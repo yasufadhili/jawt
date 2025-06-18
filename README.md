@@ -1,2 +1,1 @@
-# jawt
-Just A Weird Web Tool
+# Just A Weird Web Tool
