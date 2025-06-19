@@ -4,6 +4,7 @@ import (
 	"fmt"
 	cmd "github.com/yasufadhili/jawt/cmd"
 	"github.com/yasufadhili/jawt/internal/bs"
+	"github.com/yasufadhili/jawt/internal/build"
 	"os"
 )
 
@@ -26,14 +27,15 @@ func main() {
 		}
 
 	case cmd.RunCommand:
-		if c.ClearCache {
-			err := bs.RunProject(true)
-			if err != nil {
-				_, _ = fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-				os.Exit(1)
-			}
+
+		dir, err := os.Getwd()
+		if err != nil {
+			_, _ = fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+			os.Exit(1)
 		}
-		err := bs.RunProject(false)
+
+		builder := build.NewBuilder(dir)
+		err = builder.RunDev()
 		if err != nil {
 			_, _ = fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 			os.Exit(1)
