@@ -32,3 +32,6 @@ go.work.sum
  .vscode/
 
 examples/
+
+internal/cc/parser/generated/
+internal/pc/parser/generated/
