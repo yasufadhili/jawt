@@ -26,12 +26,19 @@ func main() {
 		}
 
 	case cmd.RunCommand:
-		fmt.Printf("Running project on port %d", c.Port)
+		fmt.Printf("Running project on port %d\n", c.Port)
 		if c.ClearCache {
-			fmt.Print(" (clearing cache)")
+			err := bs.RunProject(true)
+			if err != nil {
+				_, _ = fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+				os.Exit(1)
+			}
 		}
-		fmt.Println()
-	// TODO: Call run implementation
+		err := bs.RunProject(false)
+		if err != nil {
+			_, _ = fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+			os.Exit(1)
+		}
 
 	case cmd.BuildCommand:
 		fmt.Println("Building project...")
