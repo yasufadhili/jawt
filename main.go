@@ -5,7 +5,6 @@ import (
 	cmd "github.com/yasufadhili/jawt/cmd"
 	"github.com/yasufadhili/jawt/internal/build"
 	"os"
-	"path/filepath"
 )
 
 func main() {
@@ -26,13 +25,7 @@ func main() {
 			os.Exit(1)
 		}
 
-		// Determine the target path
-		var targetPath string
-		if c.ProjectName == "." {
-			targetPath = currentDir
-		} else {
-			targetPath = filepath.Dir(currentDir)
-		}
+		targetPath := currentDir
 
 		err = build.InitProject(targetPath, c.ProjectName)
 		if err != nil {

@@ -112,6 +112,13 @@ func (pi *ProjectInitializer) prepareConfig(projectName string) (*InitConfig, er
 // createDirectoryStructure creates the project directory structure
 func (pi *ProjectInitializer) createDirectoryStructure() error {
 	// Determine target directory
+
+	d, e := os.Getwd()
+	if e != nil {
+		return fmt.Errorf("failed to get current directory: %w", e)
+	}
+	fmt.Println(d)
+
 	var targetDir string
 	if pi.config.ProjectName == filepath.Base(pi.targetPath) {
 		// Initializing in the current directory
