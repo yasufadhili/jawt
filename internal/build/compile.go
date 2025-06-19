@@ -17,6 +17,29 @@ func NewCompilerManager(project *ProjectStructure) *CompilerManager {
 	}
 }
 
+// CompileProject compiles the entire project
+func (cm *CompilerManager) CompileProject() error {
+	fmt.Println("🏗️  Starting project compilation...")
+
+	// Compile components first (they're dependencies)
+	if err := cm.compileComponents(); err != nil {
+		return fmt.Errorf("component compilation failed: %w", err)
+	}
+
+	// Then compile pages
+	if err := cm.compilePages(); err != nil {
+		return fmt.Errorf("page compilation failed: %w", err)
+	}
+
+	// Copy assets
+	if err := cm.copyAssets(); err != nil {
+		return fmt.Errorf("asset copying failed: %w", err)
+	}
+
+	fmt.Println("✅ Project compilation completed successfully!")
+	return nil
+}
+
 // compileComponents compiles all components in dependency order
 func (cm *CompilerManager) compileComponents() error {
 	fmt.Println("📦 Compiling components...")

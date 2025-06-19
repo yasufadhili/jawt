@@ -11,8 +11,8 @@ type DevServer struct {
 	server  *http.Server
 }
 
-func NewDevServer(project *ProjectStructure, port int) *DevServer {
-	port = project.Config.Server.Port
+func NewDevServer(project *ProjectStructure) *DevServer {
+	port := project.Config.Server.Port
 	if port == 0 {
 		port = 6500
 	}
