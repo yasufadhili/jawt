@@ -3,6 +3,7 @@ package bs
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 )
 
 func RunProject(clearCache bool) error {
@@ -23,6 +24,24 @@ func RunProject(clearCache bool) error {
 	name, err := readJsonField("app.json", "name")
 	if err != nil {
 		return err
+	}
+
+	pagesPaths, err := discoverPages(filepath.Join(wDir, "app"))
+	if err != nil {
+		return err
+	}
+
+	for _, path := range pagesPaths {
+		fmt.Println(path)
+	}
+
+	components, err := discoverComponents(filepath.Join(wDir, "components"))
+	if err != nil {
+		return err
+	}
+
+	for _, component := range components {
+		fmt.Println(component.Path)
 	}
 
 	// TODO: Implement Build Process
