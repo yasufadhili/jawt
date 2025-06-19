@@ -1,8 +1,10 @@
 package bs
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"regexp"
 )
 
@@ -59,6 +61,35 @@ func validateFolderName(name string) error {
 	// Check for spaces
 	if regexp.MustCompile(`\s`).MatchString(name) {
 		return fmt.Errorf("folder name cannot contain spaces")
+	}
+
+	return nil
+}
+
+func createJsonFile(parentDir string, fileName string, data interface{}) error {
+	// Ensure the parent directory exists
+	if err := os.MkdirAll(parentDir, 0755); err != nil {
+		return fmt.Errorf("failed to create directory %s: %v", parentDir, err)
+	}
+
+	filePath := filepath.Join(parentDir, fileName)
+
+	// Marshal the data to JSON with indentation
+	jsonData, err := json.MarshalIndent(data, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal data to JSON: %v", err)
+	}
+
+	// Create or overwrite the file
+	file, err := os.Create(filePath)
+	if err != nil {
+		return fmt.Errorf("failed to create file %s: %v", filePath, err)
+	}
+	defer file.Close()
+
+	// Write JSON data to the file
+	if _, err := file.Write(jsonData); err != nil {
+		return fmt.Errorf("failed to write to file %s: %v", filePath, err)
 	}
 
 	return nil
