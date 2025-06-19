@@ -21,7 +21,7 @@ func NewBuilder(rootPath string) *Builder {
 
 // Build performs a full project build
 func (b *Builder) Build() error {
-	fmt.Println("🏗️  Starting JAWT build process...")
+	//fmt.Println("🏗️  Starting JAWT build process...")
 
 	// Discover project structure
 	project, err := b.discovery.DiscoverProject()
@@ -31,10 +31,12 @@ func (b *Builder) Build() error {
 
 	b.project = project
 
-	fmt.Printf("📊 Project Summary:\n")
-	fmt.Printf("   📄 Pages: %d\n", len(project.Pages))
-	fmt.Printf("   📦 Components: %d\n", len(project.Components))
-	fmt.Printf("   📁 Assets: %d\n", len(project.Assets))
+	/*
+		fmt.Printf("📊 Project Summary:\n")
+		fmt.Printf("   📄 Pages: %d\n", len(project.Pages))
+		fmt.Printf("   📦 Components: %d\n", len(project.Components))
+		fmt.Printf("   📁 Assets: %d\n", len(project.Assets))
+	*/
 
 	// Compile project
 	b.compiler = NewCompilerManager(project)
@@ -47,7 +49,6 @@ func (b *Builder) Build() error {
 
 // RunDev starts the development mode with file watching and server
 func (b *Builder) RunDev() error {
-	fmt.Println("🚀 Starting JAWT development mode...")
 
 	// Build the project first
 	if err := b.Build(); err != nil {

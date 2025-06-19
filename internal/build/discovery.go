@@ -67,7 +67,7 @@ func (pd *ProjectDiscovery) DiscoverProject() (*ProjectStructure, error) {
 
 func (pd *ProjectDiscovery) loadProjectConfig(project *ProjectStructure) error {
 
-	name, err := readJsonField(project.Root+"app.json", "name")
+	name, err := readJsonField(project.Root+"/app.json", "name")
 	if err != nil {
 		return err
 	}
