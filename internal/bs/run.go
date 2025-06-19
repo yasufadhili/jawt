@@ -12,7 +12,13 @@ func RunProject(clearCache bool) error {
 		return err
 	}
 
-	fmt.Println(wDir)
+	if !fileExists("jawt.config.json") {
+		return fmt.Errorf("jawt.config.json not found in %s", wDir)
+	}
+
+	if !fileExists("app.json") {
+		return fmt.Errorf("app.json not found in %s", wDir)
+	}
 
 	return nil
 }

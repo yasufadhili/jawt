@@ -26,7 +26,6 @@ func main() {
 		}
 
 	case cmd.RunCommand:
-		fmt.Printf("Running project on port %d\n", c.Port)
 		if c.ClearCache {
 			err := bs.RunProject(true)
 			if err != nil {

@@ -118,3 +118,8 @@ func createFile(parentDir string, fileName string, data []byte) error {
 
 	return nil
 }
+
+func fileExists(path string) bool {
+	_, err := os.Stat(path)
+	return !os.IsNotExist(err)
+}
