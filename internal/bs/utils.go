@@ -3,6 +3,7 @@ package bs
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -122,4 +123,35 @@ func createFile(parentDir string, fileName string, data []byte) error {
 func fileExists(path string) bool {
 	_, err := os.Stat(path)
 	return !os.IsNotExist(err)
+}
+
+func readJsonField(filename string, field string) (interface{}, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	file, err = os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	data, err := io.ReadAll(file)
+	if err != nil {
+		return nil, err
+	}
+
+	// Unmarshal JSON into a map
+	var result map[string]interface{}
+	if err := json.Unmarshal(data, &result); err != nil {
+		return nil, err
+	}
+
+	value, exists := result[field]
+	if !exists {
+		return nil, fmt.Errorf("field %s not found in %s", field, filename)
+	}
+	return value, nil
 }

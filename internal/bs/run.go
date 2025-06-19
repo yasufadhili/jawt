@@ -20,5 +20,15 @@ func RunProject(clearCache bool) error {
 		return fmt.Errorf("app.json not found in %s", wDir)
 	}
 
+	name, err := readJsonField("app.json", "name")
+	if err != nil {
+		return err
+	}
+
+	// TODO: Implement Build Process
+
+	fmt.Printf("Running project '%s'\n", name)
+	fmt.Printf("Visit localhost:%d to view the project\n", 6500) // TODO: Allow using port passed by user
+
 	return nil
 }
