@@ -26,6 +26,9 @@ func RunProject(clearCache bool) error {
 	}
 
 	// TODO: Implement Build Process
+	// Parse all page and component names
+	// Resolve dependencies
+	// Compile each page or component accordingly
 
 	fmt.Printf("Running project '%s'\n", name)
 	fmt.Printf("Visit localhost:%d to view the project\n", 6500) // TODO: Allow using port passed by user
