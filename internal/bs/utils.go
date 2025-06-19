@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"os/user"
 	"path/filepath"
 	"regexp"
 )
@@ -93,4 +94,12 @@ func createJsonFile(parentDir string, fileName string, data interface{}) error {
 	}
 
 	return nil
+}
+
+func getCurrentUserName() (string, error) {
+	currUser, err := user.Current()
+	if err != nil {
+		return "", fmt.Errorf("failed to get current user: %v", err)
+	}
+	return currUser.Username, nil
 }

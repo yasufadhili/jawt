@@ -28,6 +28,11 @@ func InitProject(projectName string) error {
 			return err
 		}
 
+		err = createConfigFiles(projectName)
+		if err != nil {
+			return err
+		}
+
 		fmt.Printf("Project '%s' initialised\n\n", projectName)
 		fmt.Printf("Run 'cd %s' to enter the project directory\n", projectName)
 		fmt.Printf("Then run 'jawt run' to start the project\n")
@@ -63,5 +68,49 @@ func createDirStructure(parent string) error {
 		}
 	}
 
+	return nil
+}
+
+func createConfigFiles(dir string) error {
+	err := createAppJsonFile(dir)
+	if err != nil {
+		return err
+	}
+	e := createJawtJsonFile(dir)
+	if e != nil {
+		return e
+	}
+	return nil
+}
+
+func createAppJsonFile(name string) error {
+	type AppConfig struct {
+		Name        string `json:"name"`
+		Author      string `json:"author"`
+		Version     string `json:"version"`
+		Description string `json:"description"`
+	}
+
+	currUser, err := getCurrentUserName()
+	if err != nil {
+		return err
+	}
+
+	appConfig := AppConfig{
+		Name:        name,
+		Author:      currUser,
+		Version:     "1.0.0",
+		Description: "Cool Jawt project",
+	}
+
+	err = createJsonFile(name, "app.json", appConfig)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func createJawtJsonFile(name string) error {
 	return nil
 }
