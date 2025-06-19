@@ -34,6 +34,11 @@ func InitProject(projectName string) error {
 			return err
 		}
 
+		err = createSampleFiles(projectName)
+		if err != nil {
+			return err
+		}
+
 		fmt.Printf("Project '%s' initialised\n\n", projectName)
 		fmt.Printf("Run 'cd %s' to enter the project directory\n", projectName)
 		fmt.Printf("Then run 'jawt run' to start the project\n")
@@ -124,6 +129,40 @@ func createJawtJsonFile(name string) error {
 	err := createJsonFile(name, "jawt.config.json", jawtConfig)
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func createSampleFiles(dir string) error {
+	err := createAppIndexFile(dir)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func createAppIndexFile(dir string) error {
+
+	content := `_doctype page index
+
+import Layout "components/layout"
+
+Page {
+  title: "Home"
+  description: "Built in Jawt"
+
+  Layout {}
+
+}
+  `
+
+	path := filepath.Join(dir, "app")
+
+	err := createFile(path, "index.jml", []byte(content))
+
+	if err != nil {
+		return fmt.Errorf("failed to create file %s: %v", path, err)
 	}
 
 	return nil
