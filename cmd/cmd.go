@@ -162,7 +162,7 @@ func PrintUsage() {
 	fmt.Printf(`Usage: %s <command> [options]
 
 Commands:
-  init <name>    Initialize a project with the given name or '.' for current directory
+  init <name>    Initialise a project with the given name or '.' for current directory
   run [port]     Run the project (optionally specify port, default: 8080)
                  Options:
                    -c, --clear-cache    Clear cache before running
