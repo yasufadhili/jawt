@@ -1,4 +1,4 @@
-package config
+package bs
 
 type AppConfig struct {
 	Name        string `json:"name"`
