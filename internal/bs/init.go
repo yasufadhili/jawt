@@ -3,6 +3,7 @@ package bs
 import (
 	"errors"
 	"fmt"
+	"github.com/yasufadhili/jawt/internal/config"
 	"os"
 	"path/filepath"
 )
@@ -84,19 +85,13 @@ func createConfigFiles(dir string) error {
 }
 
 func createAppJsonFile(name string) error {
-	type AppConfig struct {
-		Name        string `json:"name"`
-		Author      string `json:"author"`
-		Version     string `json:"version"`
-		Description string `json:"description"`
-	}
 
 	currUser, err := getCurrentUserName()
 	if err != nil {
 		return err
 	}
 
-	appConfig := AppConfig{
+	appConfig := config.AppConfig{
 		Name:        name,
 		Author:      currUser,
 		Version:     "1.0.0",
@@ -112,5 +107,24 @@ func createAppJsonFile(name string) error {
 }
 
 func createJawtJsonFile(name string) error {
+
+	projConfig := config.ProjectConfig{
+		Name: name,
+	}
+
+	serverConfig := config.ServerConfig{
+		Port: 6500,
+	}
+
+	jawtConfig := config.JawtConfig{
+		Project: projConfig,
+		Server:  serverConfig,
+	}
+
+	err := createJsonFile(name, "jawt.config.json", jawtConfig)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
