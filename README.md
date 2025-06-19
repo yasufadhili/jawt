@@ -1,4 +1,4 @@
-# JAWT - Just A Weird Web Tool
+# JAWT—Just A Weird Web Tool
 
 JAWT enables building minimal web applications using a declarative approach. 
 Write your application structure and behaviour using Jawt Markup Language (JML), a domain-specific language for JAWT.
@@ -37,7 +37,7 @@ Page {
   description: "A simple web application built with JAWT"
   
   Layout {
-    content: "Hello, world!"
+    content: "Hello, There!"
   }
 }
 ```
@@ -88,14 +88,14 @@ Card {
 
 ```
 my-app/
+├── app/
+│   ├── index.jml
 ├── components/
 │   ├── layout.jml
 │   └── card.jml
-├── pages/
-│   ├── index.jml
-│   └── about.jml
 ├── assets/
-│   └── styles.css
+│   └── favicon.ico
+└── app.json
 └── jawt.config.json
 ```
 
