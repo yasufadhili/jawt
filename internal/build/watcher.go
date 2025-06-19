@@ -23,7 +23,6 @@ func NewFileWatcher(project *ProjectStructure, compiler *CompilerManager) *FileW
 
 // Start begins watching for file changes
 func (fw *FileWatcher) Start() error {
-	fmt.Println("👀 Starting file watcher...")
 
 	// TODO: use fsnotify library
 	go fw.watchLoop()
