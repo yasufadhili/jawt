@@ -3,6 +3,7 @@ package bs
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 )
 
 func RunProject(clearCache bool) error {
@@ -21,6 +22,16 @@ func RunProject(clearCache bool) error {
 	}
 
 	name, err := readJsonField("app.json", "name")
+	if err != nil {
+		return err
+	}
+
+	_, err = discoverPages(filepath.Join(wDir, "app"))
+	if err != nil {
+		return err
+	}
+
+	_, err = discoverComponents(filepath.Join(wDir, "components"))
 	if err != nil {
 		return err
 	}
