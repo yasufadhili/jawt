@@ -3,13 +3,14 @@ package main
 import (
 	"fmt"
 	cmd "github.com/yasufadhili/jawt/cmd"
+	"github.com/yasufadhili/jawt/internal/bs"
 	"os"
 )
 
 func main() {
 	command, err := cmd.ParseArgs()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		cmd.PrintUsage()
 		os.Exit(1)
 	}
@@ -18,7 +19,11 @@ func main() {
 
 	case cmd.InitCommand:
 		fmt.Printf("Initialising project %s\n", c.ProjectName)
-		// TODO: Initialise project
+		err := bs.InitProject(c.ProjectName)
+		if err != nil {
+			_, _ = fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+			os.Exit(1)
+		}
 
 	case cmd.RunCommand:
 		fmt.Printf("Running project on port %d", c.Port)
