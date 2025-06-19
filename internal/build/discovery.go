@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 // ProjectDiscovery handles scanning and analysing project files
@@ -19,6 +20,49 @@ func NewProjectDiscovery(rootPath string) *ProjectDiscovery {
 	return &ProjectDiscovery{
 		rootPath: rootPath,
 	}
+}
+
+// DiscoverProject scans the entire project and builds the project structure
+func (pd *ProjectDiscovery) DiscoverProject() (*ProjectStructure, error) {
+	absRoot, err := filepath.Abs(pd.rootPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get absolute path: %w", err)
+	}
+
+	project := &ProjectStructure{
+		Root:       absRoot,
+		Pages:      make(map[string]*PageInfo),
+		Components: make(map[string]*ComponentInfo),
+		Assets:     make([]string, 0),
+		BuildTime:  time.Now(),
+	}
+
+	// Load project configuration
+	if err := pd.loadProjectConfig(project); err != nil {
+		return nil, fmt.Errorf("failed to load project config: %w", err)
+	}
+
+	// Discover pages
+	if err := pd.discoverPages(project); err != nil {
+		return nil, fmt.Errorf("failed to discover pages: %w", err)
+	}
+
+	// Discover components
+	if err := pd.discoverComponents(project); err != nil {
+		return nil, fmt.Errorf("failed to discover components: %w", err)
+	}
+
+	// Discover assets
+	if err := pd.discoverAssets(project); err != nil {
+		return nil, fmt.Errorf("failed to discover assets: %w", err)
+	}
+
+	// Build dependency graph
+	if err := pd.buildDependencyGraph(project); err != nil {
+		return nil, fmt.Errorf("failed to build dependency graph: %w", err)
+	}
+
+	return project, nil
 }
 
 func (pd *ProjectDiscovery) loadProjectConfig(project *ProjectStructure) error {
