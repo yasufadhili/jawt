@@ -2,21 +2,30 @@
 #!/bin/bash
 set -e
 
+
 # Project root directory (where this script is located)
 PROJECT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+
 # Directories
 TOOLS_DIR="$PROJECT_ROOT/tools"
+
 INTERNAL_DIR="$PROJECT_ROOT/internal"
+
 PC_DIR="$INTERNAL_DIR/pc"
+
 CC_DIR="$INTERNAL_DIR/cc"
+
 BUILD_DIR="$PROJECT_ROOT/build"
+
 BIN_DIR="$BUILD_DIR/bin"
+
 
 # ANTLR JAR file
 ANTLR_JAR="$TOOLS_DIR/antlr-4.13.1-complete.jar"
 
-# Print colored messages
+
+# Print coloured messages
 print_step() {
   echo -e "\033[1;34m=== $1 ===\033[0m"
 }
@@ -29,14 +38,17 @@ print_error() {
   echo -e "\033[1;31m✗ $1\033[0m" >&2
 }
 
+
 # Check if ANTLR JAR exists
 if [ ! -f "$ANTLR_JAR" ]; then
     print_error "ANTLR JAR file not found at $ANTLR_JAR"
     exit 1
 fi
 
+
 # Create build directories
 mkdir -p "$BIN_DIR"
+
 
 # Generate parsers for page compiler
 print_step "Generating Page Compiler Parser"
@@ -52,6 +64,7 @@ else
     exit 1
 fi
 
+
 # Generate parsers for component compiler
 print_step "Generating Component Compiler Parser"
 if [ -f "$CC_DIR/parser/generate.sh" ]; then
@@ -66,6 +79,7 @@ else
     exit 1
 fi
 
+
 # Build the project
 print_step "Building JAWT Binary"
 go build -o "$BIN_DIR/jawt" "$PROJECT_ROOT/main.go"
@@ -74,5 +88,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+
 print_success "Build completed successfully!"
 print_success "Binary available at: $BIN_DIR/jawt"
+
