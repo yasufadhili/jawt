@@ -7,9 +7,14 @@ import (
 	"strings"
 )
 
-func discoverPages(rootPath string) ([]string, error) {
+type page struct {
+	Name    string
+	RelPath string
+	AbsPath string
+}
 
-	var pages []string
+func discoverPages(rootPath string) ([]page, error) {
+	var pages []page
 
 	absRoot, err := filepath.Abs(rootPath)
 	if err != nil {
@@ -22,24 +27,33 @@ func discoverPages(rootPath string) ([]string, error) {
 		}
 
 		if !info.IsDir() && info.Name() == "index.jml" {
-			// Get the directory path by removing the filename
 			dirPath := filepath.Dir(path)
-			// Convert to a relative path from the root directory
 			relPath, err := filepath.Rel(absRoot, dirPath)
 			if err != nil {
 				return fmt.Errorf("failed to get relative path for %s: %w", path, err)
 			}
-			// Convert to forward-slash notation and ensure no trailing slash
-			normalisedPath := strings.TrimSuffix(filepath.ToSlash(relPath), "/")
-			// Append the path (or "." if the file is directly in the root)
-			if normalisedPath == "." {
-				normalisedPath = "/"
+			relPath = strings.TrimSuffix(filepath.ToSlash(relPath), "/")
+			if relPath == "." {
+				relPath = "/"
 			}
 
-			//normalisedPath = strings.Replace(normalisedPath, "app", "/", 1)
-			//normalisedPath = strings.Replace(normalisedPath, "//", "/", 1)
+			// Derive page name from the directory or use "index" for root
+			pageName := "index"
+			if relPath != "/" {
+				pageName = filepath.Base(dirPath)
+			}
 
-			pages = append(pages, normalisedPath)
+			// Use the absolute path of the index.jml file
+			absPath, err := filepath.Abs(path)
+			if err != nil {
+				return fmt.Errorf("failed to get absolute path for %s: %w", path, err)
+			}
+
+			pages = append(pages, page{
+				Name:    pageName,
+				RelPath: relPath,
+				AbsPath: absPath,
+			})
 		}
 
 		return nil
@@ -53,8 +67,9 @@ func discoverPages(rootPath string) ([]string, error) {
 }
 
 type component struct {
-	Name string
-	Path string
+	Name    string
+	RelPath string
+	AbsPath string
 }
 
 func discoverComponents(rootPath string) ([]component, error) {
@@ -81,12 +96,18 @@ func discoverComponents(rootPath string) ([]component, error) {
 				return fmt.Errorf("failed to get relative path for %s: %w", path, err)
 			}
 
+			absPath, err := filepath.Abs(path)
+			if err != nil {
+				return fmt.Errorf("failed to get absolute path for %s: %w", path, err)
+			}
+
 			// Convert to forward-slash notation and remove .jml extension
-			normalisedPath := strings.TrimSuffix(filepath.ToSlash(relPath), ".jml")
+			relPath = strings.TrimSuffix(filepath.ToSlash(relPath), ".jml")
 
 			components = append(components, component{
-				Name: componentName,
-				Path: normalisedPath,
+				Name:    componentName,
+				RelPath: relPath,
+				AbsPath: absPath,
 			})
 
 		}

@@ -26,22 +26,14 @@ func RunProject(clearCache bool) error {
 		return err
 	}
 
-	pagesPaths, err := discoverPages(filepath.Join(wDir, "app"))
+	_, err = discoverPages(filepath.Join(wDir, "app"))
 	if err != nil {
 		return err
 	}
 
-	for _, path := range pagesPaths {
-		fmt.Println(path)
-	}
-
-	components, err := discoverComponents(filepath.Join(wDir, "components"))
+	_, err = discoverComponents(filepath.Join(wDir, "components"))
 	if err != nil {
 		return err
-	}
-
-	for _, component := range components {
-		fmt.Println(component.Path)
 	}
 
 	// TODO: Implement Build Process
