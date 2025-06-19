@@ -103,3 +103,18 @@ func getCurrentUserName() (string, error) {
 	}
 	return currUser.Username, nil
 }
+
+func createFile(parentDir string, fileName string, data []byte) error {
+
+	if err := os.MkdirAll(parentDir, 0755); err != nil {
+		return fmt.Errorf("failed to create directory %s: %v", parentDir, err)
+	}
+
+	filePath := filepath.Join(parentDir, fileName)
+
+	if err := os.WriteFile(filePath, data, 0644); err != nil {
+		return fmt.Errorf("failed to create file %s: %v", filePath, err)
+	}
+
+	return nil
+}
