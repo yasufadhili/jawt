@@ -2,19 +2,15 @@ package bs
 
 import (
 	"fmt"
+	"github.com/yasufadhili/jawt/internal/cc"
+	"github.com/yasufadhili/jawt/internal/pc"
 	"os"
 	"path/filepath"
 	"strings"
 )
 
-type page struct {
-	Name    string
-	RelPath string
-	AbsPath string
-}
-
-func discoverPages(rootPath string) ([]page, error) {
-	var pages []page
+func discoverPages(rootPath string) ([]pc.Page, error) {
+	var pages []pc.Page
 
 	absRoot, err := filepath.Abs(rootPath)
 	if err != nil {
@@ -49,7 +45,7 @@ func discoverPages(rootPath string) ([]page, error) {
 				return fmt.Errorf("failed to get absolute path for %s: %w", path, err)
 			}
 
-			pages = append(pages, page{
+			pages = append(pages, pc.Page{
 				Name:    pageName,
 				RelPath: relPath,
 				AbsPath: absPath,
@@ -66,14 +62,8 @@ func discoverPages(rootPath string) ([]page, error) {
 	return pages, nil
 }
 
-type component struct {
-	Name    string
-	RelPath string
-	AbsPath string
-}
-
-func discoverComponents(rootPath string) ([]component, error) {
-	var components []component
+func discoverComponents(rootPath string) ([]cc.Component, error) {
+	var components []cc.Component
 
 	absRoot, err := filepath.Abs(rootPath)
 	if err != nil {
@@ -104,7 +94,7 @@ func discoverComponents(rootPath string) ([]component, error) {
 			// Convert to forward-slash notation and remove .jml extension
 			relPath = strings.TrimSuffix(filepath.ToSlash(relPath), ".jml")
 
-			components = append(components, component{
+			components = append(components, cc.Component{
 				Name:    componentName,
 				RelPath: relPath,
 				AbsPath: absPath,
