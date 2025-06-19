@@ -19,7 +19,6 @@ func NewCompilerManager(project *ProjectStructure) *CompilerManager {
 
 // CompileProject compiles the entire project
 func (cm *CompilerManager) CompileProject() error {
-	fmt.Println("🏗️  Starting project compilation...")
 
 	// Compile components first (they're dependencies)
 	if err := cm.compileComponents(); err != nil {
@@ -36,13 +35,11 @@ func (cm *CompilerManager) CompileProject() error {
 		return fmt.Errorf("asset copying failed: %w", err)
 	}
 
-	fmt.Println("✅ Project compilation completed successfully!")
 	return nil
 }
 
 // compileComponents compiles all components in dependency order
 func (cm *CompilerManager) compileComponents() error {
-	fmt.Println("📦 Compiling components...")
 
 	for name, comp := range cm.project.Components {
 		if err := cm.compileComponent(name, comp); err != nil {
@@ -55,7 +52,6 @@ func (cm *CompilerManager) compileComponents() error {
 
 // compilePages compiles all pages
 func (cm *CompilerManager) compilePages() error {
-	fmt.Println("📄 Compiling pages...")
 
 	for name, page := range cm.project.Pages {
 		if err := cm.compilePage(name, page); err != nil {
@@ -68,7 +64,6 @@ func (cm *CompilerManager) compilePages() error {
 
 // compileComponent compiles a single component (placeholder)
 func (cm *CompilerManager) compileComponent(name string, comp *ComponentInfo) error {
-	fmt.Printf("  📦 Compiling component: %s\n", name)
 
 	// TODO: call CC (Component Compiler)
 
@@ -78,7 +73,6 @@ func (cm *CompilerManager) compileComponent(name string, comp *ComponentInfo) er
 
 // compilePage compiles a single page (placeholder)
 func (cm *CompilerManager) compilePage(name string, page *PageInfo) error {
-	fmt.Printf("  📄 Compiling page: %s -> %s\n", name, page.Route)
 
 	// TODO: call PC (Page Compiler)
 
@@ -88,19 +82,17 @@ func (cm *CompilerManager) compilePage(name string, page *PageInfo) error {
 
 // copyAssets copies all assets to the output directory (placeholder)
 func (cm *CompilerManager) copyAssets() error {
-	fmt.Println("📁 Copying assets...")
 
-	for _, asset := range cm.project.Assets {
-		fmt.Printf("  📁 Copying asset: %s\n", asset)
-		// TODO: actual asset copying
-	}
+	//for _, asset := range cm.project.Assets {
+	//	fmt.Printf("  📁 Copying asset: %s\n", asset)
+	// TODO: actual asset copying
+	//}
 
 	return nil
 }
 
 // CompileChanged compiles only files that have changed
 func (cm *CompilerManager) CompileChanged() error {
-	fmt.Println("🔄 Compiling changed files...")
 
 	// Check for changed components
 	for name, comp := range cm.project.Components {
