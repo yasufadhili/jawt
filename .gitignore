@@ -35,3 +35,5 @@ examples/
 
 internal/cc/parser/generated/
 internal/pc/parser/generated/
+
+vendor/
