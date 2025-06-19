@@ -139,6 +139,10 @@ func createSampleFiles(dir string) error {
 	if err != nil {
 		return err
 	}
+	err = createLayoutComponentFile(dir)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -160,6 +164,30 @@ Page {
 	path := filepath.Join(dir, "app")
 
 	err := createFile(path, "index.jml", []byte(content))
+
+	if err != nil {
+		return fmt.Errorf("failed to create file %s: %v", path, err)
+	}
+
+	return nil
+}
+
+func createLayoutComponentFile(dir string) error {
+	content := `_doctype component layout
+
+Layout {
+  style: "flex-1, flex-column, justify-center, align-center,"
+
+  Text {
+    style: "font-bold, text-2xl"
+    content: "Hello from Jawt"
+  }
+
+}
+`
+	path := filepath.Join(dir, "components")
+
+	err := createFile(path, "layout.jml", []byte(content))
 
 	if err != nil {
 		return fmt.Errorf("failed to create file %s: %v", path, err)
