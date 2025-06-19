@@ -1,18 +1,17 @@
-package server
+package build
 
 import (
 	"fmt"
-	"github.com/yasufadhili/jawt/internal/build"
 	"net/http"
 )
 
 type DevServer struct {
-	project *build.ProjectStructure
+	project *ProjectStructure
 	port    int
 	server  *http.Server
 }
 
-func NewDevServer(project *build.ProjectStructure, port int) *DevServer {
+func NewDevServer(project *ProjectStructure, port int) *DevServer {
 	port = project.Config.Server.Port
 	if port == 0 {
 		port = 6500
