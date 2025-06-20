@@ -6,7 +6,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_ROOT="$( cd "$DIR/../../../" && pwd )"
 
 # Set up paths
-GRAMMAR_DIR="$DIR/../grammar"
+GRAMMAR_DIR="$DIR/../../../grammar"
 GRAMMAR_FILE="$GRAMMAR_DIR/JMLPage.g4"
 OUTPUT_DIR="$DIR/generated"
 ANTLR_JAR="$PROJECT_ROOT/tools/antlr-4.13.2-complete.jar"
