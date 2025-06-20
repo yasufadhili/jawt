@@ -38,3 +38,5 @@ internal/pc/parser/generated/
 
 vendor/
 /build/
+
+gen/
