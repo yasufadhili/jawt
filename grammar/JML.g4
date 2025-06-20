@@ -53,3 +53,11 @@ NEWLINE
 WHITESPACE
     : [ \t\r\n]+ -> skip
 ;
+
+COMMENT
+    : '//' ~[\r\n]* -> skip
+;
+
+MULTILINE_COMMENT
+    : '/*' .*? '*/' -> skip
+;
