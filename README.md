@@ -1,130 +1,38 @@
 # JAWT—Just A Weird Web Tool
 
-JAWT enables building minimal web applications using a declarative approach. 
-Write your application structure and behaviour using Jawt Markup Language (JML), a domain-specific language for JAWT.
+**JAWT is a toolchain that enables building minimal web applications using a declarative approach.** 
 
-## Quick Start
-
-Create a new project:
-```bash
-jawt init my-app
-cd my-app
-```
-
-Run your application:
-```bash
-jawt run
-```
-
-Build for production:
-```bash
-jawt build
-```
-
-## JML Syntax
-
-### Pages
-
-Pages define the entry points of your application. Each page specifies metadata and content structure:
-
-```jml
-_doctype page index
-
-import Layout from "components/layout"
-
-Page {
-  title: "Welcome to My App"
-  description: "A simple web application built with JAWT"
-  
-  Layout {
-    content: "Hello, There!"
-  }
-}
-```
-
-### Components
-
-Components are reusable building blocks that encapsulate layout and styling:
-
-```jml
-_doctype component Layout
-
-Container {
-  style: "max-width-4xl mx-auto p-6"
-  
-  Header {
-    style: "mb-8"
-    text: "My Application"
-  }
-  
-  Main {
-    style: "flex-1"
-    children: props.content
-  }
-}
-```
-
-### Styling
-
-JAWT uses utility-based styling similar to Tailwind CSS:
-
-```jml
-Card {
-  style: "bg-white rounded-lg shadow-md p-4 mb-4"
-  
-  Title {
-    style: "text-xl font-bold text-gray-800"
-    text: "Card Title"
-  }
-  
-  Content {
-    style: "text-gray-600 mt-2"
-    text: "Card content goes here"
-  }
-}
-```
-
-## Project Structure
-
-```
-my-app/
-├── app/
-│   ├── index.jml
-├── components/
-│   ├── layout.jml
-│   └── card.jml
-├── assets/
-│   └── favicon.ico
-└── app.json
-└── jawt.config.json
-```
-
-## CLI Commands
-
-| Command | Description |
-|---------|-------------|
-| `jawt init <name>` | Create a new JAWT project |
-| `jawt run` | Start development server with hot reload |
-| `jawt build` | Build optimised production bundle |
-| `jawt serve` | Serve production build locally |
-
-## Configuration
-
-Customise your build process with `jawt.config.json`:
-
-```json
-{
-  "port": 6500,
-  "output": "dist",
-  "publicPath": "/",
-  "minify": true
-}
-```
+Write your application structure and behaviour using **JML**, a domain-specific language for JAWT.
 
 ## Features
 
 - **Declarative Syntax**: Express your UI structure clearly and concisely
 - **Component System**: Build reusable components with props and composition
 - **Hot Reload**: See changes instantly during development
-- **Minimal Bundle**: Generates lightweight, optimised output
+- **Minimal Bundle**: Generates lightweight, optimized output
 - **Zero Configuration**: Works out of the box with sensible defaults
+
+## Resources
+
+**Useful links to understand the Toolchain**
+
+- [Getting Started](docs/tutorial) — Quick tutorial on Jawt
+- [Documentation](docs/jawt) — Build and use Jawt apps
+- [Architecture](docs/architecture) — How Jawt handles pages, components, modules and more
+- [JML](docs/jml) — Jawt's DSL for app development
+- [Jawt CLI](CLI.MD) — Useful commands when working with Jawt
+- [Building](BUILDING.MD) this source code
+
+## Components
+
+**This project repo consists of several components that make up JAWT**
+
+- [Page Compiler](internal/pc) : Compiles Pages
+- [Component Compiler](internal/cc) : Compiles Components
+- [Module Compiler](internal/mc) : Compiles Modules
+- [Build System](internal/build) : Orchestrates the entire build process
+- [Development Server](internal/server) : Serves Jawt projects locally during development
+
+## License
+
+All parts of the Jawt Toolchain are licensed under the [MIT Licence](LICENSE).
