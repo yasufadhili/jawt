@@ -59,5 +59,5 @@ COMMENT
 ;
 
 MULTILINE_COMMENT
-    : '/*' .*? '*/' -> skip
+    : '/*' ( . | '\r' | '\n' )*? '*/' -> skip
 ;
