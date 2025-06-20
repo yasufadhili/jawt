@@ -44,7 +44,7 @@ func (ab *AstBuilder) VisitProgram(ctx *parser.ProgramContext) interface{} {
 
 	// Visit doctypeSpecifier
 	if ctx.DoctypeSpecifier() != nil {
-		p.Doctype = ab.Visit(ctx.DoctypeSpecifier()).(*DoctypeSpecifier)
+		p.Doctype = ctx.DoctypeSpecifier().Accept(ab).(*DoctypeSpecifier)
 	}
 
 	// Visit imports
