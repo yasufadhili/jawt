@@ -69,3 +69,11 @@ func (ab *AstBuilder) VisitPage(ctx *parser.PageContext) interface{} {
 
 	return p
 }
+
+func (ab *AstBuilder) VisitPageProperty(ctx *parser.PagePropertyContext) interface{} {
+	value := ab.Visit(ctx.PropertyValue()).(interface{}) // Get the raw value from the literal
+	return &PageProperty{
+		Key:   ctx.IDENTIFIER().GetText(),
+		Value: value,
+	}
+}
