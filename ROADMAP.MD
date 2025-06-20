@@ -1,6 +1,6 @@
 # JAWT Development Roadmap
 
-This roadmap outlines the development phases and features for JAWT (Just A Weird Web Tool), a toolchain for building minimal web applications using declarative JML syntax. 
+This roadmap outlines the development phases and features for JAWT, a toolchain for building minimal web applications using declarative JML syntax. 
 The focus is on simplicity, clarity, and functionality for creating lightweight web apps.
 
 ## Foundation Phase ✅
