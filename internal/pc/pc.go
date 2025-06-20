@@ -21,6 +21,8 @@ func NewPageCompiler(filepath string, outputPath string) *PageCompiler {
 
 func (pc *PageCompiler) CompilePage() error {
 
+	var allErrors []error
+
 	// 1. Lexing
 	input, err := antlr.NewFileStream(pc.inputPath)
 	if err != nil {
@@ -31,13 +33,20 @@ func (pc *PageCompiler) CompilePage() error {
 
 	// 2. Parsing
 	p := parser.NewJMLPageParser(stream)
-	//parser.AddErrorListener(antlr.NewDiagnosticErrorListener(true))
-	p.AddErrorListener(antlr.NewConsoleErrorListener()) // TODO: Use robust error listener
+
+	syntaxErrorListener := NewErrorListener()
+	p.RemoveErrorListeners()
+	p.AddErrorListener(syntaxErrorListener)
+
 	tree := p.Program()
 
-	if p.HasError() {
-		return fmt.Errorf("error parsing page")
+	if len(syntaxErrorListener.Errors) > 0 {
+		for _, se := range syntaxErrorListener.Errors {
+			allErrors = append(allErrors, se)
+		}
+		return fmt.Errorf("syntax errors encountered during parsing:\n%v", formatErrors(allErrors))
 	}
+	fmt.Println("Parsing: OK")
 
 	// 3. Build AST
 	fmt.Println("Building AST")
@@ -67,4 +76,16 @@ func (pc *PageCompiler) CompilePage() error {
 	fmt.Println(emit.Emitted)
 
 	return nil
+}
+
+// Helper function to format a slice of errors into a single string
+func formatErrors(errors []error) string {
+	if len(errors) == 0 {
+		return "No errors."
+	}
+	s := ""
+	for i, err := range errors {
+		s += fmt.Sprintf("  %d. %s\n", i+1, err.Error())
+	}
+	return s
 }
