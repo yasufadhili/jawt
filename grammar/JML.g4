@@ -47,11 +47,11 @@ STRING
 ;
 
 NEWLINE
-    : [ \r]+
+    : ('\r'? '\n')+
 ;
 
 WHITESPACE
-    : [ \t\r\n]+ -> skip
+    : [ \t]+ -> skip
 ;
 
 COMMENT
