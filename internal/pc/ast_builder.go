@@ -97,3 +97,8 @@ func (ab *AstBuilder) VisitLiteral(ctx *parser.LiteralContext) interface{} {
 	}
 	return nil
 }
+
+// VisitPropertyValue just delegates to VisitLiteral
+func (ab *AstBuilder) VisitPropertyValue(ctx *parser.PropertyValueContext) interface{} {
+	return ab.Visit(ctx.Literal())
+}
