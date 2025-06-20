@@ -4,12 +4,12 @@ import JML;
 
 
 program
-    : doctypeSpecifier imports? page EOF
+    : doctypeSpecifier imports? page NEWLINE* EOF
 ;
 
 
 page
-    : 'Page' '{' pageBody '}'
+    : 'Page' '{' NEWLINE pageBody NEWLINE? '}'
 ;
 
 
@@ -19,7 +19,7 @@ pageBody
 
 
 pageProperty
-    : IDENTIFIER ':' propertyValue
+    : IDENTIFIER ':' propertyValue NEWLINE
 ;
 
 
