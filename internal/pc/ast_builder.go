@@ -1,6 +1,7 @@
 package pc
 
 import (
+	"github.com/antlr4-go/antlr/v4"
 	parser "github.com/yasufadhili/jawt/internal/pc/parser/generated"
 	"strconv"
 )
@@ -12,6 +13,28 @@ type AstBuilder struct {
 func NewAstBuilder() *AstBuilder {
 	return &AstBuilder{
 		BaseJMLPageVisitor: &parser.BaseJMLPageVisitor{},
+	}
+}
+
+func (ab *AstBuilder) Visit(tree antlr.ParseTree) interface{} {
+	switch ctx := tree.(type) {
+	case *parser.ProgramContext:
+		return ab.VisitProgram(ctx)
+	case *parser.DoctypeSpecifierContext:
+		return ab.VisitDoctypeSpecifier(ctx)
+	case *parser.ImportStatementContext:
+		return ab.VisitImportStatement(ctx)
+	case *parser.PageContext:
+		return ab.VisitPage(ctx)
+	case *parser.PagePropertyContext:
+		return ab.VisitPageProperty(ctx)
+	case *parser.LiteralContext:
+		return ab.VisitLiteral(ctx)
+	case *parser.PropertyValueContext:
+		return ab.VisitPropertyValue(ctx)
+	default:
+		// For any unhandled types, return nil
+		return nil
 	}
 }
 
