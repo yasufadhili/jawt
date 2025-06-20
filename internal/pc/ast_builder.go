@@ -4,6 +4,7 @@ import (
 	"github.com/antlr4-go/antlr/v4"
 	parser "github.com/yasufadhili/jawt/internal/pc/parser/generated"
 	"strconv"
+	"strings"
 )
 
 type AstBuilder struct {
@@ -71,10 +72,7 @@ func (ab *AstBuilder) VisitDoctypeSpecifier(ctx *parser.DoctypeSpecifierContext)
 
 func (ab *AstBuilder) VisitImportStatement(ctx *parser.ImportStatementContext) interface{} {
 	// Remove quotes from the string literal
-	fromPath := ctx.STRING().GetText()
-	if len(fromPath) >= 2 && fromPath[0] == '"' && fromPath[len(fromPath)-1] == '"' {
-		fromPath = fromPath[1 : len(ctx.STRING().GetText())-1]
-	}
+	fromPath := strings.Trim(ctx.STRING().GetText(), `"`)
 
 	return &ImportStatement{
 		Doctype:    ctx.Doctype().GetText(),
