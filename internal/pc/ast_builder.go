@@ -106,7 +106,11 @@ func (ab *AstBuilder) VisitPageProperty(ctx *parser.PagePropertyContext) interfa
 
 func (ab *AstBuilder) VisitLiteral(ctx *parser.LiteralContext) interface{} {
 	if ctx.INTEGER() != nil {
-		val, _ := strconv.Atoi(ctx.INTEGER().GetText())
+		val, err := strconv.Atoi(ctx.INTEGER().GetText())
+		if err != nil {
+			// Handle parsing error appropriately (log, return error, etc.)
+			return 0
+		}
 		return val
 	} else if ctx.STRING() != nil {
 		// Remove quotes from the string literal
