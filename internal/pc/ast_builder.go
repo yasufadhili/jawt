@@ -35,3 +35,10 @@ func (ab *AstBuilder) VisitProgram(ctx *parser.ProgramContext) interface{} {
 
 	return p
 }
+
+func (ab *AstBuilder) VisitDoctypeSpecifier(ctx *parser.DoctypeSpecifierContext) interface{} {
+	return &DoctypeSpecifier{
+		Doctype: ctx.Doctype().GetText(),
+		Name:    ctx.IDENTIFIER().GetText(),
+	}
+}
