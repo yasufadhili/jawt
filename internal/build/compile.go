@@ -75,7 +75,7 @@ func (cm *CompilerManager) compileComponent(name string, comp *ComponentInfo) er
 // compilePage compiles a single page (placeholder)
 func (cm *CompilerManager) compilePage(name string, page *PageInfo) error {
 
-	compiler := pc.NewPageCompiler(page.RelativePath, "dist")
+	compiler := pc.NewPageCompiler(page.AbsolutePath, "dist")
 	if err := compiler.CompilePage(); err != nil {
 		return err
 	}
