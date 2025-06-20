@@ -119,13 +119,43 @@ func (pd *ProjectDiscovery) discoverPages(project *ProjectStructure) error {
 			return err
 		}
 
-		if !info.IsDir() && strings.HasSuffix(info.Name(), ".jml") {
+		// Only process index.jml files
+		if !info.IsDir() && info.Name() == "index.jml" {
+			absPath, err := filepath.Abs(path)
+			if err != nil {
+				return fmt.Errorf("failed to get absolute path for %s: %w", path, err)
+			}
+
+			relPath, err := filepath.Rel(appDir, filepath.Dir(path))
+			if err != nil {
+				return fmt.Errorf("failed to get relative path for %s: %w", path, err)
+			}
+			relPath = filepath.ToSlash(relPath)
+			if relPath == "." {
+				relPath = "/"
+			} else {
+				relPath = "/" + strings.Trim(relPath, "/")
+			}
+
+			// Derive page name from directory or use "index" for root
+			pageName := "index"
+			if relPath != "/" {
+				pageName = filepath.Base(filepath.Dir(path))
+			}
+
+			// Analyse a page file for additional metadata
 			pageInfo, err := pd.analysePageFile(path, project.Root)
 			if err != nil {
 				return fmt.Errorf("failed to analyse page %s: %w", path, err)
 			}
 
-			project.Pages[pageInfo.Name] = pageInfo
+			pageInfo.Name = pageName
+			pageInfo.RelativePath = relPath
+			pageInfo.AbsolutePath = absPath
+			pageInfo.Route = relPath
+			pageInfo.LastModified = info.ModTime()
+
+			project.Pages[pageName] = pageInfo
 		}
 
 		return nil
