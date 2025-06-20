@@ -44,7 +44,7 @@ func (pc *PageCompiler) CompilePage() error {
 		for _, se := range syntaxErrorListener.Errors {
 			allErrors = append(allErrors, se)
 		}
-		return fmt.Errorf("syntax errors encountered during parsing:\n%v", formatErrors(allErrors))
+		return fmt.Errorf("\n%v", formatErrors(allErrors))
 	}
 	fmt.Println("Parsing: OK")
 
