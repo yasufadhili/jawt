@@ -37,7 +37,7 @@ type Page struct {
 	Name       string
 	RelPath    string
 	AbsPath    string
-	Properties []PageProperty
+	Properties []*PageProperty
 }
 
 func (p *Page) Accept(v Visitor) interface{} {
