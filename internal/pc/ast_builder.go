@@ -57,7 +57,7 @@ func (ab *AstBuilder) VisitProgram(ctx *parser.ProgramContext) interface{} {
 
 	// Visit page
 	if ctx.Page() != nil {
-		p.Page = ab.Visit(ctx.Page()).(*Page)
+		p.Page = ctx.Page().Accept(ab).(*Page)
 	}
 
 	return p
