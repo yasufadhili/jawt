@@ -2,10 +2,6 @@ grammar JMLComponent;
 
 import JML;
 
-program
-    :
-;
-
 
 component
     :   COMP_ID '{' componentBody '}' NEWLINE
@@ -14,6 +10,7 @@ component
 
 componentInvocation
     :   COMP_ID '{' componentBody '}' NEWLINE
+    |   COMP_ID NEWLINE
 ;
 
 
@@ -30,12 +27,6 @@ componentProperty
 propertyValue
     : STRING
     | IDENTIFIER
-    | component
+    | componentInvocation
 ;
-
-
-componentContent
-    :
-;
-
 

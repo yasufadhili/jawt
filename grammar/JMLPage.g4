@@ -9,7 +9,7 @@ program
 
 
 page
-    : 'Page' '{' pageBody? '}'
+    : 'Page' '{' pageBody '}'
 ;
 
 
