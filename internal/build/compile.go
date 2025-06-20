@@ -2,6 +2,7 @@ package build
 
 import (
 	"fmt"
+	"github.com/yasufadhili/jawt/internal/pc"
 	"os"
 	"time"
 )
@@ -74,7 +75,10 @@ func (cm *CompilerManager) compileComponent(name string, comp *ComponentInfo) er
 // compilePage compiles a single page (placeholder)
 func (cm *CompilerManager) compilePage(name string, page *PageInfo) error {
 
-	// TODO: call PC (Page Compiler)
+	compiler := pc.NewPageCompiler(page.AbsolutePath, "dist")
+	if err := compiler.CompilePage(); err != nil {
+		return err
+	}
 
 	page.Compiled = true
 	return nil

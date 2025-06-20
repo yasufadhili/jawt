@@ -22,7 +22,7 @@ BIN_DIR="$BUILD_DIR/bin"
 
 
 # ANTLR JAR file
-ANTLR_JAR="$TOOLS_DIR/antlr-4.13.1-complete.jar"
+ANTLR_JAR="$TOOLS_DIR/antlr-4.13.2-complete.jar"
 
 
 # Print coloured messages
