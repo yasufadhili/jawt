@@ -56,3 +56,16 @@ func (ab *AstBuilder) VisitImportStatement(ctx *parser.ImportStatementContext) i
 		From:       fromPath,
 	}
 }
+
+func (ab *AstBuilder) VisitPage(ctx *parser.PageContext) interface{} {
+	p := &Page{}
+
+	if ctx.PageBody() != nil {
+		bodyCtx := ctx.PageBody().(*parser.PageBodyContext)
+		for _, propCtx := range bodyCtx.AllPageProperty() {
+			p.Properties = append(p.Properties, ab.Visit(propCtx).(*PageProperty))
+		}
+	}
+
+	return p
+}
