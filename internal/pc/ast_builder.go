@@ -51,7 +51,7 @@ func (ab *AstBuilder) VisitProgram(ctx *parser.ProgramContext) interface{} {
 	if ctx.Imports() != nil {
 		importsCtx := ctx.Imports().(*parser.ImportsContext)
 		for _, impCtx := range importsCtx.AllImportStatement() {
-			p.Imports = append(p.Imports, ab.Visit(impCtx).(*ImportStatement))
+			p.Imports = append(p.Imports, impCtx.Accept(ab).(*ImportStatement))
 		}
 	}
 
