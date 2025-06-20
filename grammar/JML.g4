@@ -25,6 +25,8 @@ importStatement
 
 literal
     : INTEGER
+    | STRING
+    | IDENTIFIER
 ;
 
 

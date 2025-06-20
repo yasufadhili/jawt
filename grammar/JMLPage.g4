@@ -9,7 +9,7 @@ program
 
 
 page
-    : 'Page' '{' '}'
+    : 'Page' '{' pageBody? '}'
 ;
 
 
@@ -19,6 +19,11 @@ pageBody
 
 
 pageProperty
-    : IDENTIFIER ':' STRING
+    : IDENTIFIER ':' propertyValue
+;
+
+
+propertyValue
+    : literal
 ;
 
