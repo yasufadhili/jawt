@@ -42,3 +42,17 @@ func (ab *AstBuilder) VisitDoctypeSpecifier(ctx *parser.DoctypeSpecifierContext)
 		Name:    ctx.IDENTIFIER().GetText(),
 	}
 }
+
+func (ab *AstBuilder) VisitImportStatement(ctx *parser.ImportStatementContext) interface{} {
+	// Remove quotes from the string literal
+	fromPath := ctx.STRING().GetText()
+	if len(fromPath) >= 2 && fromPath[0] == '"' && fromPath[len(fromPath)-1] == '"' {
+		fromPath = fromPath[1 : len(ctx.STRING().GetText())-1]
+	}
+
+	return &ImportStatement{
+		Doctype:    ctx.Doctype().GetText(),
+		Identifier: ctx.IDENTIFIER().GetText(),
+		From:       fromPath,
+	}
+}
