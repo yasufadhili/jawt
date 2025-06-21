@@ -1,4 +1,4 @@
-# JAWT—Just A Weird Web Tool
+# JAWT—Just Another Web Tool
 
 **JAWT is a toolchain that enables building minimal web applications using a declarative approach.** 
 
