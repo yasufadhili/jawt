@@ -21,6 +21,6 @@ run 'jawt build' first.`,
 }
 
 func init() {
-	serveCmd.Flags().IntVarP(&servePort, "port", "p", 8000, "Specify custom port")
+	serveCmd.Flags().IntVarP(&servePort, "port", "p", 80, "Specify custom port")
 	rootCmd.AddCommand(serveCmd)
 }
