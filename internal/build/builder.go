@@ -16,15 +16,19 @@ type Builder struct {
 }
 
 // NewBuilder creates a new builder instance
-func NewBuilder(rootPath string) *Builder {
-	cfg, _ := config.LoadConfig(rootPath)
+func NewBuilder(rootPath string) (*Builder, error) {
+
+	cfg, err := config.LoadConfig(rootPath)
+	if err != nil {
+		return nil, err
+	}
 	discovery := NewProjectDiscovery(rootPath)
 
 	return &Builder{
 		discovery:   discovery,
 		ProjectPath: rootPath,
 		Config:      cfg,
-	}
+	}, nil
 }
 
 // SetConfig allows manually setting the configuration

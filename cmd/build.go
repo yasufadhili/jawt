@@ -24,11 +24,15 @@ Generates optimised HTML, CSS, JavaScript and WebAssembly output.`,
 		fmt.Printf("🔨 Building %s for production...\n", projectConfig.App.Name)
 		fmt.Printf("📁 Output directory: %s\n", outputDir)
 
-		builder := build.NewBuilder(projectDir)
+		builder, err := build.NewBuilder(projectDir)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error building project: %v\n", err)
+			os.Exit(1)
+		}
 
 		// TODO: Pass output directory to builder when supported
 
-		err := builder.Build()
+		err = builder.Build()
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error building project: %v\n", err)
 			os.Exit(1)

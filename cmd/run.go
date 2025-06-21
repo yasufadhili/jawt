@@ -25,14 +25,18 @@ Monitors your JML files for changes and automatically reloads the browser.`,
 		fmt.Printf("🚀 Starting development server for %s on port %d...\n",
 			projectConfig.App.Name, port)
 
-		builder := build.NewBuilder(projectDir)
+		builder, err := build.NewBuilder(projectDir)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error building project: %v\n", err)
+			os.Exit(1)
+		}
 
 		if clearCache {
 			fmt.Println("🧹 Clearing cache...")
 			// TODO: Implement cache clearing in builder
 		}
 
-		err := builder.RunDev()
+		err = builder.RunDev()
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 			os.Exit(1)
