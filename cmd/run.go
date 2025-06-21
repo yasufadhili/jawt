@@ -17,22 +17,22 @@ var runCmd = &cobra.Command{
 	Long: `Starts the development server with hot reload functionality.
 Monitors your JML files for changes and automatically reloads the browser.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		dir, err := os.Getwd()
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)
-			os.Exit(1)
+		// Use the configured port if not explicitly provided as a flag
+		if !cmd.Flags().Changed("port") && projectConfig != nil {
+			port = projectConfig.Jawt.Port
 		}
 
-		builder := build.NewBuilder(dir)
+		fmt.Printf("🚀 Starting development server for %s on port %d...\n",
+			projectConfig.App.Name, port)
+
+		builder := build.NewBuilder(projectDir)
 
 		if clearCache {
 			fmt.Println("🧹 Clearing cache...")
 			// TODO: Implement cache clearing in builder
 		}
 
-		fmt.Printf("🚀 Starting development server on port %d...\n", port)
-
-		err = builder.RunDev()
+		err := builder.RunDev()
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 			os.Exit(1)
