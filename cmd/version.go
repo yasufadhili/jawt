@@ -20,9 +20,5 @@ var (
 )
 
 func getVersion() string {
-	// TODO: Implement proper version handling
-	if version == "dev" {
-		return "v0.0.1-dev"
-	}
-	return version
+	return fmt.Sprintf("v0.0.1-dev (commit: %s, built: %s)", commit, date)
 }
