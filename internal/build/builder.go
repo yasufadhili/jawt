@@ -1,29 +1,44 @@
 package build
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/yasufadhili/jawt/internal/config"
+)
 
 type Builder struct {
-	discovery *ProjectDiscovery
-	project   *ProjectStructure
-	compiler  *CompilerManager
-	watcher   *FileWatcher
-	server    *DevServer
+	ProjectPath string
+	Config      *config.Config
+	discovery   *ProjectDiscovery
+	project     *ProjectStructure
+	compiler    *CompilerManager
+	watcher     *FileWatcher
+	server      *DevServer
 }
 
 // NewBuilder creates a new builder instance
-func NewBuilder(rootPath string) *Builder {
+func NewBuilder(rootPath string) (*Builder, error) {
+
+	cfg, err := config.LoadConfig(rootPath)
+	if err != nil {
+		return nil, err
+	}
 	discovery := NewProjectDiscovery(rootPath)
 
 	return &Builder{
-		discovery: discovery,
-	}
+		discovery:   discovery,
+		ProjectPath: rootPath,
+		Config:      cfg,
+	}, nil
+}
+
+// SetConfig allows manually setting the configuration
+func (b *Builder) SetConfig(cfg *config.Config) {
+	b.Config = cfg
 }
 
 // Build performs a full project build
 func (b *Builder) Build() error {
-	//fmt.Println("🏗️  Starting JAWT build process...")
 
-	// Discover project structure
 	project, err := b.discovery.DiscoverProject()
 	if err != nil {
 		return fmt.Errorf("project discovery failed: %w", err)
@@ -31,14 +46,6 @@ func (b *Builder) Build() error {
 
 	b.project = project
 
-	/*
-		fmt.Printf("📊 Project Summary:\n")
-		fmt.Printf("   📄 Pages: %d\n", len(project.Pages))
-		fmt.Printf("   📦 Components: %d\n", len(project.Components))
-		fmt.Printf("   📁 Assets: %d\n", len(project.Assets))
-	*/
-
-	// Compile project
 	b.compiler = NewCompilerManager(project)
 	if err := b.compiler.CompileProject(); err != nil {
 		return fmt.Errorf("compilation failed: %w", err)
@@ -50,18 +57,15 @@ func (b *Builder) Build() error {
 // RunDev starts the development mode with file watching and server
 func (b *Builder) RunDev() error {
 
-	// Build the project first
 	if err := b.Build(); err != nil {
 		return err
 	}
 
-	// Start file watcher
 	b.watcher = NewFileWatcher(b.project, b.compiler)
 	if err := b.watcher.Start(); err != nil {
 		return fmt.Errorf("failed to start file watcher: %w", err)
 	}
 
-	// Start development server
 	b.server = NewDevServer(b.project)
 	if err := b.server.Start(); err != nil {
 		return fmt.Errorf("failed to start development server: %w", err)
