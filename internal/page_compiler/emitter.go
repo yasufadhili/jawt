@@ -104,20 +104,6 @@ func (e *HTMLEmitter) VisitPageDefinition(node *PageDefinition) interface{} {
 
 // VisitPageProperty emits HTML based on the property type
 func (e *HTMLEmitter) VisitPageProperty(node *PageProperty) interface{} {
-	switch node.Key {
-	case "title":
-		e.emitTitle(node.Value)
-	case "subtitle":
-		e.emitSubtitle(node.Value)
-	case "content":
-		e.emitContent(node.Value)
-	case "layout":
-		e.emitLayout(node.Value)
-	default:
-		// For unknown properties, emit as a data attribute div
-		e.emitGenericProperty(node.Key, node.Value)
-	}
-
 	return nil
 }
 
