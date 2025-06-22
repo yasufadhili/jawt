@@ -9,6 +9,7 @@ type Structure struct {
 	Components map[string]*ComponentInfo `json:"components"`
 	Assets     []string                  `json:"assets"`
 	BuildTime  time.Time                 `json:"build_time"`
+	TempDir    string
 }
 
 // PageInfo contains metadata about a page file

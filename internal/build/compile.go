@@ -11,7 +11,6 @@ import (
 // CompilerManager orchestrates the compilation process
 type CompilerManager struct {
 	project *project.Structure
-	outDir  string
 }
 
 func NewCompilerManager(project *project.Structure) *CompilerManager {
@@ -28,7 +27,7 @@ func (cm *CompilerManager) CompileProject() error {
 	if err != nil {
 		return err
 	}
-	cm.outDir = dir
+	cm.project.TempDir = dir
 
 	// Compile components first (they're dependencies)
 	if err := cm.compileComponents(); err != nil {
@@ -82,7 +81,7 @@ func (cm *CompilerManager) compileComponent(name string, comp *project.Component
 // compilePage compiles a single page (placeholder)
 func (cm *CompilerManager) compilePage(page *project.PageInfo) error {
 
-	compiler := page_compiler.NewPageCompiler(page, cm.outDir)
+	compiler := page_compiler.NewPageCompiler(page, cm.project.TempDir)
 	result, err := compiler.CompilePage()
 	if err != nil {
 		return err

@@ -7,7 +7,6 @@ import (
 	parser "github.com/yasufadhili/jawt/internal/page_compiler/parser/generated"
 	"github.com/yasufadhili/jawt/internal/project"
 	"os"
-	"path/filepath"
 )
 
 type PageCompiler struct {
@@ -87,9 +86,7 @@ func (pc *PageCompiler) CompilePage() (*CompileResult, error) {
 	configurableEmitter := NewConfigurableHTMLEmitter(emitConfig)
 	customHTML := configurableEmitter.EmitHTML(astRoot)
 
-	outPath := filepath.Join(pc.outputPath, pc.pageInfo.RelativePath)
-
-	err = os.WriteFile(outPath+"/index.html", []byte(customHTML), 0644)
+	err = os.WriteFile(pc.outputPath+"/index.html", []byte(customHTML), 0644)
 	if err != nil {
 		return nil, fmt.Errorf("failed to write HTML file: %w", err)
 	}
