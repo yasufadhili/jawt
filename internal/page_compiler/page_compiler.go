@@ -36,3 +36,20 @@ func (pc *PageCompiler) lexPage() (*antlr.CommonTokenStream, error) {
 
 	return stream, nil
 }
+
+func (pc *PageCompiler) parsePage() (parser.IPageContext, []error) {
+	var errors []error
+	stream, err := pc.lexPage()
+	if err != nil {
+		errors = append(errors, err)
+		return nil, errors
+	}
+
+	p := parser.NewJMLPageParser(stream)
+
+	tree := p.Page()
+
+	p.AddErrorListener(antlr.NewDiagnosticErrorListener(true))
+
+	return tree, nil
+}

@@ -3,12 +3,12 @@ grammar JMLPage;
 import JML;
 
 
-program
-    : doctypeSpecifier imports? page NEWLINE* EOF
+page
+    : doctypeSpecifier imports? pageDefinition NEWLINE* EOF
 ;
 
 
-page
+pageDefinition
     : 'Page' '{' NEWLINE pageBody NEWLINE? '}'
 ;
 
