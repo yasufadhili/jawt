@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/antlr4-go/antlr/v4"
 	"github.com/yasufadhili/jawt/internal/error_handler"
-	parser "github.com/yasufadhili/jawt/internal/pc/parser/generated"
+	parser "github.com/yasufadhili/jawt/internal/page_compiler/parser/generated"
 	"github.com/yasufadhili/jawt/internal/project"
 )
 

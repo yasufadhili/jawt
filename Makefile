@@ -15,13 +15,13 @@ clean:
 	@rm -rf $(BUILD_DIR)
 	@rm -rf internal/pc/parser/*.go internal/cc/parser/*.go
 	@find internal/pc/parser internal/cc/parser -name "*.tokens" -delete
-	@find internal/pc/parser internal/cc/parser -name "*.interp" -delete
+	@find internal/pc/parser internal/page_compiler/parser -name "*.interp" -delete
 	@echo "Clean complete"
 
 
 generate-pc:
 	@echo "Generating Page Compiler parser..."
-	@cd internal/pc/parser && ./generate.sh
+	@cd internal/page_compiler/parser && ./generate.sh
 	@echo "Page Compiler parser generation complete"
 
 

@@ -2,7 +2,7 @@ package page_compiler
 
 import (
 	"github.com/antlr4-go/antlr/v4"
-	parser "github.com/yasufadhili/jawt/internal/pc/parser/generated"
+	parser "github.com/yasufadhili/jawt/internal/page_compiler/parser/generated"
 	"strconv"
 	"strings"
 )
