@@ -86,7 +86,16 @@ func (pc *PageCompiler) CompilePage() (*CompileResult, error) {
 	configurableEmitter := NewConfigurableHTMLEmitter(emitConfig)
 	customHTML := configurableEmitter.EmitHTML(astRoot)
 
-	err = os.WriteFile(pc.outputPath+"/index.html", []byte(customHTML), 0644)
+	outPath := pc.outputPath + pc.pageInfo.RelativePath
+
+	if pc.pageInfo.RelativePath != "/" {
+		err = os.Mkdir(outPath, 0777)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	err = os.WriteFile(outPath+"/index.html", []byte(customHTML), 0644)
 	if err != nil {
 		return nil, fmt.Errorf("failed to write HTML file: %w", err)
 	}
