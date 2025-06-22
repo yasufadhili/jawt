@@ -11,6 +11,7 @@ import (
 // CompilerManager orchestrates the compilation process
 type CompilerManager struct {
 	project *project.Structure
+	outDir  string
 }
 
 func NewCompilerManager(project *project.Structure) *CompilerManager {
@@ -21,6 +22,13 @@ func NewCompilerManager(project *project.Structure) *CompilerManager {
 
 // CompileProject compiles the entire project
 func (cm *CompilerManager) CompileProject() error {
+
+	// Create dist directory
+	dir, err := os.MkdirTemp("", "jawt")
+	if err != nil {
+		return err
+	}
+	cm.outDir = dir
 
 	// Compile components first (they're dependencies)
 	if err := cm.compileComponents(); err != nil {
@@ -74,7 +82,7 @@ func (cm *CompilerManager) compileComponent(name string, comp *project.Component
 // compilePage compiles a single page (placeholder)
 func (cm *CompilerManager) compilePage(page *project.PageInfo) error {
 
-	compiler := page_compiler.NewPageCompiler(page, cm.project.Root+"/dist")
+	compiler := page_compiler.NewPageCompiler(page, cm.outDir)
 	result, err := compiler.CompilePage()
 	if err != nil {
 		return err

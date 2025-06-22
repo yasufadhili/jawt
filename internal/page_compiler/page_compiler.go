@@ -89,7 +89,7 @@ func (pc *PageCompiler) CompilePage() (*CompileResult, error) {
 
 	outPath := filepath.Join(pc.outputPath, pc.pageInfo.RelativePath)
 
-	err = os.WriteFile(outPath, []byte(customHTML), 0644)
+	err = os.WriteFile(outPath+"/index.html", []byte(customHTML), 0644)
 	if err != nil {
 		return nil, fmt.Errorf("failed to write HTML file: %w", err)
 	}
