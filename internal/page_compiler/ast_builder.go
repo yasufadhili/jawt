@@ -41,6 +41,22 @@ func (ab *AstBuilder) Visit(tree antlr.ParseTree) interface{} {
 
 func (ab *AstBuilder) VisitPage(ctx *parser.PageContext) interface{} {
 	p := &Page{}
+
+	if ctx.DoctypeSpecifier() != nil {
+		p.Doctype = ctx.DoctypeSpecifier().Accept(ab).(*DoctypeSpecifier)
+	}
+
+	if ctx.Imports() != nil {
+		importsCtx := ctx.Imports().(*parser.ImportsContext)
+		for _, impCtx := range importsCtx.AllImportStatement() {
+			p.Imports = append(p.Imports, impCtx.Accept(ab).(*ImportStatement))
+		}
+	}
+
+	if ctx.PageDefinition() != nil {
+		p.PageDefinition = ctx.PageDefinition().Accept(ab).(*PageDefinition)
+	}
+
 	return p
 }
 
