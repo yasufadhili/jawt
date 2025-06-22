@@ -43,12 +43,13 @@ func (e *HTMLEmitter) emitHead(page *Page) {
 	e.writeHTML("<meta charset=\"UTF-8\">")
 	e.writeHTML("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">")
 
-	// Set title from page name or doctype name
-	title := "Page"
-	if page.Doctype != nil && page.Doctype.Name != "" {
-		title = page.Doctype.Name
+	if page.PageDefinition != nil && page.PageDefinition.Properties != nil {
+		for _, prop := range page.PageDefinition.Properties {
+			if prop.Key == "title" {
+				e.writeHTML(fmt.Sprintf("<title>%s</title>", prop.Value))
+			}
+		}
 	}
-	e.writeHTML(fmt.Sprintf("<title>%s</title>", title))
 
 	e.writeHTML("<script src=\"https://cdn.tailwindcss.com\"></script>")
 
@@ -85,7 +86,7 @@ func (e *HTMLEmitter) VisitPageDefinition(node *PageDefinition) interface{} {
 	return nil
 }
 
-// VisitPageProperty emits HTML based on property type
+// VisitPageProperty emits HTML based on the property type
 func (e *HTMLEmitter) VisitPageProperty(node *PageProperty) interface{} {
 	switch node.Key {
 	case "title":
