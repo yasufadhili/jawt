@@ -1,10 +1,10 @@
-package build
+package project
 
 import "time"
 
-type ProjectStructure struct {
+type Structure struct {
 	Root       string                    `json:"root"`
-	Config     *ProjectConfig            `json:"config"`
+	Config     *Config                   `json:"config"`
 	Pages      map[string]*PageInfo      `json:"pages"`
 	Components map[string]*ComponentInfo `json:"components"`
 	Assets     []string                  `json:"assets"`
@@ -37,8 +37,8 @@ type ComponentInfo struct {
 	UsedBy       []string          `json:"used_by"` // Pages/components that use this component
 }
 
-// ProjectConfig holds configuration for the build system
-type ProjectConfig struct {
+// Config holds configuration for the project to be used by the build system
+type Config struct {
 	Name        string       `json:"name"`
 	Version     string       `json:"version"`
 	Author      string       `json:"author"`
