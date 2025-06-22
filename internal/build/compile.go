@@ -27,12 +27,10 @@ func (cm *CompilerManager) CompileProject() error {
 		return fmt.Errorf("component compilation failed: %w", err)
 	}
 
-	// Then compile pages
 	if err := cm.compilePages(); err != nil {
 		return fmt.Errorf("page compilation failed: %w", err)
 	}
 
-	// Copy assets
 	if err := cm.copyAssets(); err != nil {
 		return fmt.Errorf("asset copying failed: %w", err)
 	}
