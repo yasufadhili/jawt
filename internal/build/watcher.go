@@ -2,20 +2,21 @@ package build
 
 import (
 	"fmt"
+	"github.com/yasufadhili/jawt/internal/project"
 	"time"
 )
 
 // FileWatcher monitors file changes and triggers recompilation
 type FileWatcher struct {
-	project  *ProjectStructure
+	project  *project.Structure
 	compiler *CompilerManager
 	stopChan chan bool
 }
 
 // NewFileWatcher creates a new file watcher
-func NewFileWatcher(project *ProjectStructure, compiler *CompilerManager) *FileWatcher {
+func NewFileWatcher(p *project.Structure, compiler *CompilerManager) *FileWatcher {
 	return &FileWatcher{
-		project:  project,
+		project:  p,
 		compiler: compiler,
 		stopChan: make(chan bool),
 	}
