@@ -10,9 +10,17 @@ type Page struct {
 	PageDefinition *PageDefinition
 }
 
+func (p *Page) Accept(v Visitor) interface{} {
+	return v.VisitPage(p)
+}
+
 type DoctypeSpecifier struct {
 	Doctype string
 	Name    string
+}
+
+func (d *DoctypeSpecifier) Accept(v Visitor) interface{} {
+	return v.VisitDoctypeSpecifier(d)
 }
 
 type ImportStatement struct {
@@ -21,12 +29,24 @@ type ImportStatement struct {
 	From       string
 }
 
+func (i *ImportStatement) Accept(v Visitor) interface{} {
+	return v.VisitImportStatement(i)
+}
+
 type PageDefinition struct {
 	Name       string
 	Properties []*PageProperty
 }
 
+func (d *PageDefinition) Accept(v Visitor) interface{} {
+	return v.VisitPageDefinition(d)
+}
+
 type PageProperty struct {
 	Key   string
 	Value interface{} // Can be string, int, bool or another AST node
+}
+
+func (p *PageProperty) Accept(v Visitor) interface{} {
+	return v.VisitPageProperty(p)
 }
