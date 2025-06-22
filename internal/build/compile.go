@@ -75,8 +75,18 @@ func (cm *CompilerManager) compileComponent(name string, comp *project.Component
 func (cm *CompilerManager) compilePage(page *project.PageInfo) error {
 
 	compiler := page_compiler.NewPageCompiler(page)
-	if err := compiler.CompilePage(); err != nil {
+	result, err := compiler.CompilePage()
+	if err != nil {
 		return err
+	}
+
+	if !result.Success {
+		// Handle syntax errors
+		fmt.Printf("Found %d syntax errors\n", len(result.Errors))
+		for _, err := range result.Errors {
+			fmt.Errorf(err.Error())
+		}
+		return fmt.Errorf("compilation failed")
 	}
 
 	return nil

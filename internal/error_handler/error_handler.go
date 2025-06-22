@@ -63,11 +63,15 @@ func (l *SyntaxErrorListener) GetErrors() []SyntaxError {
 	return l.Errors
 }
 
+func (l *SyntaxErrorListener) Reset() {
+	l.Errors = []SyntaxError{}
+}
+
 // ErrorStrategy implements antlr.ErrorStrategy for recovery strategies
 type ErrorStrategy struct {
 	antlr.DefaultErrorStrategy
 	MaxRecoveryAttempts int
-	recoveryAttempts    int
+	RecoveryAttempts    int
 }
 
 // NewErrorStrategy creates a new error strategy
@@ -75,16 +79,16 @@ func NewErrorStrategy(maxAttempts int) *ErrorStrategy {
 	return &ErrorStrategy{
 		DefaultErrorStrategy: antlr.DefaultErrorStrategy{},
 		MaxRecoveryAttempts:  maxAttempts,
-		recoveryAttempts:     0,
+		RecoveryAttempts:     0,
 	}
 }
 
 // Recover attempts to recover from a parsing error
 func (s *ErrorStrategy) Recover(recognizer antlr.Parser, e antlr.RecognitionException) {
-	s.recoveryAttempts++
+	s.RecoveryAttempts++
 
-	if s.recoveryAttempts > s.MaxRecoveryAttempts {
-		panic(fmt.Sprintf("Too many recovery attempts (%d), giving up", s.recoveryAttempts))
+	if s.RecoveryAttempts > s.MaxRecoveryAttempts {
+		panic(fmt.Sprintf("Too many recovery attempts (%d), giving up", s.RecoveryAttempts))
 	}
 
 	// Call the default recovery mechanism
@@ -95,4 +99,16 @@ func (s *ErrorStrategy) Recover(recognizer antlr.Parser, e antlr.RecognitionExce
 func (s *ErrorStrategy) RecoverInline(recognizer antlr.Parser) antlr.Token {
 	// Try default inline recovery first
 	return s.DefaultErrorStrategy.RecoverInline(recognizer)
+}
+
+func (s *ErrorStrategy) Reset() {
+	s.RecoveryAttempts = 0
+}
+
+func NewSyntaxErrorListener() *SyntaxErrorListener {
+	return &SyntaxErrorListener{
+		Errors:               []SyntaxError{},
+		DefaultErrorListener: antlr.DefaultErrorListener{},
+	}
+
 }
