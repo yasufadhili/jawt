@@ -80,6 +80,14 @@ func (ab *AstBuilder) VisitImportStatement(ctx *parser.ImportStatementContext) i
 
 func (ab *AstBuilder) VisitPageDefinition(ctx *parser.PageDefinitionContext) interface{} {
 	pd := &PageDefinition{}
+
+	if ctx.PageBody() != nil {
+		bodyCtx := ctx.PageBody().(*parser.PageBodyContext)
+		for _, propCtx := range bodyCtx.AllPageProperty() {
+			pd.Properties = append(pd.Properties, propCtx.Accept(ab).(*PageProperty))
+		}
+	}
+
 	return pd
 }
 
