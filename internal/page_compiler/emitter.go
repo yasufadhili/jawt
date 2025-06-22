@@ -47,6 +47,8 @@ func (e *HTMLEmitter) emitHead(page *Page) {
 		for _, prop := range page.PageDefinition.Properties {
 			if prop.Key == "title" {
 				e.writeHTML(fmt.Sprintf("<title>%s</title>", prop.Value))
+			} else if prop.Key == "description" {
+				e.writeHTML(fmt.Sprintf("<description>%s</description>", prop.Value))
 			}
 		}
 	}
