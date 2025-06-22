@@ -3,16 +3,17 @@ package build
 import (
 	"fmt"
 	"github.com/yasufadhili/jawt/internal/pc"
+	"github.com/yasufadhili/jawt/internal/project"
 	"os"
 	"time"
 )
 
 // CompilerManager orchestrates the compilation process
 type CompilerManager struct {
-	project *ProjectStructure
+	project *project.Structure
 }
 
-func NewCompilerManager(project *ProjectStructure) *CompilerManager {
+func NewCompilerManager(project *project.Structure) *CompilerManager {
 	return &CompilerManager{
 		project: project,
 	}
@@ -64,7 +65,7 @@ func (cm *CompilerManager) compilePages() error {
 }
 
 // compileComponent compiles a single component (placeholder)
-func (cm *CompilerManager) compileComponent(name string, comp *ComponentInfo) error {
+func (cm *CompilerManager) compileComponent(name string, comp *project.ComponentInfo) error {
 
 	// TODO: call CC (Component Compiler)
 
@@ -73,7 +74,7 @@ func (cm *CompilerManager) compileComponent(name string, comp *ComponentInfo) er
 }
 
 // compilePage compiles a single page (placeholder)
-func (cm *CompilerManager) compilePage(name string, page *PageInfo) error {
+func (cm *CompilerManager) compilePage(name string, page *project.PageInfo) error {
 
 	compiler := pc.NewPageCompiler(page.AbsolutePath, "dist")
 	if err := compiler.CompilePage(); err != nil {

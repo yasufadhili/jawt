@@ -3,13 +3,14 @@ package build
 import (
 	"fmt"
 	"github.com/yasufadhili/jawt/internal/config"
+	"github.com/yasufadhili/jawt/internal/project"
 )
 
 type Builder struct {
 	ProjectPath string
 	Config      *config.Config
 	discovery   *ProjectDiscovery
-	project     *ProjectStructure
+	project     *project.Structure
 	compiler    *CompilerManager
 	watcher     *FileWatcher
 	server      *DevServer
@@ -85,6 +86,6 @@ func (b *Builder) Stop() {
 }
 
 // GetProject returns the current project structure
-func (b *Builder) GetProject() *ProjectStructure {
+func (b *Builder) GetProject() *project.Structure {
 	return b.project
 }
