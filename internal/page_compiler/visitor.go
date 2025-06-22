@@ -2,11 +2,11 @@ package page_compiler
 
 type Visitor interface {
 	Visit(Node) interface{}
-	visitPage(*Page) interface{}
-	visitDoctypeSpecifier(*DoctypeSpecifier) interface{}
-	visitImportStatement(*ImportStatement) interface{}
-	visitPageDefinition(*PageDefinition) interface{}
-	visitPageProperty(*PageProperty) interface{}
+	VisitPage(*Page) interface{}
+	VisitDoctypeSpecifier(*DoctypeSpecifier) interface{}
+	VisitImportStatement(*ImportStatement) interface{}
+	VisitPageDefinition(*PageDefinition) interface{}
+	VisitPageProperty(*PageProperty) interface{}
 }
 
 // BaseVisitor provides a default implementation for traversing the AST by
@@ -18,23 +18,23 @@ func (v *BaseVisitor) Visit(node Node) interface{} {
 	return node.Accept(v)
 }
 
-func (v *BaseVisitor) visitPage(node *Page) interface{} {
+func (v *BaseVisitor) VisitPage(node *Page) interface{} {
 
 	return nil
 }
 
-func (v *BaseVisitor) visitDoctypeSpecifier(node *DoctypeSpecifier) interface{} {
+func (v *BaseVisitor) VisitDoctypeSpecifier(node *DoctypeSpecifier) interface{} {
 	return nil
 }
 
-func (v *BaseVisitor) visitImportStatement(node *ImportStatement) interface{} {
+func (v *BaseVisitor) VisitImportStatement(node *ImportStatement) interface{} {
 	return nil
 }
 
-func (v *BaseVisitor) visitPageDefinition(node *PageDefinition) interface{} {
+func (v *BaseVisitor) VisitPageDefinition(node *PageDefinition) interface{} {
 	return nil
 }
 
-func (v *BaseVisitor) visitPageProperty(node *PageProperty) interface{} {
+func (v *BaseVisitor) VisitPageProperty(node *PageProperty) interface{} {
 	return nil
 }
