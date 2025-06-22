@@ -2,7 +2,7 @@ package build
 
 import (
 	"fmt"
-	"github.com/yasufadhili/jawt/internal/pc"
+	"github.com/yasufadhili/jawt/internal/page_compiler"
 	"github.com/yasufadhili/jawt/internal/project"
 	"os"
 	"time"
@@ -56,7 +56,7 @@ func (cm *CompilerManager) compileComponents() error {
 func (cm *CompilerManager) compilePages() error {
 
 	for name, page := range cm.project.Pages {
-		if err := cm.compilePage(name, page); err != nil {
+		if err := cm.compilePage(page); err != nil {
 			return fmt.Errorf("failed to compile page %s: %w", name, err)
 		}
 	}
@@ -74,14 +74,13 @@ func (cm *CompilerManager) compileComponent(name string, comp *project.Component
 }
 
 // compilePage compiles a single page (placeholder)
-func (cm *CompilerManager) compilePage(name string, page *project.PageInfo) error {
+func (cm *CompilerManager) compilePage(page *project.PageInfo) error {
 
-	compiler := pc.NewPageCompiler(page.AbsolutePath, "dist")
+	compiler := page_compiler.NewPageCompiler(page)
 	if err := compiler.CompilePage(); err != nil {
 		return err
 	}
 
-	page.Compiled = true
 	return nil
 }
 
@@ -110,9 +109,9 @@ func (cm *CompilerManager) CompileChanged() error {
 	}
 
 	// Check for changed pages
-	for name, page := range cm.project.Pages {
+	for _, page := range cm.project.Pages {
 		if cm.hasChanged(page.AbsolutePath, page.LastModified) {
-			if err := cm.compilePage(name, page); err != nil {
+			if err := cm.compilePage(page); err != nil {
 				return err
 			}
 			page.LastModified = time.Now()
