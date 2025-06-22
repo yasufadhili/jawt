@@ -6,17 +6,21 @@ import (
 	"github.com/yasufadhili/jawt/internal/error_handler"
 	parser "github.com/yasufadhili/jawt/internal/page_compiler/parser/generated"
 	"github.com/yasufadhili/jawt/internal/project"
+	"os"
+	"path/filepath"
 )
 
 type PageCompiler struct {
-	pageInfo *project.PageInfo
-	parser   *Parser
+	pageInfo   *project.PageInfo
+	parser     *Parser
+	outputPath string
 }
 
-func NewPageCompiler(pageInfo *project.PageInfo) *PageCompiler {
+func NewPageCompiler(pageInfo *project.PageInfo, outPath string) *PageCompiler {
 	return &PageCompiler{
-		pageInfo: pageInfo,
-		parser:   newParser(),
+		pageInfo:   pageInfo,
+		parser:     newParser(),
+		outputPath: outPath,
 	}
 }
 
@@ -57,16 +61,37 @@ func (pc *PageCompiler) CompilePage() (*CompileResult, error) {
 		return result, nil
 	}
 
-	fmt.Printf("✅ Parsing successful for %s\n", pc.pageInfo.Name)
-	fmt.Println("Parse Tree:", parseResult.Tree.ToStringTree(nil, nil))
-
-	// Build AST if parsing succeeded
 	astBuilder := NewAstBuilder()
 	astRoot := astBuilder.Visit(parseResult.Tree).(*Page)
 	result.AST = astRoot
 
 	if astRoot.Doctype != nil {
-		fmt.Printf("AST Built: %+v\n", astRoot.Doctype)
+		//fmt.Printf("AST Built: %+v\n", astRoot.Doctype)
+	}
+
+	emitConfig := &EmitterConfig{
+		TailwindCDN: "https://cdn.tailwindcss.com",
+		CustomCSS: []string{
+			"https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap",
+		},
+		BodyClasses: []string{
+			"bg-gradient-to-br",
+			"from-blue-50",
+			"to-indigo-100",
+			"min-h-screen",
+			"font-inter",
+		},
+		WrapperClass: "max-w-4xl mx-auto px-6 py-12",
+	}
+
+	configurableEmitter := NewConfigurableHTMLEmitter(emitConfig)
+	customHTML := configurableEmitter.EmitHTML(astRoot)
+
+	outPath := filepath.Join(pc.outputPath, pc.pageInfo.RelativePath)
+
+	err = os.WriteFile(outPath, []byte(customHTML), 0644)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write HTML file: %w", err)
 	}
 
 	pc.pageInfo.Compiled = true

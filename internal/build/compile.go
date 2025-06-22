@@ -74,7 +74,7 @@ func (cm *CompilerManager) compileComponent(name string, comp *project.Component
 // compilePage compiles a single page (placeholder)
 func (cm *CompilerManager) compilePage(page *project.PageInfo) error {
 
-	compiler := page_compiler.NewPageCompiler(page)
+	compiler := page_compiler.NewPageCompiler(page, cm.project.Root+"/dist")
 	result, err := compiler.CompilePage()
 	if err != nil {
 		return err
