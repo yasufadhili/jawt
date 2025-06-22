@@ -19,6 +19,16 @@ func (v *BaseVisitor) Visit(node Node) interface{} {
 }
 
 func (v *BaseVisitor) VisitPage(node *Page) interface{} {
+	if node.Doctype != nil {
+		node.Doctype.Accept(v)
+	}
+	for _, imp := range node.Imports {
+		imp.Accept(v)
+	}
+
+	if node.PageDefinition != nil {
+		node.PageDefinition.Accept(v)
+	}
 
 	return nil
 }
@@ -32,6 +42,9 @@ func (v *BaseVisitor) VisitImportStatement(node *ImportStatement) interface{} {
 }
 
 func (v *BaseVisitor) VisitPageDefinition(node *PageDefinition) interface{} {
+	for _, prop := range node.Properties {
+		prop.Accept(v)
+	}
 	return nil
 }
 
