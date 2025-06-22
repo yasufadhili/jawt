@@ -83,8 +83,11 @@ func (pc *PageCompiler) CompilePage() (*CompileResult, error) {
 		WrapperClass: "max-w-4xl mx-auto px-6 py-12",
 	}
 
-	configurableEmitter := NewConfigurableHTMLEmitter(emitConfig)
-	customHTML := configurableEmitter.EmitHTML(astRoot)
+	_ = NewConfigurableHTMLEmitter(emitConfig)
+	//_ = configurableEmitter.EmitHTML(astRoot)
+
+	emitter := NewHTMLEmitter()
+	html := emitter.EmitHTML(astRoot)
 
 	outPath := pc.outputPath + pc.pageInfo.RelativePath
 
@@ -95,7 +98,7 @@ func (pc *PageCompiler) CompilePage() (*CompileResult, error) {
 		}
 	}
 
-	err = os.WriteFile(outPath+"/index.html", []byte(customHTML), 0644)
+	err = os.WriteFile(outPath+"/index.html", []byte(html), 0644)
 	if err != nil {
 		return nil, fmt.Errorf("failed to write HTML file: %w", err)
 	}
