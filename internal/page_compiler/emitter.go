@@ -20,9 +20,17 @@ func NewHTMLEmitter() *HTMLEmitter {
 func (e *HTMLEmitter) EmitHTML(page *Page) string {
 
 	e.output.Reset()
+	e.indentLevel = 0
 
 	e.writeHTML("<!DOCTYPE html>")
 	e.writeHTML("<html lang=\"en\">")
+	e.indent()
+
+	e.emitHead(page)
+	e.emitBody(page)
+
+	e.dedent()
+	e.writeHTML("</html>")
 
 	return e.output.String()
 }
