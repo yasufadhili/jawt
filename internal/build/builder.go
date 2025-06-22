@@ -3,13 +3,14 @@ package build
 import (
 	"fmt"
 	"github.com/yasufadhili/jawt/internal/config"
+	"github.com/yasufadhili/jawt/internal/project"
 )
 
 type Builder struct {
 	ProjectPath string
 	Config      *config.Config
 	discovery   *ProjectDiscovery
-	project     *ProjectStructure
+	project     *project.Structure
 	compiler    *CompilerManager
 	watcher     *FileWatcher
 	server      *DevServer
@@ -39,14 +40,14 @@ func (b *Builder) SetConfig(cfg *config.Config) {
 // Build performs a full project build
 func (b *Builder) Build() error {
 
-	project, err := b.discovery.DiscoverProject()
+	p, err := b.discovery.DiscoverProject()
 	if err != nil {
 		return fmt.Errorf("project discovery failed: %w", err)
 	}
 
-	b.project = project
+	b.project = p
 
-	b.compiler = NewCompilerManager(project)
+	b.compiler = NewCompilerManager(p)
 	if err := b.compiler.CompileProject(); err != nil {
 		return fmt.Errorf("compilation failed: %w", err)
 	}
@@ -85,6 +86,6 @@ func (b *Builder) Stop() {
 }
 
 // GetProject returns the current project structure
-func (b *Builder) GetProject() *ProjectStructure {
+func (b *Builder) GetProject() *project.Structure {
 	return b.project
 }

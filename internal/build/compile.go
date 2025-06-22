@@ -2,17 +2,18 @@ package build
 
 import (
 	"fmt"
-	"github.com/yasufadhili/jawt/internal/pc"
+	"github.com/yasufadhili/jawt/internal/page_compiler"
+	"github.com/yasufadhili/jawt/internal/project"
 	"os"
 	"time"
 )
 
 // CompilerManager orchestrates the compilation process
 type CompilerManager struct {
-	project *ProjectStructure
+	project *project.Structure
 }
 
-func NewCompilerManager(project *ProjectStructure) *CompilerManager {
+func NewCompilerManager(project *project.Structure) *CompilerManager {
 	return &CompilerManager{
 		project: project,
 	}
@@ -21,17 +22,22 @@ func NewCompilerManager(project *ProjectStructure) *CompilerManager {
 // CompileProject compiles the entire project
 func (cm *CompilerManager) CompileProject() error {
 
+	// Create dist directory
+	dir, err := os.MkdirTemp("", "jawt")
+	if err != nil {
+		return err
+	}
+	cm.project.TempDir = dir
+
 	// Compile components first (they're dependencies)
 	if err := cm.compileComponents(); err != nil {
 		return fmt.Errorf("component compilation failed: %w", err)
 	}
 
-	// Then compile pages
 	if err := cm.compilePages(); err != nil {
 		return fmt.Errorf("page compilation failed: %w", err)
 	}
 
-	// Copy assets
 	if err := cm.copyAssets(); err != nil {
 		return fmt.Errorf("asset copying failed: %w", err)
 	}
@@ -55,7 +61,7 @@ func (cm *CompilerManager) compileComponents() error {
 func (cm *CompilerManager) compilePages() error {
 
 	for name, page := range cm.project.Pages {
-		if err := cm.compilePage(name, page); err != nil {
+		if err := cm.compilePage(page); err != nil {
 			return fmt.Errorf("failed to compile page %s: %w", name, err)
 		}
 	}
@@ -64,7 +70,7 @@ func (cm *CompilerManager) compilePages() error {
 }
 
 // compileComponent compiles a single component (placeholder)
-func (cm *CompilerManager) compileComponent(name string, comp *ComponentInfo) error {
+func (cm *CompilerManager) compileComponent(name string, comp *project.ComponentInfo) error {
 
 	// TODO: call CC (Component Compiler)
 
@@ -73,14 +79,23 @@ func (cm *CompilerManager) compileComponent(name string, comp *ComponentInfo) er
 }
 
 // compilePage compiles a single page (placeholder)
-func (cm *CompilerManager) compilePage(name string, page *PageInfo) error {
+func (cm *CompilerManager) compilePage(page *project.PageInfo) error {
 
-	compiler := pc.NewPageCompiler(page.AbsolutePath, "dist")
-	if err := compiler.CompilePage(); err != nil {
+	compiler := page_compiler.NewPageCompiler(page, cm.project.TempDir)
+	result, err := compiler.CompilePage()
+	if err != nil {
 		return err
 	}
 
-	page.Compiled = true
+	if !result.Success {
+		// Handle syntax errors
+		fmt.Printf("Found %d syntax errors\n", len(result.Errors))
+		for _, err := range result.Errors {
+			fmt.Errorf(err.Error())
+		}
+		return fmt.Errorf("compilation failed")
+	}
+
 	return nil
 }
 
@@ -109,9 +124,9 @@ func (cm *CompilerManager) CompileChanged() error {
 	}
 
 	// Check for changed pages
-	for name, page := range cm.project.Pages {
+	for _, page := range cm.project.Pages {
 		if cm.hasChanged(page.AbsolutePath, page.LastModified) {
-			if err := cm.compilePage(name, page); err != nil {
+			if err := cm.compilePage(page); err != nil {
 				return err
 			}
 			page.LastModified = time.Now()

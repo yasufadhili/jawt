@@ -1,11 +1,11 @@
-package pc
+package page_compiler
 
 type Visitor interface {
 	Visit(Node) interface{}
-	VisitProgram(*Program) interface{}
+	VisitPage(*Page) interface{}
 	VisitDoctypeSpecifier(*DoctypeSpecifier) interface{}
 	VisitImportStatement(*ImportStatement) interface{}
-	VisitPage(*Page) interface{}
+	VisitPageDefinition(*PageDefinition) interface{}
 	VisitPageProperty(*PageProperty) interface{}
 }
 
@@ -18,28 +18,30 @@ func (v *BaseVisitor) Visit(node Node) interface{} {
 	return node.Accept(v)
 }
 
-func (v *BaseVisitor) VisitProgram(node *Program) interface{} {
+func (v *BaseVisitor) VisitPage(node *Page) interface{} {
 	if node.Doctype != nil {
 		node.Doctype.Accept(v)
 	}
 	for _, imp := range node.Imports {
 		imp.Accept(v)
 	}
-	if node.Page != nil {
-		node.Page.Accept(v)
+
+	if node.PageDefinition != nil {
+		node.PageDefinition.Accept(v)
 	}
+
 	return nil
 }
 
 func (v *BaseVisitor) VisitDoctypeSpecifier(node *DoctypeSpecifier) interface{} {
-	return nil // Leaf node, nothing to visit further
+	return nil
 }
 
 func (v *BaseVisitor) VisitImportStatement(node *ImportStatement) interface{} {
-	return nil // Leaf node
+	return nil
 }
 
-func (v *BaseVisitor) VisitPage(node *Page) interface{} {
+func (v *BaseVisitor) VisitPageDefinition(node *PageDefinition) interface{} {
 	for _, prop := range node.Properties {
 		prop.Accept(v)
 	}
@@ -47,7 +49,5 @@ func (v *BaseVisitor) VisitPage(node *Page) interface{} {
 }
 
 func (v *BaseVisitor) VisitPageProperty(node *PageProperty) interface{} {
-	// For now the value is a primitive type (string, int)
-	// FUTURE: Have expressions, complex types as properties
 	return nil
 }

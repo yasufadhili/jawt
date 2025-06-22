@@ -1,17 +1,17 @@
-package pc
+package page_compiler
 
 type Node interface {
 	Accept(Visitor) interface{}
 }
 
-type Program struct {
-	Doctype *DoctypeSpecifier
-	Imports []*ImportStatement
-	Page    *Page
+type Page struct {
+	Doctype        *DoctypeSpecifier
+	Imports        []*ImportStatement
+	PageDefinition *PageDefinition
 }
 
-func (p *Program) Accept(v Visitor) interface{} {
-	return v.VisitProgram(p)
+func (p *Page) Accept(v Visitor) interface{} {
+	return v.VisitPage(p)
 }
 
 type DoctypeSpecifier struct {
@@ -33,15 +33,13 @@ func (i *ImportStatement) Accept(v Visitor) interface{} {
 	return v.VisitImportStatement(i)
 }
 
-type Page struct {
+type PageDefinition struct {
 	Name       string
-	RelPath    string
-	AbsPath    string
 	Properties []*PageProperty
 }
 
-func (p *Page) Accept(v Visitor) interface{} {
-	return v.VisitPage(p)
+func (d *PageDefinition) Accept(v Visitor) interface{} {
+	return v.VisitPageDefinition(d)
 }
 
 type PageProperty struct {
@@ -49,6 +47,6 @@ type PageProperty struct {
 	Value interface{} // Can be string, int, bool or another AST node
 }
 
-func (pp *PageProperty) Accept(v Visitor) interface{} {
-	return v.VisitPageProperty(pp)
+func (p *PageProperty) Accept(v Visitor) interface{} {
+	return v.VisitPageProperty(p)
 }

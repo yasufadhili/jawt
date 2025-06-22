@@ -1,8 +1,8 @@
-package pc
+package page_compiler
 
 import (
 	"github.com/antlr4-go/antlr/v4"
-	parser "github.com/yasufadhili/jawt/internal/pc/parser/generated"
+	parser "github.com/yasufadhili/jawt/internal/page_compiler/parser/generated"
 	"strconv"
 	"strings"
 )
@@ -18,36 +18,34 @@ func NewAstBuilder() *AstBuilder {
 }
 
 func (ab *AstBuilder) Visit(tree antlr.ParseTree) interface{} {
+
 	switch ctx := tree.(type) {
-	case *parser.ProgramContext:
-		return ab.VisitProgram(ctx)
+	case *parser.PageContext:
+		return ab.VisitPage(ctx)
 	case *parser.DoctypeSpecifierContext:
 		return ab.VisitDoctypeSpecifier(ctx)
 	case *parser.ImportStatementContext:
 		return ab.VisitImportStatement(ctx)
-	case *parser.PageContext:
-		return ab.VisitPage(ctx)
+	case *parser.PageDefinitionContext:
+		return ab.VisitPageDefinition(ctx)
 	case *parser.PagePropertyContext:
 		return ab.VisitPageProperty(ctx)
 	case *parser.LiteralContext:
 		return ab.VisitLiteral(ctx)
 	case *parser.PropertyValueContext:
 		return ab.VisitPropertyValue(ctx)
-	default:
-		// For any unhandled types, return nil
-		return nil
 	}
+
+	return nil // For any unhandled types
 }
 
-func (ab *AstBuilder) VisitProgram(ctx *parser.ProgramContext) interface{} {
-	p := &Program{}
+func (ab *AstBuilder) VisitPage(ctx *parser.PageContext) interface{} {
+	p := &Page{}
 
-	// Visit doctypeSpecifier
 	if ctx.DoctypeSpecifier() != nil {
 		p.Doctype = ctx.DoctypeSpecifier().Accept(ab).(*DoctypeSpecifier)
 	}
 
-	// Visit imports
 	if ctx.Imports() != nil {
 		importsCtx := ctx.Imports().(*parser.ImportsContext)
 		for _, impCtx := range importsCtx.AllImportStatement() {
@@ -55,9 +53,8 @@ func (ab *AstBuilder) VisitProgram(ctx *parser.ProgramContext) interface{} {
 		}
 	}
 
-	// Visit page
-	if ctx.Page() != nil {
-		p.Page = ctx.Page().Accept(ab).(*Page)
+	if ctx.PageDefinition() != nil {
+		p.PageDefinition = ctx.PageDefinition().Accept(ab).(*PageDefinition)
 	}
 
 	return p
@@ -81,17 +78,17 @@ func (ab *AstBuilder) VisitImportStatement(ctx *parser.ImportStatementContext) i
 	}
 }
 
-func (ab *AstBuilder) VisitPage(ctx *parser.PageContext) interface{} {
-	p := &Page{}
+func (ab *AstBuilder) VisitPageDefinition(ctx *parser.PageDefinitionContext) interface{} {
+	pd := &PageDefinition{}
 
 	if ctx.PageBody() != nil {
 		bodyCtx := ctx.PageBody().(*parser.PageBodyContext)
 		for _, propCtx := range bodyCtx.AllPageProperty() {
-			p.Properties = append(p.Properties, ab.Visit(propCtx).(*PageProperty))
+			pd.Properties = append(pd.Properties, propCtx.Accept(ab).(*PageProperty))
 		}
 	}
 
-	return p
+	return pd
 }
 
 func (ab *AstBuilder) VisitPageProperty(ctx *parser.PagePropertyContext) interface{} {

@@ -2,22 +2,24 @@ package build
 
 import (
 	"fmt"
+	"github.com/yasufadhili/jawt/internal/project"
 	"net/http"
+	"os"
 )
 
 type DevServer struct {
-	project *ProjectStructure
+	project *project.Structure
 	port    int
 	server  *http.Server
 }
 
-func NewDevServer(project *ProjectStructure) *DevServer {
-	port := project.Config.Server.Port
+func NewDevServer(p *project.Structure) *DevServer {
+	port := p.Config.Server.Port
 	if port == 0 {
 		port = 6500
 	}
 	return &DevServer{
-		project: project,
+		project: p,
 		port:    port,
 	}
 }
@@ -27,17 +29,26 @@ func (ds *DevServer) Start() error {
 	fmt.Printf("🚀 Starting development server on port %d...\n", ds.port)
 	fmt.Printf("📍 Visit http://localhost:%d to view your project\n", ds.port)
 
-	// TODO: set up proper HTTP handlers
-
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", ds.handleRequest)
-
-	ds.server = &http.Server{
-		Addr:    fmt.Sprintf(":%d", ds.port),
-		Handler: mux,
+	if ds.project.TempDir == "" {
+		return fmt.Errorf("TempDir is not set")
 	}
 
-	return ds.server.ListenAndServe()
+	if stat, err := os.Stat(ds.project.TempDir); os.IsNotExist(err) || !stat.IsDir() {
+		return fmt.Errorf("directory %q does not exist or is not a directory", ds.project.TempDir)
+	}
+
+	fileServer := http.FileServer(http.Dir(ds.project.TempDir))
+
+	http.Handle("/", fileServer)
+
+	addr := fmt.Sprintf(":%d", ds.port)
+
+	err := http.ListenAndServe(addr, nil)
+	if err != nil {
+		return fmt.Errorf("failed to start server: %w", err)
+	}
+
+	return nil
 }
 
 // Stop stops the development server

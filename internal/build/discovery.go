@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"github.com/yasufadhili/jawt/internal/project"
 	"io"
 	"os"
 	"path/filepath"
@@ -23,56 +24,56 @@ func NewProjectDiscovery(rootPath string) *ProjectDiscovery {
 }
 
 // DiscoverProject scans the entire project and builds the project structure
-func (pd *ProjectDiscovery) DiscoverProject() (*ProjectStructure, error) {
+func (pd *ProjectDiscovery) DiscoverProject() (*project.Structure, error) {
 	absRoot, err := filepath.Abs(pd.rootPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get absolute path: %w", err)
 	}
 
-	project := &ProjectStructure{
+	p := &project.Structure{
 		Root:       absRoot,
-		Pages:      make(map[string]*PageInfo),
-		Components: make(map[string]*ComponentInfo),
+		Pages:      make(map[string]*project.PageInfo),
+		Components: make(map[string]*project.ComponentInfo),
 		Assets:     make([]string, 0),
 		BuildTime:  time.Now(),
 	}
 
 	// Load project configuration
-	if err := pd.loadProjectConfig(project); err != nil {
+	if err := pd.loadProjectConfig(p); err != nil {
 		return nil, fmt.Errorf("failed to load project config: %w", err)
 	}
 
 	// Discover pages
-	if err := pd.discoverPages(project); err != nil {
+	if err := pd.discoverPages(p); err != nil {
 		return nil, fmt.Errorf("failed to discover pages: %w", err)
 	}
 
 	// Discover components
-	if err := pd.discoverComponents(project); err != nil {
+	if err := pd.discoverComponents(p); err != nil {
 		return nil, fmt.Errorf("failed to discover components: %w", err)
 	}
 
 	// Discover assets
-	if err := pd.discoverAssets(project); err != nil {
+	if err := pd.discoverAssets(p); err != nil {
 		return nil, fmt.Errorf("failed to discover assets: %w", err)
 	}
 
 	// Build dependency graph
-	if err := pd.buildDependencyGraph(project); err != nil {
+	if err := pd.buildDependencyGraph(p); err != nil {
 		return nil, fmt.Errorf("failed to build dependency graph: %w", err)
 	}
 
-	return project, nil
+	return p, nil
 }
 
-func (pd *ProjectDiscovery) loadProjectConfig(project *ProjectStructure) error {
+func (pd *ProjectDiscovery) loadProjectConfig(p *project.Structure) error {
 
-	name, err := readJsonField(project.Root+"/app.json", "name")
+	name, err := readJsonField(p.Root+"/app.json", "name")
 	if err != nil {
 		return err
 	}
 
-	project.Config = &ProjectConfig{
+	p.Config = &project.Config{
 		Name: name.(string),
 	}
 
@@ -111,8 +112,8 @@ func readJsonField(filename string, field string) (interface{}, error) {
 }
 
 // discoverPages finds all page files in the app directory
-func (pd *ProjectDiscovery) discoverPages(project *ProjectStructure) error {
-	appDir := filepath.Join(project.Root, "app")
+func (pd *ProjectDiscovery) discoverPages(p *project.Structure) error {
+	appDir := filepath.Join(p.Root, "app")
 
 	return filepath.Walk(appDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -144,7 +145,7 @@ func (pd *ProjectDiscovery) discoverPages(project *ProjectStructure) error {
 			}
 
 			// Analyse a page file for additional metadata
-			pageInfo, err := pd.analysePageFile(path, project.Root)
+			pageInfo, err := pd.analysePageFile(path, p.Root)
 			if err != nil {
 				return fmt.Errorf("failed to analyse page %s: %w", path, err)
 			}
@@ -155,7 +156,7 @@ func (pd *ProjectDiscovery) discoverPages(project *ProjectStructure) error {
 			pageInfo.Route = relPath
 			pageInfo.LastModified = info.ModTime()
 
-			project.Pages[pageName] = pageInfo
+			p.Pages[pageName] = pageInfo
 		}
 
 		return nil
@@ -163,8 +164,8 @@ func (pd *ProjectDiscovery) discoverPages(project *ProjectStructure) error {
 }
 
 // discoverComponents finds all component files in the components directory
-func (pd *ProjectDiscovery) discoverComponents(project *ProjectStructure) error {
-	componentsDir := filepath.Join(project.Root, "components")
+func (pd *ProjectDiscovery) discoverComponents(p *project.Structure) error {
+	componentsDir := filepath.Join(p.Root, "components")
 
 	return filepath.Walk(componentsDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -172,12 +173,12 @@ func (pd *ProjectDiscovery) discoverComponents(project *ProjectStructure) error 
 		}
 
 		if !info.IsDir() && strings.HasSuffix(info.Name(), ".jml") {
-			compInfo, err := pd.analyseComponentFile(path, project.Root)
+			compInfo, err := pd.analyseComponentFile(path, p.Root)
 			if err != nil {
 				return fmt.Errorf("failed to analyse component %s: %w", path, err)
 			}
 
-			project.Components[compInfo.Name] = compInfo
+			p.Components[compInfo.Name] = compInfo
 		}
 
 		return nil
@@ -185,8 +186,8 @@ func (pd *ProjectDiscovery) discoverComponents(project *ProjectStructure) error 
 }
 
 // discoverAssets finds all asset files in the assets directory
-func (pd *ProjectDiscovery) discoverAssets(project *ProjectStructure) error {
-	assetsDir := filepath.Join(project.Root, "assets")
+func (pd *ProjectDiscovery) discoverAssets(p *project.Structure) error {
+	assetsDir := filepath.Join(p.Root, "assets")
 
 	return filepath.Walk(assetsDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -194,11 +195,11 @@ func (pd *ProjectDiscovery) discoverAssets(project *ProjectStructure) error {
 		}
 
 		if !info.IsDir() {
-			relPath, err := filepath.Rel(project.Root, path)
+			relPath, err := filepath.Rel(p.Root, path)
 			if err != nil {
 				return err
 			}
-			project.Assets = append(project.Assets, relPath)
+			p.Assets = append(p.Assets, relPath)
 		}
 
 		return nil
@@ -206,7 +207,7 @@ func (pd *ProjectDiscovery) discoverAssets(project *ProjectStructure) error {
 }
 
 // analysePageFile extracts metadata from a page file
-func (pd *ProjectDiscovery) analysePageFile(filePath, rootPath string) (*PageInfo, error) {
+func (pd *ProjectDiscovery) analysePageFile(filePath, rootPath string) (*project.PageInfo, error) {
 	relPath, err := filepath.Rel(rootPath, filePath)
 	if err != nil {
 		return nil, err
@@ -232,7 +233,7 @@ func (pd *ProjectDiscovery) analysePageFile(filePath, rootPath string) (*PageInf
 	// Parse imports (placeholder)
 	imports, dependencies := pd.parseImports(filePath)
 
-	return &PageInfo{
+	return &project.PageInfo{
 		Name:         name,
 		Title:        title,
 		RelativePath: relPath,
@@ -246,7 +247,7 @@ func (pd *ProjectDiscovery) analysePageFile(filePath, rootPath string) (*PageInf
 }
 
 // analyseComponentFile extracts metadata from a component file
-func (pd *ProjectDiscovery) analyseComponentFile(filePath, rootPath string) (*ComponentInfo, error) {
+func (pd *ProjectDiscovery) analyseComponentFile(filePath, rootPath string) (*project.ComponentInfo, error) {
 	relPath, err := filepath.Rel(rootPath, filePath)
 	if err != nil {
 		return nil, err
@@ -269,7 +270,7 @@ func (pd *ProjectDiscovery) analyseComponentFile(filePath, rootPath string) (*Co
 	// Parse imports (placeholder)
 	imports, dependencies := pd.parseImports(filePath)
 
-	return &ComponentInfo{
+	return &project.ComponentInfo{
 		Name:         name,
 		Title:        title,
 		RelativePath: relPath,
@@ -334,19 +335,19 @@ func (pd *ProjectDiscovery) parseImports(filePath string) (map[string]string, []
 }
 
 // buildDependencyGraph creates the dependency relationships
-func (pd *ProjectDiscovery) buildDependencyGraph(project *ProjectStructure) error {
+func (pd *ProjectDiscovery) buildDependencyGraph(p *project.Structure) error {
 	// Build reverse dependencies for components
-	for pageName, pageInfo := range project.Pages {
+	for pageName, pageInfo := range p.Pages {
 		for _, dep := range pageInfo.Dependencies {
-			if comp, exists := project.Components[dep]; exists {
+			if comp, exists := p.Components[dep]; exists {
 				comp.UsedBy = append(comp.UsedBy, pageName)
 			}
 		}
 	}
 
-	for compName, compInfo := range project.Components {
+	for compName, compInfo := range p.Components {
 		for _, dep := range compInfo.Dependencies {
-			if comp, exists := project.Components[dep]; exists {
+			if comp, exists := p.Components[dep]; exists {
 				comp.UsedBy = append(comp.UsedBy, compName)
 			}
 		}

@@ -3,18 +3,18 @@ grammar JMLPage;
 import JML;
 
 
-program
-    : doctypeSpecifier imports? page NEWLINE* EOF
+page
+    : doctypeSpecifier imports? pageDefinition NEWLINE* EOF
 ;
 
 
-page
+pageDefinition
     : 'Page' '{' NEWLINE pageBody NEWLINE? '}'
 ;
 
 
 pageBody
-    : pageProperty*
+    : (pageProperty | componentInvocation)*
 ;
 
 
@@ -23,7 +23,30 @@ pageProperty
 ;
 
 
-propertyValue
-    : literal
+componentInvocation
+    : COMP_ID '{' componentBody '}' NEWLINE*
+    | COMP_ID NEWLINE
 ;
 
+
+componentBody
+    : (componentProperty | componentInvocation)*
+;
+
+
+componentProperty
+    : IDENTIFIER ':' propertyValue NEWLINE
+;
+
+
+propertyValue
+    : literal
+    | componentInvocation
+;
+
+
+literal
+    : INTEGER
+    | STRING
+    | IDENTIFIER
+;
