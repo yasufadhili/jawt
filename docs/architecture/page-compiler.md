@@ -1,6 +1,6 @@
 # Jawt Page Compiler
 
-The Page Compiler is a component of the JAWT toolchain, located in `internal/pc`. Its primary responsibility is to compile JML page definitions into standard HTML documents. It focuses solely on transforming individual JML files into HTML, relying on the build system for routing, dependency resolution, and project orchestration.
+The Page Compiler is a component of the JAWT toolchain, located in `internal/page_compiler`. Its primary responsibility is to compile JML page definitions into standard HTML documents. It focuses solely on transforming individual JML files into HTML, relying on the build system for routing, dependency resolution, and project orchestration.
 
 ## Purpose
 
