@@ -15,7 +15,7 @@ clean:
 	@rm -rf $(BUILD_DIR)
 	@rm -rf internal/page_compiler/parser/*.go internal/component_compiler/parser/*.go
 	@find internal/page_compiler/parser internal/component_compiler/parser -name "*.tokens" -delete
-	@find internal/page_compiler/parser internal/page_compiler/parser -name "*.interp" -delete
+	@find internal/page_compiler/parser internal/component_compiler/parser -name "*.interp" -delete
 	@echo "Clean complete"
 
 
