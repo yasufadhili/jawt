@@ -33,7 +33,7 @@ go.work.sum
 
 examples/
 
-internal/cc/parser/generated/
+internal/component_compiler/parser/generated/
 internal/page_compiler/parser/generated/
 
 vendor/

@@ -89,6 +89,8 @@ if [ $? -ne 0 ]; then
 fi
 
 
+
+
 print_success "Build completed successfully!"
 print_success "Binary available at: $BIN_DIR/jawt"
 
