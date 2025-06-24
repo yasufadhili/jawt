@@ -13,8 +13,8 @@ all: clean generate build
 clean:
 	@echo "Cleaning up..."
 	@rm -rf $(BUILD_DIR)
-	@rm -rf internal/page_compiler/parser/*.go internal/cc/parser/*.go
-	@find internal/page_compiler/parser internal/cc/parser -name "*.tokens" -delete
+	@rm -rf internal/page_compiler/parser/*.go internal/component_compiler/parser/*.go
+	@find internal/page_compiler/parser internal/component_compiler/parser -name "*.tokens" -delete
 	@find internal/page_compiler/parser internal/page_compiler/parser -name "*.interp" -delete
 	@echo "Clean complete"
 
@@ -27,7 +27,7 @@ generate-pc:
 
 generate-cc:
 	@echo "Generating Component Compiler parser..."
-	@cd internal/cc/parser && ./generate.sh
+	@cd internal/component_compiler/parser && ./generate.sh
 	@echo "Component Compiler parser generation complete"
 
 

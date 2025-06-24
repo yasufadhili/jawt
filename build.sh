@@ -7,21 +7,21 @@ set -e
 PROJECT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 
-# Directories
+
 TOOLS_DIR="$PROJECT_ROOT/tools"
 
 INTERNAL_DIR="$PROJECT_ROOT/internal"
 
-PC_DIR="$INTERNAL_DIR/pc"
+PC_DIR="$INTERNAL_DIR/page_compiler"
 
-CC_DIR="$INTERNAL_DIR/cc"
+CC_DIR="$INTERNAL_DIR/component_compiler"
 
 BUILD_DIR="$PROJECT_ROOT/build"
 
 BIN_DIR="$BUILD_DIR/bin"
 
 
-# ANTLR JAR file
+
 ANTLR_JAR="$TOOLS_DIR/antlr-4.13.2-complete.jar"
 
 
@@ -39,18 +39,18 @@ print_error() {
 }
 
 
-# Check if ANTLR JAR exists
+
 if [ ! -f "$ANTLR_JAR" ]; then
     print_error "ANTLR JAR file not found at $ANTLR_JAR"
     exit 1
 fi
 
 
-# Create build directories
+
 mkdir -p "$BIN_DIR"
 
 
-# Generate parsers for page compiler
+
 print_step "Generating Page Compiler Parser"
 if [ -f "$PC_DIR/parser/generate.sh" ]; then
     (cd "$PC_DIR/parser" && ./generate.sh)
@@ -65,7 +65,7 @@ else
 fi
 
 
-# Generate parsers for component compiler
+
 print_step "Generating Component Compiler Parser"
 if [ -f "$CC_DIR/parser/generate.sh" ]; then
     (cd "$CC_DIR/parser" && ./generate.sh)
@@ -80,13 +80,15 @@ else
 fi
 
 
-# Build the project
+
 print_step "Building JAWT Binary"
 go build -o "$BIN_DIR/jawt" "$PROJECT_ROOT/main.go"
 if [ $? -ne 0 ]; then
     print_error "Build failed"
     exit 1
 fi
+
+
 
 
 print_success "Build completed successfully!"
