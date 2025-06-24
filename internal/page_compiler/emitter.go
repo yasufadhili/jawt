@@ -43,12 +43,15 @@ func (e *HTMLEmitter) emitHead(page *Page) {
 	e.writeHTML("<meta charset=\"UTF-8\">")
 	e.writeHTML("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">")
 
-	// Set title from page name or doctype name
-	title := "Page"
-	if page.Doctype != nil && page.Doctype.Name != "" {
-		title = page.Doctype.Name
+	if page.PageDefinition != nil && page.PageDefinition.Properties != nil {
+		for _, prop := range page.PageDefinition.Properties {
+			if prop.Key == "title" {
+				e.writeHTML(fmt.Sprintf("<title>%s</title>", prop.Value))
+			} else if prop.Key == "description" {
+
+			}
+		}
 	}
-	e.writeHTML(fmt.Sprintf("<title>%s</title>", title))
 
 	e.writeHTML("<script src=\"https://cdn.tailwindcss.com\"></script>")
 
@@ -58,7 +61,7 @@ func (e *HTMLEmitter) emitHead(page *Page) {
 
 // emitBody generates the HTML body section
 func (e *HTMLEmitter) emitBody(page *Page) {
-	e.writeHTML("<body class=\"bg-gray-50 min-h-screen\">")
+	e.writeHTML("<body>")
 	e.indent()
 
 	// Visit the page definition to emit content
@@ -72,7 +75,20 @@ func (e *HTMLEmitter) emitBody(page *Page) {
 
 // VisitPageDefinition emits a container div for the page
 func (e *HTMLEmitter) VisitPageDefinition(node *PageDefinition) interface{} {
-	e.writeHTML("<div class=\"container mx-auto px-4 py-8\">")
+
+	var classStr string = ""
+
+	for _, prop := range node.Properties {
+		if prop.Key == "style" {
+			classStr = (prop.Value).(string)
+		}
+	}
+
+	if classStr == "" {
+		e.writeHTML("<main>")
+	} else {
+		e.writeHTML(fmt.Sprintf("<main class=\"%s\">", e.escapeHTML(classStr)))
+	}
 	e.indent()
 
 	for _, prop := range node.Properties {
@@ -80,28 +96,22 @@ func (e *HTMLEmitter) VisitPageDefinition(node *PageDefinition) interface{} {
 	}
 
 	e.dedent()
-	e.writeHTML("</div>")
+
+	e.writeHTML("</main>")
 
 	return nil
 }
 
-// VisitPageProperty emits HTML based on property type
+// VisitPageProperty emits HTML based on the property type
 func (e *HTMLEmitter) VisitPageProperty(node *PageProperty) interface{} {
-	switch node.Key {
-	case "title":
-		e.emitTitle(node.Value)
-	case "subtitle":
-		e.emitSubtitle(node.Value)
-	case "content":
-		e.emitContent(node.Value)
-	case "layout":
-		e.emitLayout(node.Value)
-	default:
-		// For unknown properties, emit as a data attribute div
-		e.emitGenericProperty(node.Key, node.Value)
-	}
-
 	return nil
+}
+
+func (e *HTMLEmitter) getPropertyString(node *PageProperty) string {
+	if node.Value != nil {
+		return node.Value.(string)
+	}
+	return ""
 }
 
 // emitTitle creates a h1 element

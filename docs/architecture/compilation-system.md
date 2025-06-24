@@ -4,7 +4,7 @@ The JAWT compilation system is responsible for transforming JML source files int
 
 ## Core Compilers
 
-### 1. Page Compiler (`internal/pc`)
+### 1. Page Compiler (`internal/page_compiler`)
 
 Responsible for processing page definitions and generating HTML output.
 
