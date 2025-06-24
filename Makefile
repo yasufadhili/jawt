@@ -27,7 +27,7 @@ generate-pc:
 
 generate-cc:
 	@echo "Generating Component Compiler parser..."
-	@cd internal/cc/parser && ./generate.sh
+	@cd internal/component_compiler/parser && ./generate.sh
 	@echo "Component Compiler parser generation complete"
 
 
