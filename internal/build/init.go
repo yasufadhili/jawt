@@ -333,9 +333,8 @@ Container {
 		return fmt.Errorf("failed to create assets/favicon.svg: %w", err)
 	}
 
-	readmeContent := fmt.Sprintf(`
-
-`, pi.config.ProjectName, pi.config.Description, pi.config.Port, pi.config.Port, pi.config.ProjectName)
+	//readmeContent := fmt.Sprintf(`# JAWT Application`, pi.config.ProjectName, pi.config.Description, pi.config.Port, pi.config.Port, pi.config.ProjectName)
+	readmeContent := fmt.Sprintf("")
 
 	if err := pi.writeTextFile("README.md", readmeContent); err != nil {
 		return fmt.Errorf("failed to create README.md: %w", err)
