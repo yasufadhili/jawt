@@ -17,12 +17,12 @@ type ProjectInitializer struct {
 
 // InitConfig holds configuration for project initialization
 type InitConfig struct {
-	ProjectName string
-	Author      string
-	Version     string
-	Description string
-	Template    string
-	Port        int
+	ProjectName string `json:"name"`
+	Author      string `json:"author"`
+	Version     string `json:"version"`
+	Description string `json:"description"`
+	Template    string `json:"template"`
+	Port        int    `json:"port"`
 }
 
 // InitProject Package-level convenience function for external use
