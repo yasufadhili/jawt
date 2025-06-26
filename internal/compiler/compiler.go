@@ -59,6 +59,7 @@ func (c *Compiler) Compile() (*CompileResult, error) {
 	// TODO: Semantic Analysis
 	// TODO: Emit
 
+	c.docInfo.Compiled = true
 	return result, nil
 }
 
