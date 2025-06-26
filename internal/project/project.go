@@ -12,30 +12,27 @@ type Structure struct {
 	TempDir    string
 }
 
-// PageInfo contains metadata about a page file
-type PageInfo struct {
+type DocumentInfo struct {
 	Name         string            `json:"name"`
 	Title        string            `json:"title"`
 	RelativePath string            `json:"relative_path"`
 	AbsolutePath string            `json:"absolute_path"`
-	Route        string            `json:"route"`
 	Dependencies []string          `json:"dependencies"`
 	Imports      map[string]string `json:"imports"`
 	LastModified time.Time         `json:"last_modified"`
 	Compiled     bool              `json:"compiled"`
 }
 
+// PageInfo contains metadata about a page file
+type PageInfo struct {
+	DocumentInfo
+	Route string `json:"route"`
+}
+
 // ComponentInfo contains metadata about a component file
 type ComponentInfo struct {
-	Name         string            `json:"name"`
-	Title        string            `json:"title"`
-	RelativePath string            `json:"relative_path"`
-	AbsolutePath string            `json:"absolute_path"`
-	Dependencies []string          `json:"dependencies"`
-	Imports      map[string]string `json:"imports"`
-	LastModified time.Time         `json:"last_modified"`
-	Compiled     bool              `json:"compiled"`
-	UsedBy       []string          `json:"used_by"` // Pages/components that use this component
+	DocumentInfo
+	UsedBy []string `json:"used_by"` // Pages/components that use this component
 }
 
 // Config holds configuration for the project to be used by the build system
