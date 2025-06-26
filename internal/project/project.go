@@ -3,12 +3,12 @@ package project
 import "time"
 
 type Structure struct {
-	Root       string                    `json:"root"`
-	Config     *Config                   `json:"config"`
-	Pages      map[string]*PageInfo      `json:"pages"`
-	Components map[string]*ComponentInfo `json:"components"`
-	Assets     []string                  `json:"assets"`
-	BuildTime  time.Time                 `json:"build_time"`
+	Root       string                   `json:"root"`
+	Config     *Config                  `json:"config"`
+	Pages      map[string]*DocumentInfo `json:"pages"`
+	Components map[string]*DocumentInfo `json:"components"`
+	Assets     []string                 `json:"assets"`
+	BuildTime  time.Time                `json:"build_time"`
 	TempDir    string
 }
 

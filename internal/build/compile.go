@@ -70,9 +70,9 @@ func (cm *CompilerManager) compilePages() error {
 }
 
 // compileComponent compiles a single component
-func (cm *CompilerManager) compileComponent(comp *project.ComponentInfo) error {
+func (cm *CompilerManager) compileComponent(comp *project.DocumentInfo) error {
 
-	c, err := compiler.NewCompiler("Component")
+	c, err := compiler.NewCompiler(comp, "Component")
 	if err != nil {
 		return err
 	}
@@ -88,9 +88,9 @@ func (cm *CompilerManager) compileComponent(comp *project.ComponentInfo) error {
 }
 
 // compilePage compiles a single page
-func (cm *CompilerManager) compilePage(page *project.PageInfo) error {
+func (cm *CompilerManager) compilePage(page *project.DocumentInfo) error {
 
-	c, err := compiler.NewCompiler("Page")
+	c, err := compiler.NewCompiler(page, "Page")
 	if err != nil {
 		return err
 	}
