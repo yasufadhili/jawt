@@ -2,6 +2,7 @@ package build
 
 import (
 	"fmt"
+	"github.com/yasufadhili/jawt/internal/compiler"
 	"github.com/yasufadhili/jawt/internal/project"
 	"os"
 	"time"
@@ -48,7 +49,7 @@ func (cm *CompilerManager) CompileProject() error {
 func (cm *CompilerManager) compileComponents() error {
 
 	for name, comp := range cm.project.Components {
-		if err := cm.compileComponent(name, comp); err != nil {
+		if err := cm.compileComponent(comp); err != nil {
 			return fmt.Errorf("failed to compile component %s: %w", name, err)
 		}
 	}
@@ -68,19 +69,38 @@ func (cm *CompilerManager) compilePages() error {
 	return nil
 }
 
-// compileComponent compiles a single component (placeholder)
-func (cm *CompilerManager) compileComponent(name string, comp *project.ComponentInfo) error {
+// compileComponent compiles a single component
+func (cm *CompilerManager) compileComponent(comp *project.ComponentInfo) error {
 
-	// TODO: call CC (Component Compiler)
+	c, err := compiler.NewCompiler("Component")
+	if err != nil {
+		return err
+	}
 
-	comp.Compiled = true
+	res, err := c.Compile()
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(res)
+
 	return nil
 }
 
-// compilePage compiles a single page (placeholder)
+// compilePage compiles a single page
 func (cm *CompilerManager) compilePage(page *project.PageInfo) error {
 
-	//TODO: Call Compiler
+	c, err := compiler.NewCompiler("Page")
+	if err != nil {
+		return err
+	}
+
+	res, err := c.Compile()
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(res)
 
 	return nil
 }
@@ -100,9 +120,9 @@ func (cm *CompilerManager) copyAssets() error {
 func (cm *CompilerManager) CompileChanged() error {
 
 	// Check for changed components
-	for name, comp := range cm.project.Components {
+	for _, comp := range cm.project.Components {
 		if cm.hasChanged(comp.AbsolutePath, comp.LastModified) {
-			if err := cm.compileComponent(name, comp); err != nil {
+			if err := cm.compileComponent(comp); err != nil {
 				return err
 			}
 			comp.LastModified = time.Now()
