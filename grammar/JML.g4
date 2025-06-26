@@ -7,9 +7,9 @@ jmlDocument
 
 
 documentContent
-    : pageContent           // For pages
-    | componentContent      // For components
-    | moduleContent         // For modules (future extension)
+    : pageDefinition           // For pages
+    | componentDefinition      // For components
+    | moduleDefinition         // For modules (future extension)
 ;
 
 
@@ -38,7 +38,7 @@ importStatement
 
 
 // Page-specific content (single child component constraint)
-pageContent
+pageDefinition
     : 'Page' '{' NEWLINE pageBody NEWLINE? '}'
 ;
 
@@ -65,7 +65,7 @@ singleComponentChild
 
 
 // Component-specific content (can have multiple children)
-componentContent
+componentDefinition
     : componentElement
 ;
 
@@ -225,7 +225,7 @@ variableDeclaration
 
 
 // Module content (placeholder for future extension)
-moduleContent
+moduleDefinition
     : moduleFunction+
 ;
 
