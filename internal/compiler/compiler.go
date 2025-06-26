@@ -11,19 +11,21 @@ import (
 )
 
 type Compiler struct {
-	parser   *Parser
-	docInfo  *project.DocumentInfo
-	FileType string
+	parser     *Parser
+	docInfo    *project.DocumentInfo
+	FileType   string
+	tmpDirPath string
 }
 
-func NewCompiler(docInfo *project.DocumentInfo, fileType string) (*Compiler, error) {
+func NewCompiler(docInfo *project.DocumentInfo, fileType string, tempDirPath string) (*Compiler, error) {
 	if fileType != "Component" && fileType != "Page" {
 		return nil, fmt.Errorf("unsupported file type: %s", fileType)
 	}
 	return &Compiler{
-		FileType: fileType,
-		parser:   newParser(),
-		docInfo:  docInfo,
+		FileType:   fileType,
+		parser:     newParser(),
+		docInfo:    docInfo,
+		tmpDirPath: tempDirPath,
 	}, nil
 }
 
@@ -62,25 +64,25 @@ func (c *Compiler) Compile() (*CompileResult, error) {
 	emitter := NewEmitter(astRoot)
 	output := emitter.Emit()
 
-	outPath := c.docInfo.RelativePath
+	//err = os.WriteFile(outPath+c.docInfo.Name+"/."+extension, []byte(output), 0644)
+	//if err != nil {
+	//	return nil, err
+	//}
 
-	if c.docInfo.RelativePath != "/" {
-		err = os.Mkdir(outPath, os.ModePerm)
-		if err != nil {
-			return nil, err
+	outPath := c.tmpDirPath
+	if c.FileType == "Page" {
+		if c.docInfo.RelativePath == "/" {
+			c.docInfo.RelativePath = "index"
 		}
+		outPath = c.tmpDirPath + "/" + c.docInfo.RelativePath + ".html"
+	} else {
+		outPath = c.tmpDirPath + "/" + c.docInfo.RelativePath + ".js"
+		outPath = strings.ReplaceAll(outPath, ".jml", "")
 	}
 
-	var extension = "html"
-	switch c.FileType {
-	case "Component":
-		extension = "js"
-		break
-	}
-
-	err = os.WriteFile(outPath+c.docInfo.Name+"/."+extension, []byte(output), 0644)
-	if err != nil {
-		return nil, err
+	osErr := os.WriteFile(outPath, []byte(output), 0644)
+	if osErr != nil {
+		return nil, osErr
 	}
 
 	c.docInfo.Compiled = true

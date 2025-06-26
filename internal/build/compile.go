@@ -66,7 +66,7 @@ func (cm *CompilerManager) compilePages() error {
 
 // compileComponent compiles a single component
 func (cm *CompilerManager) compileComponent(comp *project.ComponentInfo) error {
-	c, err := compiler.NewCompiler(&comp.DocumentInfo, "Component")
+	c, err := compiler.NewCompiler(&comp.DocumentInfo, "Component", cm.project.TempDir)
 	if err != nil {
 		return err
 	}
@@ -75,14 +75,20 @@ func (cm *CompilerManager) compileComponent(comp *project.ComponentInfo) error {
 	if err != nil {
 		return err
 	}
-
-	fmt.Println(res)
+	if !res.Success {
+		// Handle syntax errors
+		fmt.Printf("Found %d syntax errors\n", len(res.Errors))
+		for _, err := range res.Errors {
+			fmt.Errorf(err.Error())
+		}
+		return fmt.Errorf("compilation failed")
+	}
 	return nil
 }
 
 // compilePage compiles a single page
 func (cm *CompilerManager) compilePage(page *project.PageInfo) error {
-	c, err := compiler.NewCompiler(&page.DocumentInfo, "Page")
+	c, err := compiler.NewCompiler(&page.DocumentInfo, "Page", cm.project.TempDir)
 	if err != nil {
 		return err
 	}
