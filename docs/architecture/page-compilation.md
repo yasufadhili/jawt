@@ -1,14 +1,10 @@
-# Jawt Page Compiler
+# Jawt Page Compilation
 
-The Page Compiler is a component of the JAWT toolchain, located in `internal/page_compiler`. Its primary responsibility is to compile JML page definitions into standard HTML documents. It focuses solely on transforming individual JML files into HTML, relying on the build system for routing, dependency resolution, and project orchestration.
-
-## Purpose
-
-The Page Compiler processes JML files located in the `app/` directory that define pages—such as `app/index.jml`, `app/about/index.jml`, or `app/user/[id].jml` for dynamic routes—and generates corresponding HTML files. It ensures that page-specific JML syntax is correctly translated into web-ready HTML, incorporating styling and dependencies as needed.
+The Page Compilation processes JML files located in the `app/` directory that define pages—such as `app/index.jml`, `app/about/index.jml`, or `app/user/[id].jml` for dynamic routes—and generates corresponding HTML files. It ensures that page-specific JML syntax is correctly translated into web-ready HTML, incorporating styling and dependencies as needed.
 
 ## How It Works
 
-The Page Compiler receives a file path and an output path from the build system, which identifies page files and manages the overall compilation process. The compiler then transforms the provided JML file into HTML through a series of well-defined stages. It does not handle routing, nested route logic, or dependency management—these are delegated to the build system.
+The Compiler receives a file path and an output path from the build system, which identifies page files and manages the overall compilation process. The compiler then transforms the provided JML file into HTML through a series of well-defined stages. It does not handle routing, nested route logic, or dependency management—these are delegated to the build system.
 
 ### Page File Requirements
 
@@ -44,12 +40,10 @@ The Page Compiler follows these stages to transform a JML page file into HTML:
 
 ### Integration with the Build System
 
-The Page Compiler operates as a focused tool within the JAWT ecosystem:
+The Compiler operates as a focused tool within the JAWT ecosystem:
 - **Input**: Receives the JML file path and output path from the build system.
 - **Dependencies**: Relies on the prior compilation of components and modules (handled by the Component Compiler and Module Compiler) to ensure all referenced assets are available.
 - **Routing**: The build system manages route detection (including nested and dynamic routes like `app/user/[id].jml`) and saves them in a routes table, passing only the compilation task to the Page Compiler.
-
-This division of responsibilities keeps the Page Compiler lightweight and specialized, enhancing modularity and maintainability.
 
 ### Styling
 
@@ -60,7 +54,7 @@ Component {
 }
   
 ```
-During the emit stage, the Page Compiler embeds these classes into the HTML, ensuring the output reflects the specified design.
+During the emit stage, the Compiler embeds these classes into the HTML, ensuring the output reflects the specified design.
 
 ## Key Features
 
@@ -71,7 +65,7 @@ During the emit stage, the Page Compiler embeds these classes into the HTML, ens
 
 ## Limitations and Assumptions
 
-- The Page Compiler assumes that components and modules are compiled beforehand, as they are dependencies for pages.
+- The Page Compilation assumes that components and modules are compiled beforehand, as they are dependencies for pages.
 - It does not perform optimisations like HTML minification; such tasks are left to the build system.
 - Dynamic route parameters (e.g., `[id]`) are not processed by the Page Compiler; it generates static HTML, with dynamic behavior managed elsewhere in the toolchain.
 
@@ -126,14 +120,13 @@ During the emit stage, the Page Compiler embeds these classes into the HTML, ens
 
 ## Potential Improvements
 
-Soon enhancing the Page Compiler’s functionality within the JAWT toolchain through:
+Soon enhancing the Page Compilation’s functionality within the JAWT toolchain through:
 - **Error Reporting**: Provide detailed diagnostics during semantic analysis for better developer feedback.
-- **Metadata Support**: Incorporate page metadata (e.g., title, description) from JML into the HTML `<head>`.
 - **Caching**: Implement a caching mechanism for parsed ASTs to speed up recompilation during development.
 - **Validation Hooks**: Allow the build system to inject custom validation rules before the emit stage.
 
 ## Related Components
 
-- [JML Documentation](docs/jml/) – JML syntax conventions.
-- [Architecture Guide](docs/architecture/) – Ecosystem and toolchain design.
+- [JML Documentation](../jml/readme.md) – JML syntax conventions.
+- [Architecture Guide](../architecture/overview.md) – Ecosystem and toolchain design.
 
