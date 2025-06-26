@@ -237,15 +237,13 @@ func (pi *ProjectInitializer) generateTemplateFiles() error {
 	// Generate app/index.jml
 	indexContent := fmt.Sprintf(`_doctype page index
 
-import Layout from "components/layout"
+import component Layout from "components/layout"
 
 Page {
   title: "%s"
   description: "Welcome to %s - Built with JAWT"
   
-  Layout {
-    content: "Welcome to your new JAWT project!"
-  }
+  Layout {}
 }
 `, pi.config.ProjectName, pi.config.ProjectName)
 
@@ -254,7 +252,7 @@ Page {
 	}
 
 	// Generate components/layout.jml
-	layoutContent := `_doctype component layout
+	layoutContent := `_doctype component Layout
 
 Container {
   style: "min-h-screen bg-gray-50 flex flex-col"
