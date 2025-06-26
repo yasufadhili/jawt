@@ -233,16 +233,20 @@ func (pd *ProjectDiscovery) analysePageFile(filePath, rootPath string) (*project
 	// Parse imports (placeholder)
 	imports, dependencies := pd.parseImports(filePath)
 
-	return &project.PageInfo{
+	docInfo := project.DocumentInfo{
 		Name:         name,
 		Title:        title,
 		RelativePath: relPath,
 		AbsolutePath: filePath,
-		Route:        route,
 		Dependencies: dependencies,
 		Imports:      imports,
 		LastModified: info.ModTime(),
 		Compiled:     false,
+	}
+
+	return &project.PageInfo{
+		DocumentInfo: docInfo,
+		Route:        route,
 	}, nil
 }
 
@@ -270,7 +274,7 @@ func (pd *ProjectDiscovery) analyseComponentFile(filePath, rootPath string) (*pr
 	// Parse imports (placeholder)
 	imports, dependencies := pd.parseImports(filePath)
 
-	return &project.ComponentInfo{
+	docInfo := project.DocumentInfo{
 		Name:         name,
 		Title:        title,
 		RelativePath: relPath,
@@ -279,6 +283,10 @@ func (pd *ProjectDiscovery) analyseComponentFile(filePath, rootPath string) (*pr
 		Imports:      imports,
 		LastModified: info.ModTime(),
 		Compiled:     false,
+	}
+
+	return &project.ComponentInfo{
+		DocumentInfo: docInfo,
 		UsedBy:       make([]string, 0),
 	}, nil
 }
@@ -311,7 +319,7 @@ func (pd *ProjectDiscovery) extractTitleFromFile(filePath string) (string, error
 
 // generateRoute creates a route from the file path
 func (pd *ProjectDiscovery) generateRoute(relPath string) string {
-	// Convert a file path to route
+	// Convert a file path to a route
 	route := filepath.Dir(relPath)
 	route = strings.ReplaceAll(route, "\\", "/")
 	route = strings.TrimPrefix(route, "app")
