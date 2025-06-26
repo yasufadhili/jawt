@@ -17,37 +17,37 @@ type Config struct {
 // JawtConfig holds the JAWT configuration from jawt.config.json
 // Fixed to match the nested structure created by the initialiser
 type JawtConfig struct {
-	Project ProjectConfig `mapstructure:"project"`
-	Server  ServerConfig  `mapstructure:"server"`
-	Build   BuildConfig   `mapstructure:"build"`
+	Project ProjectConfig `json:"project"`
+	Server  ServerConfig  `json:"server"`
+	Build   BuildConfig   `json:"build"`
 }
 
 // ProjectConfig holds project-specific settings
 type ProjectConfig struct {
-	Name string `mapstructure:"name"`
+	Name string `json:"name"`
 }
 
 // ServerConfig holds server-specific settings
 type ServerConfig struct {
-	Port int `mapstructure:"port"`
+	Port int `json:"port"`
 }
 
 // BuildConfig holds build-specific settings
 type BuildConfig struct {
-	Output string `mapstructure:"output"`
-	Minify bool   `mapstructure:"minify"`
+	Output string `json:"output"`
+	Minify bool   `json:"minify"`
 }
 
 // AppConfig holds the application configuration from app.json
 // This structure matches what the initialiser creates
 type AppConfig struct {
-	Name        string `mapstructure:"name"`
-	Description string `mapstructure:"description"`
-	Version     string `mapstructure:"version"`
-	Author      string `mapstructure:"author"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Version     string `json:"version"`
+	Author      string `json:"author"`
 	// Optional fields that might be added later
-	License      string   `mapstructure:"license,omitempty"`
-	Dependencies []string `mapstructure:"dependencies,omitempty"`
+	License      string   `json:"license,omitempty"`
+	Dependencies []string `json:"dependencies,omitempty"`
 }
 
 // LoadConfig loads both app.json and jawt.config.json from the specified directory
