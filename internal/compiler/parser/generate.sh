@@ -40,4 +40,4 @@ fi
 print_step "Generating Compiler parser from grammar: $GRAMMAR_FILE"
 java -jar "$ANTLR_JAR" -Dlanguage=Go -package parser -visitor -o "$OUTPUT_DIR" "$GRAMMAR_FILE"
 
-echo "Page Compiler parser generated successfully in $OUTPUT_DIR"
+echo "Compiler parser generated successfully in $OUTPUT_DIR"
