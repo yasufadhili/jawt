@@ -7,7 +7,7 @@ PROJECT_ROOT="$( cd "$DIR/../../../" && pwd )"
 
 # Set up paths
 GRAMMAR_DIR="$DIR/../../../grammar"
-GRAMMAR_FILE="$GRAMMAR_DIR/JMLComponent.g4"
+GRAMMAR_FILE="$GRAMMAR_DIR/JML.g4"
 OUTPUT_DIR="$DIR/generated"
 ANTLR_JAR="$PROJECT_ROOT/tools/antlr-4.13.2-complete.jar"
 
@@ -37,7 +37,7 @@ if [ ! -f "$GRAMMAR_FILE" ]; then
 fi
 
 # Run ANTLR4 to generate Go code
-print_step "Generating Component Compiler parser from grammar: $GRAMMAR_FILE"
+print_step "Generating Compiler parser from grammar: $GRAMMAR_FILE"
 java -jar "$ANTLR_JAR" -Dlanguage=Go -package parser -visitor -o "$OUTPUT_DIR" "$GRAMMAR_FILE"
 
-echo "Component Compiler parser generated successfully in $OUTPUT_DIR"
+echo "Compiler parser generated successfully in $OUTPUT_DIR"

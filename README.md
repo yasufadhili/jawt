@@ -4,6 +4,8 @@
 
 Write your application structure and behaviour using **JML**, a domain-specific language for JAWT.
 
+>**NOTE:** Very early development
+
 ## Features
 
 - **Declarative Syntax**: Express your UI structure clearly and concisely
@@ -27,9 +29,7 @@ Write your application structure and behaviour using **JML**, a domain-specific 
 
 **This project repo consists of several components that make up JAWT**
 
-- [Page Compiler](internal/page_compiler) : Compiles Pages
-- [Component Compiler](internal/component_compiler) : Compiles Components
-- [Module Compiler](internal/mc) : Compiles Modules
+- [Page Compiler](internal/compiler) : Compiles Pages, Modules and Components
 - [Build System](internal/build) : Orchestrates the entire build process
 - [Development Server](internal/server) : Serves Jawt projects locally during development
 
