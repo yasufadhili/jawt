@@ -146,50 +146,6 @@ func (e *Emitter) buildAttributeString(attributes map[string]string) string {
 	return " " + strings.Join(attrs, " ")
 }
 
-// Legacy methods - now deprecated but kept for compatibility
-func (e *Emitter) getHTMLTagName(componentName string) string {
-	return e.componentProcessor.GetHTMLTag(componentName, nil)
-}
-
-func (e *Emitter) buildAttributes(properties []*PropertyNode) string {
-	// This is a simplified fallback - the new system should be used instead
-	attributes := make(map[string]string)
-
-	for _, prop := range properties {
-		if prop.Name == "style" {
-			if literal, ok := prop.Value.(*LiteralNode); ok {
-				if str, ok := literal.Value.(string); ok {
-					attributes["class"] = str
-				}
-			}
-		} else {
-			attrName := e.mapPropertyToAttribute(prop.Name)
-			attrValue := e.formatAttributeValue(prop.Value.(*LiteralNode))
-			if attrValue != "" {
-				attributes[attrName] = attrValue
-			}
-		}
-	}
-
-	return e.buildAttributeString(attributes)
-}
-
-func (e *Emitter) mapPropertyToAttribute(propName string) string {
-	// Legacy mapping - kept for compatibility
-	switch propName {
-	case "style":
-		return "class"
-	case "onClick":
-		return "onclick"
-	case "onChange":
-		return "onchange"
-	case "onSubmit":
-		return "onsubmit"
-	default:
-		return propName
-	}
-}
-
 func (e *Emitter) formatAttributeValue(literal *LiteralNode) string {
 	switch v := literal.Value.(type) {
 	case string:
