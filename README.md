@@ -4,6 +4,8 @@
 
 Write your application structure and behaviour using **JML**, a domain-specific language for JAWT.
 
+>**NOTE:** Very early development
+
 ## Features
 
 - **Declarative Syntax**: Express your UI structure clearly and concisely

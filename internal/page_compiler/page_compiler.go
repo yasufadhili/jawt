@@ -113,18 +113,18 @@ func (pc *PageCompiler) parseFile(input antlr.CharStream) ParseResult {
 	pc.parser.errorListener.Reset()
 	pc.parser.errorStrategy.Reset()
 
-	lexer := parser.NewJMLPageLexer(input)
+	lexer := parser.NewJMLLexer(input)
 	lexer.RemoveErrorListeners()
 	lexer.AddErrorListener(pc.parser.errorListener)
 
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
-	p := parser.NewJMLPageParser(stream)
+	p := parser.NewJMLParser(stream)
 	p.RemoveErrorListeners()
 	p.AddErrorListener(pc.parser.errorListener)
 	p.SetErrorHandler(pc.parser.errorStrategy)
 
-	tree := p.Page()
+	tree := p.JmlDocument()
 
 	return ParseResult{
 		Success: !pc.parser.errorListener.HasErrors(),

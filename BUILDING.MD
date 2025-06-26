@@ -14,8 +14,8 @@
 2. Make sure the build scripts are executable:
 ``` bash
    chmod +x build.sh
-   chmod +x internal/pc/parser/generate.sh
-   chmod +x internal/cc/parser/generate.sh
+   chmod +x internal/page_compiler/parser/generate.sh
+   chmod +x internal/component_compiler/parser/generate.sh
 ```
 ### Architecture Overview
 
@@ -24,8 +24,8 @@ JAWT uses two separate compilers:
 2. **Component Compiler (CC)**: Processes JML component files that define reusable UI elements
 
 Each compiler has its own ANTLR4 grammar and parser:
-- Page Grammar: `internal/pc/grammar/JMLPage.g4`
-- Component Grammar: `internal/cc/grammar/JMLComponent.g4`
+- Page Grammar: `internal/page_compiler/grammar/JMLPage.g4`
+- Component Grammar: `internal/component_compiler/grammar/JMLComponent.g4`
 
 ### Building JAWT
 

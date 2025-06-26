@@ -7,7 +7,7 @@ PROJECT_ROOT="$( cd "$DIR/../../../" && pwd )"
 
 # Set up paths
 GRAMMAR_DIR="$DIR/../../../grammar"
-GRAMMAR_FILE="$GRAMMAR_DIR/JMLComponent.g4"
+GRAMMAR_FILE="$GRAMMAR_DIR/JML.g4"
 OUTPUT_DIR="$DIR/generated"
 ANTLR_JAR="$PROJECT_ROOT/tools/antlr-4.13.2-complete.jar"
 

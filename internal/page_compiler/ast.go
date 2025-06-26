@@ -50,3 +50,40 @@ type PageProperty struct {
 func (p *PageProperty) Accept(v Visitor) interface{} {
 	return v.VisitPageProperty(p)
 }
+
+type PageBody struct {
+	Properties []*PageProperty
+	Child      *ComponentElement
+}
+
+type ComponentElement struct {
+	Name  string
+	Block *ComponentBlock
+}
+
+type ComponentBlock struct {
+	Properties []*ComponentProperty
+	Children   []*ComponentElement
+	Functions  []*ScriptFunction
+}
+
+type ComponentProperty struct {
+	Key   string
+	Value interface{}
+}
+
+type ScriptFunction struct {
+	Name       string
+	Parameters []*Parameter
+	ReturnType string
+	Body       []Statement
+}
+
+type Parameter struct {
+	Name string
+	Type string
+}
+
+type Statement interface {
+	StatementNode()
+}
