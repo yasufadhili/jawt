@@ -35,6 +35,7 @@ examples/
 
 internal/component_compiler/parser/generated/
 internal/page_compiler/parser/generated/
+internal/compiler/parser/generated/
 
 vendor/
 /build/
