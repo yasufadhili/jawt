@@ -7,6 +7,7 @@ import (
 	"github.com/yasufadhili/jawt/internal/error_handler"
 	"github.com/yasufadhili/jawt/internal/project"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -64,20 +65,20 @@ func (c *Compiler) Compile() (*CompileResult, error) {
 	emitter := NewEmitter(astRoot)
 	output := emitter.Emit()
 
-	//err = os.WriteFile(outPath+c.docInfo.Name+"/."+extension, []byte(output), 0644)
-	//if err != nil {
-	//	return nil, err
-	//}
-
 	outPath := c.tmpDirPath
 	if c.FileType == "Page" {
 		if c.docInfo.RelativePath == "/" {
 			c.docInfo.RelativePath = "index"
 		}
-		outPath = c.tmpDirPath + "/" + c.docInfo.RelativePath + ".html"
+		outPath = filepath.Join(c.tmpDirPath, c.docInfo.RelativePath+".html")
 	} else {
-		outPath = c.tmpDirPath + "/" + c.docInfo.RelativePath + ".js"
+		outPath = filepath.Join(c.tmpDirPath, c.docInfo.RelativePath+".js")
 		outPath = strings.ReplaceAll(outPath, ".jml", "")
+	}
+
+	outDir := filepath.Dir(outPath)
+	if err := os.MkdirAll(outDir, 0755); err != nil {
+		return nil, fmt.Errorf("failed to create output directory %s: %w", outDir, err)
 	}
 
 	osErr := os.WriteFile(outPath, []byte(output), 0644)
