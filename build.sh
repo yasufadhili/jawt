@@ -53,12 +53,12 @@ print_step "Generating Compiler Parser"
 if [ -f "$COMPILER_DIR/parser/generate.sh" ]; then
     (cd "$COMPILER_DIR/parser" && ./generate.sh)
     if [ $? -ne 0 ]; then
-        print_error "Failed to generate Component Compiler parser"
+        print_error "Failed to generate Compiler parser"
         exit 1
     fi
-    print_success "Component Compiler parser generated successfully"
+    print_success "Compiler parser generated successfully"
 else
-    print_error "Component Compiler generate script not found at $COMPILER_DIR/parser/generate.sh"
+    print_error "Compiler generate script not found at $COMPILER_DIR/parser/generate.sh"
     exit 1
 fi
 
