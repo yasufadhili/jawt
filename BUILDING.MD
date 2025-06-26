@@ -14,18 +14,16 @@
 2. Make sure the build scripts are executable:
 ``` bash
    chmod +x build.sh
-   chmod +x internal/page_compiler/parser/generate.sh
-   chmod +x internal/component_compiler/parser/generate.sh
+   chmod +x internal/compiler/parser/generate.sh
 ```
 ### Architecture Overview
 
-JAWT uses two separate compilers:
-1. **Page Compiler (PC)**: Processes JML page files that define application entry points
-2. **Component Compiler (CC)**: Processes JML component files that define reusable UI elements
+JAWT uses a JML compiler (internal/compiler):
+- Processes JML page, files that define application entry points
+- Processes JML component files that define reusable UI elements
 
-Each compiler has its own ANTLR4 grammar and parser:
-- Page Grammar: `internal/page_compiler/grammar/JMLPage.g4`
-- Component Grammar: `internal/component_compiler/grammar/JMLComponent.g4`
+The compiler has its ANTLR4 grammar and parser:
+- ANTLR4 Grammar: `grammar/JML.g4`
 
 ### Building JAWT
 
@@ -41,13 +39,13 @@ This will:
 #### Using Make
 Alternatively, you can use the Makefile:
 ``` bash
-# Clean, generate parsers, and build
+# Clean, generate parser, and build
 make
 
-# Generate parsers only
+# Generate parser only
 make generate
 
-# Build only (assumes parsers are already generated)
+# Build only (assumes parser are already generated)
 make build
 
 # Clean build artifacts
@@ -58,12 +56,8 @@ make clean
 If you prefer to build manually:
 1. Generate the parsers for both compilers:
 ``` bash
-   # Generate Page Compiler parser
-   cd internal/pc/parser
-   ./generate.sh
-   
-   # Generate Component Compiler parser
-   cd ../../cc/parser
+   # Generate Compiler parser
+   cd internal/compiler/parser
    ./generate.sh
 ```
 1. Build the main application:
@@ -72,42 +66,28 @@ If you prefer to build manually:
    go build -o build/bin/jawt main.go
 ```
 ### Grammar Development
-#### Page Grammar (PC)
-The Page grammar defines the syntax for application pages:
+
+#### JML Grammar
+The JML grammar defines the syntax for JAWT pages, components:
 1. View the grammar:
 ``` bash
-   cat internal/pc/grammar/JMLPage.g4
+   cat grammar/JML.g4
 ```
 1. After modifying, regenerate the parser:
 ``` bash
-   cd internal/pc/parser
-   ./generate.sh
-```
-#### Component Grammar (CC)
-The Component grammar defines the syntax for reusable UI components:
-1. View the grammar:
-``` bash
-   cat internal/cc/grammar/JMLComponent.g4
-```
-1. After modifying, regenerate the parser:
-``` bash
-   cd internal/cc/parser
+   cd internal/compiler/parser
    ./generate.sh
 ```
 ### Parser Generation Details
 The parser generation process uses ANTLR4 to transform grammar files into Go code:
-1. For the Page Compiler:
+
 ``` bash
-   java -jar tools/antlr-4.13.2-complete.jar -Dlanguage=Go -package parser -visitor -o internal/pc/parser internal/pc/grammar/JMLPage.g4
-```
-1. For the Component Compiler:
-``` bash
-   java -jar tools/antlr-4.13.2-complete.jar -Dlanguage=Go -package parser -visitor -o internal/cc/parser internal/cc/grammar/JMLComponent.g4
+   java -jar tools/antlr-4.13.2-complete.jar -Dlanguage=Go -package parser -visitor -o internal/compiler/parser grammar/JML.g4
 ```
 
 ### Creating New Grammar Rules
 When extending the JML language:
-1. Add new rules to the appropriate grammar file
+1. Add new rules to the grammar file
 2. Regenerate the parser
 3. Implement visitor methods to handle the new rules
 4. Add tests for the new functionality
@@ -133,14 +113,10 @@ The compiled binary will be available at `build/bin/jawt`.
 ### Parser Generation Issues
 
 If you encounter errors during parser generation:
-1. Check which specific grammar is failing (Page or Component)
+1. Check that the grammar is being generated
 2. Verify grammar syntax:
 ``` bash
-   # For Page grammar
-   java -jar tools/antlr-4.13.2-complete.jar -o /tmp internal/pc/grammar/JMLPage.g4
-   
-   # For Component grammar
-   java -jar tools/antlr-4.13.2-complete.jar -o /tmp internal/cc/grammar/JMLComponent.g4
+   java -jar tools/antlr-4.13.2-complete.jar -o /tmp grammar/JML.g4
 ```
 1. Ensure ANTLR4 JAR is accessible:
 ``` bash
