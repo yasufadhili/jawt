@@ -19,7 +19,7 @@ Monitors your JML files for changes and automatically reloads the browser.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// Use the configured port if not explicitly provided as a flag
 		if !cmd.Flags().Changed("port") && projectConfig != nil {
-			port = projectConfig.Jawt.Port
+			port = projectConfig.Jawt.Server.Port
 		}
 
 		fmt.Printf("🚀 Starting development server for %s on port %d...\n",

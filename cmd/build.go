@@ -18,7 +18,7 @@ Generates optimised HTML, CSS, JavaScript and WebAssembly output.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// Use a configured output directory if not explicitly provided as a flag
 		if !cmd.Flags().Changed("output") && projectConfig != nil {
-			outputDir = projectConfig.Jawt.OutputDir
+			outputDir = projectConfig.Jawt.Build.Output
 		}
 
 		fmt.Printf("🔨 Building %s for production...\n", projectConfig.App.Name)

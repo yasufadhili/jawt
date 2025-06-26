@@ -2,19 +2,19 @@ grammar JML;
 
 
 jmlDocument
-    : doctypeSpecifier imports? documentContent NEWLINE* EOF
+    : doctypeSpecifier imports? documentContent EOF
 ;
 
 
 documentContent
-    : pageContent           // For pages
-    | componentContent      // For components
-    | moduleContent         // For modules (future extension)
+    : pageDefinition           // For pages
+    | componentDefinition      // For components
+    | moduleDefinition         // For modules (future extension)
 ;
 
 
 doctypeSpecifier
-    : '_doctype' doctype IDENTIFIER NEWLINE
+    : '_doctype' doctype IDENTIFIER
 ;
 
 
@@ -32,14 +32,14 @@ imports
 
 
 importStatement
-    : 'import' doctype IDENTIFIER 'from' STRING NEWLINE
-    | 'import' 'browser' NEWLINE                             // Browser API import
+    : 'import' doctype IDENTIFIER 'from' STRING
+    | 'import' 'browser'                              // Browser API import
 ;
 
 
 // Page-specific content (single child component constraint)
-pageContent
-    : 'Page' '{' NEWLINE pageBody NEWLINE? '}'
+pageDefinition
+    : 'Page' '{' pageBody '}'
 ;
 
 
@@ -54,7 +54,7 @@ pageProperties
 
 
 pageProperty
-    : IDENTIFIER ':' propertyValue NEWLINE
+    : IDENTIFIER ':' propertyValue
 ;
 
 
@@ -65,7 +65,7 @@ singleComponentChild
 
 
 // Component-specific content (can have multiple children)
-componentContent
+componentDefinition
     : componentElement
 ;
 
@@ -76,7 +76,7 @@ componentElement
 
 
 componentBlock
-    : '{' NEWLINE componentBody NEWLINE? '}'
+    : '{' componentBody '}'
 ;
 
 
@@ -86,7 +86,7 @@ componentBody
 
 
 componentProperty
-    : IDENTIFIER ':' propertyValue NEWLINE
+    : IDENTIFIER ':' propertyValue
 ;
 
 
@@ -167,7 +167,7 @@ scriptFunction
 
 
 functionDeclaration
-    : 'function' IDENTIFIER '(' parameterList? ')' ':' typeAnnotation? '{' NEWLINE functionBody NEWLINE '}'
+    : 'function' IDENTIFIER '(' parameterList? ')' ':' typeAnnotation? '{' functionBody '}'
 ;
 
 
@@ -205,27 +205,27 @@ statement
 
 
 expressionStatement
-    : expression NEWLINE
+    : expression
 ;
 
 
 returnStatement
-    : 'return' expression? NEWLINE
+    : 'return' expression?
 ;
 
 
 ifStatement
-    : 'if' '(' expression ')' '{' NEWLINE statement* '}' ('else' '{' NEWLINE statement* '}')? NEWLINE
+    : 'if' '(' expression ')' '{' statement* '}' ('else' '{' statement* '}')?
 ;
 
 
 variableDeclaration
-    : ('let' | 'const' | 'var') IDENTIFIER ':' typeAnnotation? '=' expression NEWLINE
+    : ('let' | 'const' | 'var') IDENTIFIER ':' typeAnnotation? '=' expression
 ;
 
 
 // Module content (placeholder for future extension)
-moduleContent
+moduleDefinition
     : moduleFunction+
 ;
 
@@ -283,13 +283,8 @@ TEMPLATE_LITERAL
 ;
 
 
-NEWLINE
-    : ('\r'? '\n')+
-;
-
-
 WHITESPACE
-    : [ \t]+ -> skip
+    : [ \r\n\t]+ -> skip
 ;
 
 
