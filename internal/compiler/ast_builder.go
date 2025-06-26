@@ -22,6 +22,8 @@ func (b *AstBuilder) Visit(tree antlr.ParseTree) interface{} {
 	switch ctx := tree.(type) {
 	case *parser.JmlDocumentContext:
 		return b.VisitJmlDocument(ctx)
+	case *parser.DocumentContentContext:
+		return b.VisitDocumentContent(ctx)
 	case *parser.DoctypeSpecifierContext:
 		return b.VisitDoctypeSpecifier(ctx)
 	case *parser.ImportStatementContext:
