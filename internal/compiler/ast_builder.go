@@ -19,6 +19,7 @@ func NewAstBuilder() *AstBuilder {
 }
 
 func (b *AstBuilder) Visit(tree antlr.ParseTree) interface{} {
+
 	switch ctx := tree.(type) {
 	case *parser.JmlDocumentContext:
 		return b.VisitJmlDocument(ctx)
@@ -38,11 +39,13 @@ func (b *AstBuilder) Visit(tree antlr.ParseTree) interface{} {
 		return b.VisitComponentProperty(ctx)
 	case *parser.PagePropertyContext:
 		return b.VisitPageProperty(ctx)
+	case *parser.PropertyValueContext:
+		return b.VisitPropertyValue(ctx)
 	case *parser.LiteralContext:
 		return b.VisitLiteral(ctx)
+	default:
+		return nil
 	}
-
-	return nil
 }
 
 func (b *AstBuilder) VisitJmlDocument(ctx *parser.JmlDocumentContext) interface{} {
@@ -228,10 +231,14 @@ func (b *AstBuilder) VisitComponentProperty(ctx *parser.ComponentPropertyContext
 
 func (b *AstBuilder) VisitPropertyValue(ctx *parser.PropertyValueContext) interface{} {
 	if ctx.Literal() != nil {
-		return b.Visit(ctx.Literal())
+		if literal := b.Visit(ctx.Literal()); literal != nil {
+			return literal.(*LiteralNode)
+		}
 	}
 	if ctx.ComponentElement() != nil {
-		return b.Visit(ctx.ComponentElement())
+		if element := b.Visit(ctx.ComponentElement()); element != nil {
+			return element.(*ComponentElementNode)
+		}
 	}
 	// Expression, array literal, and object literal will be handled here
 	// when those node types are implemented

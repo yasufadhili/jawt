@@ -71,6 +71,8 @@ func (c *ComponentElementNode) Accept(v ASTVisitor) interface{} {
 	return v.VisitComponentElement(c)
 }
 
+func (c *ComponentElementNode) IsPropertyValue() {}
+
 type ComponentBlockNode struct {
 }
 
