@@ -6,20 +6,21 @@ import (
 
 type Emitter struct {
 	*BaseVisitor
-	output      strings.Builder
-	document    *JMLDocumentNode
-	indentLevel int
+	output             strings.Builder
+	document           *JMLDocumentNode
+	indentLevel        int
+	componentProcessor *ComponentProcessor
 }
 
 func NewEmitter(doc *JMLDocumentNode) *Emitter {
 	return &Emitter{
-		BaseVisitor: &BaseVisitor{},
-		document:    doc,
+		BaseVisitor:        &BaseVisitor{},
+		document:           doc,
+		componentProcessor: NewComponentProcessor(),
 	}
 }
 
 func (e *Emitter) Emit() string {
-
 	e.output.Reset()
 	e.indentLevel = 0
 
@@ -39,7 +40,6 @@ func (e *Emitter) Emit() string {
 }
 
 func (e *Emitter) emitHTMLPage() {
-
 	e.write("<!DOCTYPE html>")
 	e.write("<html lang=\"en\">")
 	e.indent()
@@ -55,7 +55,6 @@ func (e *Emitter) emitHTMLPage() {
 		if title != "" {
 			e.write("<title>" + title + "</title>")
 		}
-
 	}
 
 	e.dedent()
@@ -72,7 +71,6 @@ func (e *Emitter) emitHTMLPage() {
 	e.write("</body>")
 	e.dedent()
 	e.write("</html>")
-
 }
 
 func (e *Emitter) emitPageBody(page *PageDefinitionNode) {
@@ -82,16 +80,28 @@ func (e *Emitter) emitPageBody(page *PageDefinitionNode) {
 }
 
 func (e *Emitter) emitComponentElement(component *ComponentElementNode) {
-	// Start the HTML element
-	tagName := e.getHTMLTagName(component.Name)
-	attributes := e.buildAttributes(component.Properties)
+	// Validate component
+	if errors := e.componentProcessor.ValidateComponent(component.Name, component.Properties); len(errors) > 0 {
+		// TODO: Handle validation errors appropriately
+		e.write("<!-- Warning: " + strings.Join(errors, "; ") + " -->")
+	}
 
-	if len(component.Children) == 0 {
+	// Get HTML tag name
+	tagName := e.componentProcessor.GetHTMLTag(component.Name, component.Properties)
+
+	// Build attributes
+	attributes := e.componentProcessor.BuildAttributes(component.Name, component.Properties)
+	attributeString := e.buildAttributeString(attributes)
+
+	// Check if self-closing
+	isSelfClosing := e.componentProcessor.IsSelfClosing(component.Name)
+
+	if isSelfClosing || len(component.Children) == 0 {
 		// Self-closing tag
-		e.write("<" + tagName + attributes + " />")
+		e.write("<" + tagName + attributeString + " />")
 	} else {
 		// Opening tag
-		e.write("<" + tagName + attributes + ">")
+		e.write("<" + tagName + attributeString + ">")
 		e.indent()
 
 		// Emit children
@@ -118,50 +128,15 @@ func (e *Emitter) getPageTitle(page *PageDefinitionNode) string {
 	return ""
 }
 
-func (e *Emitter) getHTMLTagName(componentName string) string {
-	// TODO: make this more sophisticated
-	switch componentName {
-	case "Button":
-		return "button"
-	case "Input":
-		return "input"
-	case "Text":
-		return "p"
-	case "Div":
-		return "div"
-	case "Header":
-		return "header"
-	case "Footer":
-		return "footer"
-	case "Nav":
-		return "nav"
-	case "Section":
-		return "section"
-	case "Article":
-		return "article"
-	case "Aside":
-		return "aside"
-	case "Main":
-		return "main"
-	default:
-		// Default to div for unknown components
-		return "div"
-	}
-}
-
-func (e *Emitter) buildAttributes(properties []*PropertyNode) string {
-	if len(properties) == 0 {
+func (e *Emitter) buildAttributeString(attributes map[string]string) string {
+	if len(attributes) == 0 {
 		return ""
 	}
 
 	var attrs []string
-	for _, prop := range properties {
-		if literal, ok := prop.Value.(*LiteralNode); ok {
-			attrName := e.mapPropertyToAttribute(prop.Name)
-			attrValue := e.formatAttributeValue(literal)
-			if attrValue != "" {
-				attrs = append(attrs, attrName+"=\""+attrValue+"\"")
-			}
+	for name, value := range attributes {
+		if value != "" {
+			attrs = append(attrs, name+"=\""+value+"\"")
 		}
 	}
 
@@ -169,22 +144,6 @@ func (e *Emitter) buildAttributes(properties []*PropertyNode) string {
 		return ""
 	}
 	return " " + strings.Join(attrs, " ")
-}
-
-func (e *Emitter) mapPropertyToAttribute(propName string) string {
-	// TODO: Improve map property names to HTML attributes
-	switch propName {
-	case "style":
-		return "class"
-	case "onClick":
-		return "onclick"
-	case "onChange":
-		return "onchange"
-	case "onSubmit":
-		return "onsubmit"
-	default:
-		return propName
-	}
 }
 
 func (e *Emitter) formatAttributeValue(literal *LiteralNode) string {
@@ -206,22 +165,22 @@ func (e *Emitter) formatAttributeValue(literal *LiteralNode) string {
 }
 
 func (e *Emitter) emitWebComponent() {
-
+	// TODO: Implement web component emission
 }
 
 // emitWasm (placeholder)
 func (e *Emitter) emitWasmModule() {
-
+	// TODO: Implement WASM module emission
 }
 
 // emitCSS (placeholder)
 func (e *Emitter) emitCSS() {
-
+	// TODO: Implement CSS emission
 }
 
 // emitJS (placeholder)
 func (e *Emitter) emitJS() {
-
+	// TODO: Implement JS emission
 }
 
 func (e *Emitter) write(s string) {
