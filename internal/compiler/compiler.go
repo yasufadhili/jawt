@@ -6,6 +6,7 @@ import (
 	parser "github.com/yasufadhili/jawt/internal/compiler/parser/generated"
 	"github.com/yasufadhili/jawt/internal/error_handler"
 	"github.com/yasufadhili/jawt/internal/project"
+	"os"
 	"strings"
 )
 
@@ -57,7 +58,30 @@ func (c *Compiler) Compile() (*CompileResult, error) {
 
 	// TODO: Symbol Collection
 	// TODO: Semantic Analysis
-	// TODO: Emit
+
+	emitter := NewEmitter(astRoot)
+	output := emitter.Emit()
+
+	outPath := c.docInfo.RelativePath
+
+	if c.docInfo.RelativePath != "/" {
+		err = os.Mkdir(outPath, os.ModePerm)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	var extension = "html"
+	switch c.FileType {
+	case "Component":
+		extension = "js"
+		break
+	}
+
+	err = os.WriteFile(outPath+c.docInfo.Name+"/."+extension, []byte(output), 0644)
+	if err != nil {
+		return nil, err
+	}
 
 	c.docInfo.Compiled = true
 	return result, nil
