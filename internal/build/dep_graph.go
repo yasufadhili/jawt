@@ -15,7 +15,7 @@ const (
 )
 
 func (ft FileType) String() string {
-	return []string{"page", "component"}[ft]
+	return []string{"Page", "Component"}[ft]
 }
 
 // File represents a source file with its dependencies
@@ -72,11 +72,6 @@ func (dg *DependencyGraph) BuildOrder() ([]string, error) {
 				return nil, err
 			}
 		}
-	}
-
-	// Reverse the result for correct build order
-	for i, j := 0, len(result)-1; i < j; i, j = i+1, j-1 {
-		result[i], result[j] = result[j], result[i]
 	}
 
 	return result, nil
@@ -199,4 +194,13 @@ func (dg *DependencyGraph) findCyclesDFS(current string, visited, stack map[stri
 
 	stack[current] = false
 	return nil
+}
+
+func reverseSlice[T any](s []T) {
+	left, right := 0, len(s)-1
+	for left < right {
+		s[left], s[right] = s[right], s[left]
+		left++
+		right--
+	}
 }

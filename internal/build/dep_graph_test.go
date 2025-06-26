@@ -190,14 +190,14 @@ func TestDependencyGraph_GetFilesByType(t *testing.T) {
 	dg := NewDependencyGraph()
 
 	dg.AddFile("app/home.jml", Page, []string{})
-	dg.AddFile("pages/about.jml", Page, []string{})
+	dg.AddFile("app/about.jml", Page, []string{})
 	dg.AddFile("components/header.jml", Component, []string{})
 	dg.AddFile("components/footer.jml", Component, []string{})
 
 	pages := dg.getFilesByType(Page)
 	components := dg.getFilesByType(Component)
 
-	expectedPages := []string{"pages/about.jml", "app/home.jml"}
+	expectedPages := []string{"app/about.jml", "app/home.jml"}
 	expectedComponents := []string{"components/footer.jml", "components/header.jml"}
 
 	sort.Strings(pages)
