@@ -28,62 +28,62 @@ type ASTVisitor interface {
 // concrete visitors and override only the methods we care about.
 type BaseVisitor struct{}
 
-func (v *BaseVisitor) Visit(node ASTNode) interface{} {
-	return node.Accept(v)
+func (v *BaseVisitor) Visit(n ASTNode) interface{} {
+	return n.Accept(v)
 }
 
-func (v *BaseVisitor) VisitDocument(node *JMLDocumentNode) interface{} {
+func (v *BaseVisitor) VisitDocument(n *JMLDocumentNode) interface{} {
 	return nil
 }
 
-func (v *BaseVisitor) VisitDoctypeSpecifier(node *DoctypeSpecifierNode) interface{} {
+func (v *BaseVisitor) VisitDoctypeSpecifier(n *DoctypeSpecifierNode) interface{} {
 	return nil
 }
 
-func (v *BaseVisitor) VisitImportStatement(node *ImportStatementNode) interface{} {
+func (v *BaseVisitor) VisitImportStatement(n *ImportStatementNode) interface{} {
 	return nil
 }
 
-func (v *BaseVisitor) VisitDocumentContent(node *DocumentContentNode) interface{} {
+func (v *BaseVisitor) VisitDocumentContent(n *DocumentContentNode) interface{} {
 	return nil
 }
 
-func (v *BaseVisitor) VisitPageDefinition(node *PageDefinitionNode) interface{} {
+func (v *BaseVisitor) VisitPageDefinition(n *PageDefinitionNode) interface{} {
 	return nil
 }
 
-func (v *BaseVisitor) VisitPageBody(node *PageBodyNode) interface{} {
+func (v *BaseVisitor) VisitPageBody(n *PageBodyNode) interface{} {
 	return nil
 }
 
-func (v *BaseVisitor) VisitPageProperty(node *PagePropertyNode) interface{} {
+func (v *BaseVisitor) VisitPageProperty(n *PagePropertyNode) interface{} {
 	return nil
 }
 
-func (v *BaseVisitor) VisitComponentDefinition(node *ComponentDefinitionNode) interface{} {
+func (v *BaseVisitor) VisitComponentDefinition(n *ComponentDefinitionNode) interface{} {
 	return nil
 }
 
-func (v *BaseVisitor) VisitComponentElement(node *ComponentElementNode) interface{} {
+func (v *BaseVisitor) VisitComponentElement(n *ComponentElementNode) interface{} {
 	return nil
 }
 
-func (v *BaseVisitor) VisitComponentBlock(node *ComponentBlockNode) interface{} {
+func (v *BaseVisitor) VisitComponentBlock(n *ComponentBlockNode) interface{} {
 	return nil
 }
 
-func (v *BaseVisitor) VisitComponentBody(node *ComponentBodyNode) interface{} {
+func (v *BaseVisitor) VisitComponentBody(n *ComponentBodyNode) interface{} {
 	return nil
 }
 
-func (v *BaseVisitor) VisitComponentProperty(node *ComponentPropertyNode) interface{} {
+func (v *BaseVisitor) VisitComponentProperty(n *ComponentPropertyNode) interface{} {
 	return nil
 }
 
-func (v *BaseVisitor) VisitPropertyValue(node *PropertyValueNode) interface{} {
+func (v *BaseVisitor) VisitPropertyValue(n *PropertyValueNode) interface{} {
 	return nil
 }
 
-func (v *BaseVisitor) VisitLiteralValue(node *LiteralValueNode) interface{} {
+func (v *BaseVisitor) VisitLiteralValue(n *LiteralValueNode) interface{} {
 	return nil
 }
