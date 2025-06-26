@@ -4,27 +4,20 @@ type ASTVisitor interface {
 	Visit(ASTNode) interface{}
 
 	VisitDocument(*JMLDocumentNode) interface{}
-
 	VisitDoctypeSpecifier(*DoctypeSpecifierNode) interface{}
 	VisitImportStatement(*ImportStatementNode) interface{}
-	VisitDocumentContent(*DocumentContentNode) interface{}
 
 	VisitPageDefinition(*PageDefinitionNode) interface{}
-	VisitPageBody(*PageBodyNode) interface{}
-	VisitPageProperty(*PagePropertyNode) interface{}
-
 	VisitComponentDefinition(*ComponentDefinitionNode) interface{}
-	VisitComponentElement(*ComponentElementNode) interface{}
-	VisitComponentBlock(*ComponentBlockNode) interface{}
-	VisitComponentBody(*ComponentBodyNode) interface{}
-	VisitComponentProperty(*ComponentPropertyNode) interface{}
 
-	VisitPropertyValue(*PropertyValueNode) interface{}
-	VisitLiteralValue(*LiteralValueNode) interface{}
+	VisitComponentElement(*ComponentElementNode) interface{}
+	VisitProperty(*PropertyNode) interface{}
+
+	VisitLiteral(*LiteralNode) interface{}
 }
 
 // BaseVisitor provides a default implementation for traversing the AST by
-// calling VisitChildren for composite nodes. We embed this in the
+// calling VisitChildren for composite nodes. We embed this in our
 // concrete visitors and override only the methods we care about.
 type BaseVisitor struct{}
 
@@ -52,14 +45,6 @@ func (v *BaseVisitor) VisitPageDefinition(n *PageDefinitionNode) interface{} {
 	return nil
 }
 
-func (v *BaseVisitor) VisitPageBody(n *PageBodyNode) interface{} {
-	return nil
-}
-
-func (v *BaseVisitor) VisitPageProperty(n *PagePropertyNode) interface{} {
-	return nil
-}
-
 func (v *BaseVisitor) VisitComponentDefinition(n *ComponentDefinitionNode) interface{} {
 	return nil
 }
@@ -80,10 +65,14 @@ func (v *BaseVisitor) VisitComponentProperty(n *ComponentPropertyNode) interface
 	return nil
 }
 
+func (v *BaseVisitor) VisitProperty(n *PropertyNode) interface{} {
+	return nil
+}
+
 func (v *BaseVisitor) VisitPropertyValue(n *PropertyValueNode) interface{} {
 	return nil
 }
 
-func (v *BaseVisitor) VisitLiteralValue(n *LiteralValueNode) interface{} {
+func (v *BaseVisitor) VisitLiteral(n *LiteralNode) interface{} {
 	return nil
 }
