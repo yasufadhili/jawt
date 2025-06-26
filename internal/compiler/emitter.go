@@ -93,15 +93,18 @@ func (e *Emitter) emitComponentElement(component *ComponentElementNode) {
 	attributes := e.componentProcessor.BuildAttributes(component.Name, component.Properties)
 	attributeString := e.buildAttributeString(attributes)
 
+	// Raw text content
+	textContent := e.componentProcessor.GetTextContent(component.Properties)
+
 	// Check if self-closing
 	isSelfClosing := e.componentProcessor.IsSelfClosing(component.Name)
 
-	if isSelfClosing || len(component.Children) == 0 {
+	if isSelfClosing || len(component.Children) == 0 && textContent == "" {
 		// Self-closing tag
 		e.write("<" + tagName + attributeString + " />")
 	} else {
 		// Opening tag
-		e.write("<" + tagName + attributeString + ">")
+		e.write("<" + tagName + attributeString + ">" + textContent)
 		e.indent()
 
 		// Emit children
