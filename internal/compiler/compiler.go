@@ -1,0 +1,187 @@
+package compiler
+
+import (
+	"fmt"
+	"github.com/antlr4-go/antlr/v4"
+	parser "github.com/yasufadhili/jawt/internal/compiler/parser/generated"
+	"github.com/yasufadhili/jawt/internal/error_handler"
+	"github.com/yasufadhili/jawt/internal/project"
+	"os"
+	"path/filepath"
+	"strings"
+)
+
+type Compiler struct {
+	parser     *Parser
+	docInfo    *project.DocumentInfo
+	FileType   string
+	tmpDirPath string
+}
+
+func NewCompiler(docInfo *project.DocumentInfo, fileType string, tempDirPath string) (*Compiler, error) {
+	if fileType != "Component" && fileType != "Page" {
+		return nil, fmt.Errorf("unsupported file type: %s", fileType)
+	}
+	return &Compiler{
+		FileType:   fileType,
+		parser:     newParser(),
+		docInfo:    docInfo,
+		tmpDirPath: tempDirPath,
+	}, nil
+}
+
+func (c *Compiler) Compile() (*CompileResult, error) {
+
+	input, err := antlr.NewFileStream(c.docInfo.AbsolutePath)
+	if err != nil {
+		return &CompileResult{
+			Success: false,
+			DocInfo: c.docInfo,
+		}, fmt.Errorf("failed to read file %s: %w", c.docInfo.AbsolutePath, err)
+	}
+
+	parseResult := c.parseFile(input)
+
+	result := &CompileResult{
+		Success:   parseResult.Success,
+		DocInfo:   c.docInfo,
+		ParseTree: parseResult.Tree,
+		Errors:    parseResult.Errors,
+	}
+
+	if !parseResult.Success {
+		fmt.Printf("❌ Parsing failed for %s with %d errors:\n", c.docInfo.Name, len(parseResult.Errors))
+		c.printErrors(parseResult.Errors)
+		return result, nil
+	}
+
+	astBuilder := NewAstBuilder()
+	astRoot := astBuilder.Visit(parseResult.Tree).(*JMLDocumentNode)
+	result.AST = astRoot
+
+	// TODO: Symbol Collection
+	// TODO: Semantic Analysis
+
+	emitter := NewEmitter(astRoot)
+	output := emitter.Emit()
+
+	outPath := c.tmpDirPath
+	if c.FileType == "Page" {
+		if c.docInfo.RelativePath == "/" {
+			c.docInfo.RelativePath = "index"
+		}
+		outPath = filepath.Join(c.tmpDirPath, c.docInfo.RelativePath+".html")
+	} else {
+		outPath = filepath.Join(c.tmpDirPath, c.docInfo.RelativePath+".js")
+		outPath = strings.ReplaceAll(outPath, ".jml", "")
+	}
+
+	outDir := filepath.Dir(outPath)
+	if err := os.MkdirAll(outDir, 0755); err != nil {
+		return nil, fmt.Errorf("failed to create output directory %s: %w", outDir, err)
+	}
+
+	osErr := os.WriteFile(outPath, []byte(output), 0644)
+	if osErr != nil {
+		return nil, osErr
+	}
+
+	c.docInfo.Compiled = true
+	return result, nil
+}
+
+// CompileResult holds the compilation result with detailed error information
+type CompileResult struct {
+	Success   bool
+	Errors    []error_handler.SyntaxError
+	AST       *JMLDocumentNode
+	ParseTree antlr.ParseTree
+	DocInfo   *project.DocumentInfo
+}
+
+// parseFile handles the actual parsing with custom error handling
+func (c *Compiler) parseFile(input antlr.CharStream) ParseResult {
+	// Reset parser state for a new file
+	c.parser.errorListener.Reset()
+	c.parser.errorStrategy.Reset()
+
+	lexer := parser.NewJMLLexer(input)
+	lexer.RemoveErrorListeners()
+	lexer.AddErrorListener(c.parser.errorListener)
+
+	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
+
+	p := parser.NewJMLParser(stream)
+	p.RemoveErrorListeners()
+	p.AddErrorListener(c.parser.errorListener)
+	p.SetErrorHandler(c.parser.errorStrategy)
+
+	tree := p.JmlDocument()
+
+	return ParseResult{
+		Success: !c.parser.errorListener.HasErrors(),
+		Errors:  c.parser.errorListener.GetErrors(),
+		Tree:    tree,
+	}
+}
+
+// ParseResult holds the result of parsing with error information
+type ParseResult struct {
+	Success bool
+	Errors  []error_handler.SyntaxError
+	Tree    antlr.ParseTree
+}
+
+type Parser struct {
+	errorListener *error_handler.SyntaxErrorListener
+	errorStrategy *error_handler.ErrorStrategy
+}
+
+// newParser creates a new parser with error handling
+func newParser() *Parser {
+	return &Parser{
+		errorListener: error_handler.NewSyntaxErrorListener(),
+		errorStrategy: error_handler.NewErrorStrategy(3), // Allow up to 3 recovery attempts
+	}
+}
+
+// printErrors displays syntax errors in a user-friendly format
+func (c *Compiler) printErrors(errors []error_handler.SyntaxError) {
+	for i, err := range errors {
+		fmt.Printf("  %d. Line %d:%d - %s\n", i+1, err.Line, err.Column, err.Message)
+		if err.Symbol != "" && err.Symbol != "<EOF>" {
+			fmt.Printf("     Near symbol: '%s'\n", err.Symbol)
+		}
+		if err.Context != "" {
+			fmt.Printf("     Context: %s\n", err.Context)
+		}
+
+		// Add suggestions if available
+		if suggestion := c.getSuggestionForError(err); suggestion != "" {
+			fmt.Printf("     💡 Suggestion: %s\n", suggestion)
+		}
+		fmt.Println()
+	}
+}
+
+// getSuggestionForError provides helpful suggestions based on error patterns
+func (c *Compiler) getSuggestionForError(err error_handler.SyntaxError) string {
+	commonMistakes := map[string]string{
+		"missing ')'":           "Try adding a closing parenthesis",
+		"missing '}'":           "Try adding a closing brace",
+		"missing '>'":           "Try adding a closing angle bracket for tag",
+		"missing ';'":           "Try adding a semicolon",
+		"extraneous input":      "Try removing the unexpected token",
+		"mismatched input":      "Check if you're using the correct syntax",
+		"no viable alternative": "Check the grammar rules for this context",
+		"missing EOF":           "There might be unclosed tags or brackets",
+	}
+
+	errorMsg := err.Message
+	for pattern, suggestion := range commonMistakes {
+		if strings.Contains(errorMsg, pattern) {
+			return suggestion
+		}
+	}
+	return "Please check your JML page syntax"
+}

@@ -3,6 +3,7 @@ package compiler
 type ASTVisitor interface {
 	Visit(ASTNode) interface{}
 	VisitDocument(*JMLDocumentNode) interface{}
+	VisitDocumentContent(*DocumentContentNode) interface{}
 	VisitDoctypeSpecifier(*DoctypeSpecifierNode) interface{}
 	VisitImportStatement(*ImportStatementNode) interface{}
 	VisitPageDefinition(*PageDefinitionNode) interface{}
@@ -42,6 +43,10 @@ func (v *BaseVisitor) VisitDoctypeSpecifier(n *DoctypeSpecifierNode) interface{}
 }
 
 func (v *BaseVisitor) VisitImportStatement(n *ImportStatementNode) interface{} {
+	return nil
+}
+
+func (v *BaseVisitor) VisitDocumentContent(n *DocumentContentNode) interface{} {
 	return nil
 }
 

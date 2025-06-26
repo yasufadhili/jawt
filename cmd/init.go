@@ -72,13 +72,15 @@ func createDefaultConfigFiles(projectDir, projectName string) error {
 
 	// Create jawt.config.json
 	jawtConfig := config.JawtConfig{
-		Port:       6500,
-		OutputDir:  "dist",
-		DevMode:    true,
-		MinifyCode: true,
-		Components: config.ComponentsConfig{
-			Path:       "components",
-			AutoImport: false,
+		Project: config.ProjectConfig{
+			Name: projectName,
+		},
+		Server: config.ServerConfig{
+			Port: 6500,
+		},
+		Build: config.BuildConfig{
+			Output: "dist",
+			Minify: true,
 		},
 	}
 

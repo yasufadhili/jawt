@@ -2,7 +2,7 @@ grammar JML;
 
 
 jmlDocument
-    : doctypeSpecifier imports? documentContent NEWLINE* EOF
+    : doctypeSpecifier imports? documentContent EOF
 ;
 
 
@@ -14,7 +14,7 @@ documentContent
 
 
 doctypeSpecifier
-    : '_doctype' doctype IDENTIFIER NEWLINE
+    : '_doctype' doctype IDENTIFIER
 ;
 
 
@@ -32,14 +32,14 @@ imports
 
 
 importStatement
-    : 'import' doctype IDENTIFIER 'from' STRING NEWLINE
-    | 'import' 'browser' NEWLINE                             // Browser API import
+    : 'import' doctype IDENTIFIER 'from' STRING
+    | 'import' 'browser'                              // Browser API import
 ;
 
 
 // Page-specific content (single child component constraint)
 pageDefinition
-    : 'Page' '{' NEWLINE pageBody NEWLINE? '}'
+    : 'Page' '{' pageBody '}'
 ;
 
 
@@ -54,7 +54,7 @@ pageProperties
 
 
 pageProperty
-    : IDENTIFIER ':' propertyValue NEWLINE
+    : IDENTIFIER ':' propertyValue
 ;
 
 
@@ -76,7 +76,7 @@ componentElement
 
 
 componentBlock
-    : '{' NEWLINE componentBody NEWLINE? '}'
+    : '{' componentBody '}'
 ;
 
 
@@ -86,7 +86,7 @@ componentBody
 
 
 componentProperty
-    : IDENTIFIER ':' propertyValue NEWLINE
+    : IDENTIFIER ':' propertyValue
 ;
 
 
@@ -167,7 +167,7 @@ scriptFunction
 
 
 functionDeclaration
-    : 'function' IDENTIFIER '(' parameterList? ')' ':' typeAnnotation? '{' NEWLINE functionBody NEWLINE '}'
+    : 'function' IDENTIFIER '(' parameterList? ')' ':' typeAnnotation? '{' functionBody '}'
 ;
 
 
@@ -205,22 +205,22 @@ statement
 
 
 expressionStatement
-    : expression NEWLINE
+    : expression
 ;
 
 
 returnStatement
-    : 'return' expression? NEWLINE
+    : 'return' expression?
 ;
 
 
 ifStatement
-    : 'if' '(' expression ')' '{' NEWLINE statement* '}' ('else' '{' NEWLINE statement* '}')? NEWLINE
+    : 'if' '(' expression ')' '{' statement* '}' ('else' '{' statement* '}')?
 ;
 
 
 variableDeclaration
-    : ('let' | 'const' | 'var') IDENTIFIER ':' typeAnnotation? '=' expression NEWLINE
+    : ('let' | 'const' | 'var') IDENTIFIER ':' typeAnnotation? '=' expression
 ;
 
 
@@ -283,13 +283,8 @@ TEMPLATE_LITERAL
 ;
 
 
-NEWLINE
-    : ('\r'? '\n')+
-;
-
-
 WHITESPACE
-    : [ \t]+ -> skip
+    : [ \r\n\t]+ -> skip
 ;
 
 
