@@ -12,9 +12,7 @@ TOOLS_DIR="$PROJECT_ROOT/tools"
 
 INTERNAL_DIR="$PROJECT_ROOT/internal"
 
-PC_DIR="$INTERNAL_DIR/page_compiler"
-
-CC_DIR="$INTERNAL_DIR/component_compiler"
+COMPILER_DIR="$INTERNAL_DIR/page_compiler"
 
 BUILD_DIR="$PROJECT_ROOT/build"
 
@@ -51,31 +49,16 @@ mkdir -p "$BIN_DIR"
 
 
 
-print_step "Generating Page Compiler Parser"
-if [ -f "$PC_DIR/parser/generate.sh" ]; then
-    (cd "$PC_DIR/parser" && ./generate.sh)
-    if [ $? -ne 0 ]; then
-        print_error "Failed to generate Page Compiler parser"
-        exit 1
-    fi
-    print_success "Page Compiler parser generated successfully"
-else
-    print_error "Page Compiler generate script not found at $PC_DIR/parser/generate.sh"
-    exit 1
-fi
-
-
-
-print_step "Generating Component Compiler Parser"
-if [ -f "$CC_DIR/parser/generate.sh" ]; then
-    (cd "$CC_DIR/parser" && ./generate.sh)
+print_step "Generating Compiler Parser"
+if [ -f "$COMPILER_DIR/parser/generate.sh" ]; then
+    (cd "$COMPILER_DIR/parser" && ./generate.sh)
     if [ $? -ne 0 ]; then
         print_error "Failed to generate Component Compiler parser"
         exit 1
     fi
     print_success "Component Compiler parser generated successfully"
 else
-    print_error "Component Compiler generate script not found at $CC_DIR/parser/generate.sh"
+    print_error "Component Compiler generate script not found at $COMPILER_DIR/parser/generate.sh"
     exit 1
 fi
 
