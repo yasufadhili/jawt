@@ -92,7 +92,15 @@ func (cm *CompilerManager) compilePage(page *project.PageInfo) error {
 		return err
 	}
 
-	fmt.Println(res)
+	if !res.Success {
+		// Handle syntax errors
+		fmt.Printf("Found %d syntax errors\n", len(res.Errors))
+		for _, err := range res.Errors {
+			fmt.Errorf(err.Error())
+		}
+		return fmt.Errorf("compilation failed")
+	}
+
 	return nil
 }
 
