@@ -18,10 +18,10 @@ Write your application structure and behaviour using **JML**, a domain-specific 
 
 **Useful links to understand the Toolchain**
 
-- [Getting Started](docs/tutorial) — Quick tutorial on Jawt
-- [Documentation](docs/jawt) — Build and use Jawt apps
-- [Architecture](docs/architecture) — How Jawt handles pages, components, modules and more
-- [JML](docs/jml) — Jawt's DSL for app development
+- [Getting Started](https://yasufadhili.github.io/jawt/) — Quick tutorial on Jawt
+- [Documentation](https://yasufadhili.github.io/jawt/) — Build and use Jawt apps
+- [Architecture](https://yasufadhili.github.io/jawt/) — How Jawt handles pages, components, modules and more
+- [JML](https://yasufadhili.github.io/jawt/) — Jawt's DSL for app development
 - [Jawt CLI](CLI.MD) — Useful commands when working with Jawt
 - [Building](BUILDING.MD) this source code
 
