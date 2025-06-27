@@ -41,3 +41,5 @@ vendor/
 /build/
 
 gen/
+
+venv/

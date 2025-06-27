@@ -19,5 +19,8 @@ jobs:
         with:
           go-version: '1.24'
 
+      - name: Setup Parser
+        run: make generate-parser
+
       - name: Run tests
         run: make test
