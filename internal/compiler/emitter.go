@@ -60,6 +60,8 @@ func (e *Emitter) emitHTMLPage() {
 	e.dedent()
 	e.write("</head>")
 
+	e.write("<style>@keyframes rocket-launch { 0% { transform: translateY(0px) scale(1); }  25% { transform: translateY(-10px) scale(1.05); }  50% { transform: translateY(-20px) scale(1.1); }  75% { transform: translateY(-15px) scale(1.05); }100% { transform: translateY(-5px) scale(1); }}@keyframes pulse-glow {0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; }} @keyframes slide-up {0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); }} .rocket-launch { animation: rocket-launch 2s ease-out infinite; } .pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }.slide-up { animation: slide-up 0.8s ease-out forwards; } .slide-up-delay-1 { animation: slide-up 0.8s ease-out 0.2s forwards; opacity: 0; }.slide-up-delay-2 { animation: slide-up 0.8s ease-out 0.4s forwards; opacity: 0; }.slide-up-delay-3 { animation: slide-up 0.8s ease-out 0.6s forwards; opacity: 0; }</style>")
+
 	e.write("<body>")
 	e.indent()
 
@@ -93,15 +95,18 @@ func (e *Emitter) emitComponentElement(component *ComponentElementNode) {
 	attributes := e.componentProcessor.BuildAttributes(component.Name, component.Properties)
 	attributeString := e.buildAttributeString(attributes)
 
+	// Raw text content
+	textContent := e.componentProcessor.GetTextContent(component.Properties)
+
 	// Check if self-closing
 	isSelfClosing := e.componentProcessor.IsSelfClosing(component.Name)
 
-	if isSelfClosing || len(component.Children) == 0 {
+	if isSelfClosing || len(component.Children) == 0 && textContent == "" {
 		// Self-closing tag
 		e.write("<" + tagName + attributeString + " />")
 	} else {
 		// Opening tag
-		e.write("<" + tagName + attributeString + ">")
+		e.write("<" + tagName + attributeString + ">" + textContent)
 		e.indent()
 
 		// Emit children

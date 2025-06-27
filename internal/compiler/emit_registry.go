@@ -572,6 +572,9 @@ func (cp *ComponentProcessor) BuildAttributes(componentName string, properties [
 
 	// Process-component-specific attributes
 	for _, prop := range properties {
+		if prop.Name == "text" {
+			continue
+		}
 		if attrDef, exists := comp.Attributes[prop.Name]; exists {
 			switch attrDef.HTMLAttr {
 			case "class":
@@ -637,6 +640,19 @@ func (cp *ComponentProcessor) ValidateComponent(componentName string, properties
 }
 
 // Helper methods
+
+func (cp *ComponentProcessor) GetTextContent(properties []*PropertyNode) string {
+	for _, prop := range properties {
+		if prop.Name == "text" {
+			if literal, ok := prop.Value.(*LiteralNode); ok {
+				if str, ok := literal.Value.(string); ok {
+					return str
+				}
+			}
+		}
+	}
+	return ""
+}
 
 func (cp *ComponentProcessor) getVariantClasses(componentName string, properties []*PropertyNode) []string {
 	variant := cp.getStringProperty(properties, "variant")
