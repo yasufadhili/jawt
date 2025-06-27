@@ -22,9 +22,6 @@ jobs:
       - name: Install cross-compilers
         run: sudo apt-get update && sudo apt-get install -y gcc-mingw-w64
 
-      - name: Cache Go modules
-        uses: actions/cache@v4
-
       - name: Build Linux amd64
         run: make build-linux-amd64
 
