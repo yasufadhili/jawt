@@ -4,3 +4,22 @@ theme:
   locale: en
   color_mode: auto
   user_color_mode_toggle: true
+
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - Tutorial:
+    - First Page: tutorial/first-page.md
+    - Project Structure: tutorial/project-structure.md
+  - JML:
+    - Pages: jml/pages.md
+    - Components: jml/components.md
+    - Modules: jml/modules.md
+    - Scripts: jml/scripts.md
+  - Architecture:
+    - CLI Reference: cli/index.md
+    - Inbuilt Components: architecture/inbuilt-components.md
+    - Configuration: architecture/configuration.md
+  - Resources:
+    - Contributing: contributing.md
+    - FAQ: faq.md

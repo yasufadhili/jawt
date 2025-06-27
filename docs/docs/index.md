@@ -1,4 +1,4 @@
-# Just Another Web Tool (JAWT)
+# Just Another Web Tool
 
 **JAWT is a web development toolchain that enables building minimal, performant web applications using a declarative approach.**
 
@@ -191,6 +191,6 @@ Ready to start building with JAWT? Here's where to go next:
 
 ### Resources
 - **[Examples](examples/index.md)** - Sample applications and patterns
-- **[Migration Guide](migration/index.md)** - Moving from other frameworks
+- **[Migration Guide](migration/index.md)** - Moving from other tools
 - **[FAQ](faq/index.md)** - Common questions and solutions
 - **[Contributing](contributing/index.md)** - Help improve JAWT
