@@ -46,3 +46,5 @@ All parts of the Jawt Toolchain are licensed under the [MIT Licence](LICENSE).
 [![Build and Deploy Docs](https://github.com/yasufadhili/jawt/actions/workflows/docs.yml/badge.svg)](https://github.com/yasufadhili/jawt/actions/workflows/docs.yml)
 
 [![pages-build-deployment](https://github.com/yasufadhili/jawt/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/yasufadhili/jawt/actions/workflows/pages/pages-build-deployment)
+
+[![Release JAWT Binaries](https://github.com/yasufadhili/jawt/actions/workflows/release.yml/badge.svg)](https://github.com/yasufadhili/jawt/actions/workflows/release.yml)
