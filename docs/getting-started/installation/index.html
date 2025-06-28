@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Installation - Jawt</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../css/brands.min.css" rel="stylesheet">
+        <link href="../../css/solid.min.css" rel="stylesheet">
+        <link href="../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" disabled>
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">Jawt</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Getting Started</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="./" class="dropdown-item active" aria-current="page">Installation</a>
+</li>
+                                    
+<li>
+    <a href="../../tutorial/first-page/" class="dropdown-item">First Page</a>
+</li>
+                                    
+<li>
+    <a href="../project-structure/" class="dropdown-item">Project Structure</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">JML</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../jml/" class="dropdown-item">Overview</a>
+</li>
+                                    
+<li>
+    <a href="../../jml/pages/" class="dropdown-item">Pages</a>
+</li>
+                                    
+<li>
+    <a href="../../jml/components/" class="dropdown-item">Components</a>
+</li>
+                                    
+<li>
+    <a href="../../jml/modules/" class="dropdown-item">Modules</a>
+</li>
+                                    
+<li>
+    <a href="../../jml/scripts.md" class="dropdown-item">Scripts</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Architecture</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../architecture/" class="dropdown-item">Jawt Architecture</a>
+</li>
+                                    
+<li>
+    <a href="../../architecture/configuration/" class="dropdown-item">Configuration</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">References</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../references/pages/" class="dropdown-item">Pages</a>
+</li>
+                                    
+<li>
+    <a href="../../references/components/" class="dropdown-item">Components</a>
+</li>
+                                    
+<li>
+    <a href="../../references/cli/" class="dropdown-item">CLI</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">API</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../api/" class="dropdown-item">Overview</a>
+</li>
+                                    
+<li>
+    <a href="../../api/browser/" class="dropdown-item">Browser</a>
+</li>
+                                    
+<li>
+    <a href="../../api/state/" class="dropdown-item">State</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Resources</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../resources/contributing/" class="dropdown-item">Contributing</a>
+</li>
+                                    
+<li>
+    <a href="../../resources/faq/" class="dropdown-item">FAQ</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../.." class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../../tutorial/first-page/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown">
+                              <button id="theme-menu" aria-expanded="false" data-bs-toggle="dropdown" data-bs-display="static" aria-label="Toggle theme" class="nav-link dropdown-toggle">
+                                <i class="fa-solid fa-circle-half-stroke fa-fw"></i>
+                                <span class="d-lg-none ms-2">Toggle theme</span>
+                              </button>
+                              <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                  <button class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
+                                    <i class="fa-solid fa-sun fa-fw"></i>
+                                    <span class="ms-2">Light</span>
+                                    <i class="fa-solid fa-check ms-auto d-none"></i>
+                                  </button>
+                                </li>
+                                <li>
+                                  <button class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="false">
+                                    <i class="fa-solid fa-moon fa-fw"></i>
+                                    <span class="ms-2">Dark</span>
+                                    <i class="fa-solid fa-check ms-auto d-none"></i>
+                                  </button>
+                                </li>
+                                <li>
+                                  <button class="dropdown-item d-flex align-items-center" data-bs-theme-value="auto" aria-pressed="true">
+                                    <i class="fa-solid fa-circle-half-stroke fa-fw"></i>
+                                    <span class="ms-2">Auto</span>
+                                    <i class="fa-solid fa-check ms-auto"></i>
+                                  </button>
+                                </li>
+                              </ul>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <script src="../../js/darkmode.js"></script>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#installation-setup" class="nav-link">Installation &amp; Setup</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#quick-installation" class="nav-link">Quick Installation</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#verify-installation" class="nav-link">Verify Installation</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#system-requirements" class="nav-link">System Requirements</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#troubleshooting" class="nav-link">Troubleshooting</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#manual-installation" class="nav-link">Manual Installation</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#development-environment-setup" class="nav-link">Development Environment Setup</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#configuration" class="nav-link">Configuration</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#updating-jawt" class="nav-link">Updating JAWT</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#uninstalling-jawt" class="nav-link">Uninstalling JAWT</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#next-steps" class="nav-link">Next Steps</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="installation-setup">Installation &amp; Setup</h1>
+<p>Getting JAWT up and running is straightforward. Choose your platform below and follow the simple installation steps.</p>
+<h2 id="quick-installation">Quick Installation</h2>
+<h3 id="linux-macos-soon">Linux &amp; macOS (Soon)</h3>
+<p>Install JAWT with a single command that automatically downloads and configures everything:</p>
+<pre><code class="language-bash">curl -fsSL https://raw.githubusercontent.com/yasufadhili/jawt/main/install.sh | sudo bash
+</code></pre>
+<p>This script will:</p>
+<ul>
+<li>Detect your system architecture automatically</li>
+<li>Download the latest JAWT release for your platform</li>
+<li>Install JAWT to the appropriate system directory</li>
+<li>Configure your PATH environment variable</li>
+<li>Set up all necessary permissions</li>
+</ul>
+<h3 id="windows-soon">Windows (Soon)</h3>
+<p>Download and run the MSI installer:</p>
+<p><strong><a href="#">Download JAWT for Windows</a></strong></p>
+<p>The installer will:</p>
+<ul>
+<li>Install JAWT to <code>Program Files</code></li>
+<li>Add JAWT to your system PATH</li>
+<li>Create Start Menu shortcuts</li>
+<li>Set up file associations for <code>.jml</code> files</li>
+</ul>
+<h2 id="verify-installation">Verify Installation</h2>
+<p>Once installed, verify JAWT is working correctly by checking the version:</p>
+<pre><code class="language-bash">jawt --version
+</code></pre>
+<p>You should see output similar to:</p>
+<pre><code>JAWT v0.1.0
+Platform: linux/amd64
+</code></pre>
+<h2 id="system-requirements">System Requirements</h2>
+<p>JAWT has minimal system requirements and works on:</p>
+<h3 id="supported-platforms">Supported Platforms</h3>
+<ul>
+<li><strong>Linux</strong>: x64, ARM64 (Ubuntu 18.04+, CentOS 7+, Debian 9+)</li>
+<li><strong>macOS</strong>: x64, Apple Silicon (macOS 10.15+)</li>
+<li><strong>Windows</strong>: x64, ARM64 (Windows 10+, Windows Server 2019+)</li>
+</ul>
+<h3 id="dependencies">Dependencies</h3>
+<ul>
+<li><strong>No external dependencies required</strong> - JAWT is a single binary</li>
+<li><strong>Modern browser</strong> for development server (Firefox, Edge, Chrome, Safari)</li>
+<li><strong>Text editor</strong> of your choice (VS Code, Vim, Emacs, etc.)</li>
+</ul>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="permission-issues-linuxmacos">Permission Issues (Linux/macOS)</h3>
+<p>If you encounter permission errors, ensure you're running the install script with <code>sudo</code>:</p>
+<pre><code class="language-bash">curl -fsSL https://raw.githubusercontent.com/yasufadhili/jawt/main/install.sh | sudo bash
+</code></pre>
+<h3 id="command-not-found">Command Not Found</h3>
+<p>If <code>jawt --version</code> returns "command not found":</p>
+<p><strong>Linux/macOS</strong>: Restart your terminal or run:</p>
+<pre><code class="language-bash">source ~/.bashrc  # or ~/.zshrc if using zsh
+</code></pre>
+<p><strong>Windows</strong>: Restart Command Prompt or PowerShell</p>
+<h3 id="firewallantivirus-warnings">Firewall/Antivirus Warnings</h3>
+<p>Some antivirus software may flag the installer. JAWT is safe to install - you can:
+- Add an exception for the JAWT installer
+- Download directly from GitHub releases if needed
+- Build from source if you prefer (see Contributing guide)</p>
+<h2 id="manual-installation">Manual Installation</h2>
+<p>If you prefer manual installation or need a specific version:</p>
+<ol>
+<li>Visit the <a href="https://github.com/yasufadhili/jawt/releases">JAWT releases page</a></li>
+<li>Download the appropriate archive for your platform</li>
+<li>Extract the <code>jawt</code> binary to a directory in your PATH</li>
+<li>Make the binary executable (Linux/macOS): <code>chmod +x jawt</code></li>
+</ol>
+<h2 id="development-environment-setup">Development Environment Setup</h2>
+<p>JAWT currently has no support in any major text editor or IDE. You can still just write JML code in any text editor</p>
+<h2 id="configuration">Configuration</h2>
+<p>JAWT works with zero configuration, but you can customise behaviour:</p>
+<h3 id="global-configuration">Global Configuration</h3>
+<p>JAWT looks for configuration in:</p>
+<ul>
+<li>
+<p><code>~/.jawt/config.json</code> (Linux/macOS)</p>
+</li>
+<li>
+<p><code>%APPDATA%\jawt\config.json</code> (Windows)</p>
+</li>
+</ul>
+<h3 id="project-configuration">Project Configuration</h3>
+<p>Each project can have its own <code>jawt.config.json</code> file for project-specific settings.</p>
+<h2 id="updating-jawt">Updating JAWT</h2>
+<h3 id="automatic-updates">Automatic Updates</h3>
+<p>JAWT can update itself:</p>
+<pre><code class="language-bash">jawt update
+</code></pre>
+<h3 id="manual-updates">Manual Updates</h3>
+<p>Re-run the installation script to get the latest version:</p>
+<p><strong>Linux/macOS</strong>:</p>
+<pre><code class="language-bash">curl -fsSL https://raw.githubusercontent.com/yasufadhili/jawt/main/install.sh | sudo bash
+</code></pre>
+<p><strong>Windows</strong>: Download and run the latest MSI installer</p>
+<h2 id="uninstalling-jawt">Uninstalling JAWT</h2>
+<h3 id="linuxmacos">Linux/macOS</h3>
+<pre><code class="language-bash">sudo rm /usr/local/bin/jawt
+sudo rm -rf ~/.jawt
+</code></pre>
+<h3 id="windows">Windows</h3>
+<p>Use "Add or Remove Programs" in Windows Settings, or run:</p>
+<pre><code class="language-powershell">jawt uninstall
+</code></pre>
+<h2 id="next-steps">Next Steps</h2>
+<p>Now that JAWT is installed, you're ready to start building:</p>
+<ul>
+<li><strong><a href="../../tutorial/first-page/">Create Your First Project</a></strong> - Build a simple JAWT application from scratch</li>
+<li><strong><a href="../project-structure/">Project Structure</a></strong> - Understand how JAWT projects are organised</li>
+<li><strong><a href="../../jml/">JML Quick Start</a></strong> - Learn the basics of JML syntax</li>
+<li><strong><a href="../../references/cli/">CLI Reference</a></strong> - Explore all available JAWT commands</li>
+</ul></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

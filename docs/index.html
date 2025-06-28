@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="None">
+        
+        
+        <link rel="shortcut icon" href="img/favicon.ico">
+        <title>Jawt</title>
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/fontawesome.min.css" rel="stylesheet">
+        <link href="css/brands.min.css" rel="stylesheet">
+        <link href="css/solid.min.css" rel="stylesheet">
+        <link href="css/v4-font-face.min.css" rel="stylesheet">
+        <link href="css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" disabled>
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body class="homepage">
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href=".">Jawt</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="." class="nav-link active" aria-current="page">Home</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Getting Started</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="getting-started/installation/" class="dropdown-item">Installation</a>
+</li>
+                                    
+<li>
+    <a href="tutorial/first-page/" class="dropdown-item">First Page</a>
+</li>
+                                    
+<li>
+    <a href="getting-started/project-structure/" class="dropdown-item">Project Structure</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">JML</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="jml/" class="dropdown-item">Overview</a>
+</li>
+                                    
+<li>
+    <a href="jml/pages/" class="dropdown-item">Pages</a>
+</li>
+                                    
+<li>
+    <a href="jml/components/" class="dropdown-item">Components</a>
+</li>
+                                    
+<li>
+    <a href="jml/modules/" class="dropdown-item">Modules</a>
+</li>
+                                    
+<li>
+    <a href="jml/scripts.md" class="dropdown-item">Scripts</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Architecture</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="architecture/" class="dropdown-item">Jawt Architecture</a>
+</li>
+                                    
+<li>
+    <a href="architecture/configuration/" class="dropdown-item">Configuration</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">References</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="references/pages/" class="dropdown-item">Pages</a>
+</li>
+                                    
+<li>
+    <a href="references/components/" class="dropdown-item">Components</a>
+</li>
+                                    
+<li>
+    <a href="references/cli/" class="dropdown-item">CLI</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">API</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="api/" class="dropdown-item">Overview</a>
+</li>
+                                    
+<li>
+    <a href="api/browser/" class="dropdown-item">Browser</a>
+</li>
+                                    
+<li>
+    <a href="api/state/" class="dropdown-item">State</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Resources</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="resources/contributing/" class="dropdown-item">Contributing</a>
+</li>
+                                    
+<li>
+    <a href="resources/faq/" class="dropdown-item">FAQ</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" class="nav-link disabled">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="getting-started/installation/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown">
+                              <button id="theme-menu" aria-expanded="false" data-bs-toggle="dropdown" data-bs-display="static" aria-label="Toggle theme" class="nav-link dropdown-toggle">
+                                <i class="fa-solid fa-circle-half-stroke fa-fw"></i>
+                                <span class="d-lg-none ms-2">Toggle theme</span>
+                              </button>
+                              <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                  <button class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
+                                    <i class="fa-solid fa-sun fa-fw"></i>
+                                    <span class="ms-2">Light</span>
+                                    <i class="fa-solid fa-check ms-auto d-none"></i>
+                                  </button>
+                                </li>
+                                <li>
+                                  <button class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="false">
+                                    <i class="fa-solid fa-moon fa-fw"></i>
+                                    <span class="ms-2">Dark</span>
+                                    <i class="fa-solid fa-check ms-auto d-none"></i>
+                                  </button>
+                                </li>
+                                <li>
+                                  <button class="dropdown-item d-flex align-items-center" data-bs-theme-value="auto" aria-pressed="true">
+                                    <i class="fa-solid fa-circle-half-stroke fa-fw"></i>
+                                    <span class="ms-2">Auto</span>
+                                    <i class="fa-solid fa-check ms-auto"></i>
+                                  </button>
+                                </li>
+                              </ul>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <script src="js/darkmode.js"></script>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#just-another-web-tool" class="nav-link">Just Another Web Tool</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#what-is-jawt" class="nav-link">What is JAWT?</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#understanding-jml" class="nav-link">Understanding JML</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#development-workflow" class="nav-link">Development Workflow</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#architecture-philosophy" class="nav-link">Architecture Philosophy</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#quick-start-example" class="nav-link">Quick Start Example</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#browser-support" class="nav-link">Browser Support</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#next-steps" class="nav-link">Next Steps</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="just-another-web-tool">Just Another Web Tool</h1>
+<p><strong>JAWT is a web development toolchain that enables building minimal, performant web applications using a declarative approach.</strong></p>
+<p>Write your applications using <strong>JML</strong>, a domain-specific language that compiles to optimised web standards—HTML for pages, JavaScript for interactive components, and WebAssembly for performance-critical modules.</p>
+<h2 id="what-is-jawt">What is JAWT?</h2>
+<p>JAWT provides a unified development experience through its intelligent compilation system. Instead of juggling multiple technologies and build configurations, you write everything in JML and let JAWT handle the complexity of modern web development.</p>
+<h3 id="key-features">Key Features</h3>
+<ul>
+<li><strong>Single Language, Multiple Targets</strong>: Write JML code that compiles to HTML, JavaScript, and WebAssembly as needed</li>
+<li><strong>Component-Driven Architecture</strong>: Build reusable components with clear interfaces and composition patterns</li>
+<li><strong>Zero Configuration</strong>: Works out of the box with sensible defaults whilst remaining customisable</li>
+<li><strong>Hot Module Replacement</strong>: See changes instantly during development with intelligent reloading</li>
+<li><strong>Optimised Builds</strong>: Automatic code splitting, tree shaking, and performance optimisation</li>
+<li><strong>Type Safety</strong>: Leverage TypeScript-like type checking for robust applications</li>
+</ul>
+<h2 id="understanding-jml">Understanding JML</h2>
+<p>JML combines the structural clarity of markup languages with TypeScript-like scripting capabilities. Every JML file begins with a document type declaration that determines its compilation target:</p>
+<pre><code class="language-jml">_doctype page home          // Compiles to HTML document
+_doctype component Button   // Compiles to JavaScript web component  
+_doctype module calculator  // Compiles to WebAssembly module
+</code></pre>
+<h3 id="document-types-explained">Document Types Explained</h3>
+<p><strong>Pages</strong> define complete web pages with metadata and structure. They compile to HTML documents and serve as your application's entry points:</p>
+<pre><code class="language-jml">_doctype page dashboard
+
+import component Layout from &quot;components/layout&quot;
+
+Page {
+    title: &quot;Dashboard - My App&quot;
+    description: &quot;Application dashboard with analytics&quot;
+
+    Layout {
+        section: &quot;dashboard&quot;
+        showSidebar: true
+    }
+}
+</code></pre>
+<p><strong>Components</strong> encapsulate reusable UI elements with properties, state, and event handling. They compile to modern JavaScript web components:</p>
+<pre><code class="language-jml">_doctype component UserCard
+
+Container {
+    style: &quot;bg-white shadow-md rounded-lg p-6&quot;
+
+    Text {
+        content: props.userName
+        style: &quot;text-xl font-semibold text-gray-800&quot;
+    }
+
+    Button {
+        text: &quot;View Profile&quot;
+        onClick: () =&gt; navigateToProfile(props.userId)
+        style: &quot;mt-4 bg-blue-500 text-white px-4 py-2 rounded&quot;
+    }
+}
+</code></pre>
+<p><strong>Modules</strong> handle computational logic and performance-critical operations. They compile to WebAssembly for near-native performance:</p>
+<pre><code class="language-jml">_doctype module imageProcessor
+
+export function processImage(data: ImageData): ImageData {
+    // Heavy image processing logic
+    return optimiseImage(data)
+}
+
+function optimiseImage(data: ImageData): ImageData {
+    // WebAssembly-optimised processing
+}
+</code></pre>
+<h2 id="development-workflow">Development Workflow</h2>
+<p>JAWT's CLI provides everything you need to build applications efficiently:</p>
+<ol>
+<li><strong>Create</strong> a new project: <code>jawt init my-app</code></li>
+<li><strong>Develop</strong> with hot reload: <code>jawt run</code></li>
+<li><strong>Build</strong> for production: <code>jawt build</code></li>
+<li><strong>Debug</strong> when needed: <code>jawt debug</code></li>
+</ol>
+<p>The unified compiler handles all document types intelligently, resolving dependencies across your entire application and generating optimised output for each target.</p>
+<h2 id="architecture-philosophy">Architecture Philosophy</h2>
+<p>JAWT follows a clear separation of concerns:</p>
+<ul>
+<li><strong>Pages</strong> handle structure and routing</li>
+<li><strong>Components</strong> manage user interaction and state</li>
+<li><strong>Modules</strong> provide computational performance</li>
+</ul>
+<p>This architecture enables optimal loading strategies—pages load instantly, components activate when needed, and modules execute computations at near-native speed.</p>
+<h2 id="quick-start-example">Quick Start Example</h2>
+<p>Here's a complete JAWT application structure:</p>
+<pre><code>my-app/
+├── app/
+│   ├── index.jml              # Home page
+│   └── about/index.jml        # About page  
+├── components/
+│   ├── layout.jml             # Shared layout
+│   └── user-card.jml          # Reusable component
+└── modules/
+    └── analytics.jml          # Performance module
+</code></pre>
+<p><strong>Page</strong> (<code>app/index.jml</code>):</p>
+<pre><code class="language-jml">_doctype page home
+
+import component Layout from &quot;components/layout&quot;
+
+Page {
+    title: &quot;Welcome to My App&quot;
+
+    Layout {
+        showWelcome: true
+    }
+}
+</code></pre>
+<p><strong>Component</strong> (<code>components/layout.jml</code>):</p>
+<pre><code class="language-jml">_doctype component Layout
+
+import module analytics from &quot;modules/analytics&quot;
+
+Container {
+    style: &quot;min-h-screen bg-gray-50&quot;
+
+    Header {
+        style: &quot;bg-white shadow-sm p-4&quot;
+
+        if (props.showWelcome) {
+            Text {
+                content: &quot;Welcome!&quot;
+                style: &quot;text-2xl font-bold&quot;
+            }
+        }
+    }
+
+    onClick: () =&gt; analytics.trackPageView()
+}
+</code></pre>
+<h2 id="browser-support">Browser Support</h2>
+<p>JAWT generates modern web standards that work across all current browsers:</p>
+<ul>
+<li><strong>HTML5</strong>: Semantic, accessible markup</li>
+<li><strong>ES2020+</strong>: Modern JavaScript with automatic polyfills</li>
+<li><strong>WebAssembly</strong>: Supported in all major browsers since 2017</li>
+<li><strong>CSS Grid/Flexbox</strong>: Modern layout with Tailwind CSS integration</li>
+</ul>
+<h2 id="next-steps">Next Steps</h2>
+<p>Ready to start building with JAWT? Here's where to go next:</p>
+<h3 id="getting-started">Getting Started</h3>
+<ul>
+<li><strong><a href="getting-started/installation/">Installation &amp; Setup</a></strong> - Install JAWT and create your first project</li>
+<li><strong><a href="tutorial/first-page/">Tutorial</a></strong> - Build a simple application step by step</li>
+<li><strong><a href="getting-started/project-structure/">Project Structure</a></strong> - Understand how JAWT projects are organised</li>
+</ul>
+<h3 id="language-reference">Language Reference</h3>
+<ul>
+<li><strong><a href="jml/syntax/">JML Syntax</a></strong> - Complete JML language specification</li>
+<li><strong><a href="jml/pages/">Pages</a></strong> - Creating pages and handling routing</li>
+<li><strong><a href="jml/components/">Components</a></strong> - Building interactive components</li>
+<li><strong><a href="jml/modules/">Modules</a></strong> - Using modules for computational logic</li>
+<li><strong><a href="jml/scripts.md">Scripts</a></strong> - Writing scripts for interacting with components</li>
+</ul>
+<h3 id="advanced-topics">Advanced Topics</h3>
+<ul>
+<li><strong><a href="architecture/">Architecture</a></strong> - Understanding JAWT's compilation system</li>
+<li><strong><a href="references/cli/">CLI Reference</a></strong> - Complete command-line interface guide</li>
+<li><strong><a href="architecture/configuration/">Configuration</a></strong> - Customising your build process</li>
+<li><strong><a href="deployment/">Deployment</a></strong> - Publishing your applications (Soon)</li>
+</ul>
+<h3 id="resources">Resources</h3>
+<ul>
+<li><strong><a href="examples/index.md">Examples</a></strong> - Sample applications and patterns</li>
+<li><strong><a href="resources/migration/">Migration Guide</a></strong> - Moving from other tools</li>
+<li><strong><a href="resources/faq/">FAQ</a></strong> - Common questions and solutions</li>
+<li><strong><a href="contributing/">Contributing</a></strong> - Help improve JAWT</li>
+</ul></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = ".",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="js/base.js"></script>
+        <script src="search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
+
+<!--
+MkDocs version : 1.6.1
+Build Date UTC : 2025-06-28 07:02:55.113268+00:00
+-->
