@@ -7,8 +7,8 @@ theme:
 
 nav:
   - Home: index.md
-  - Installation: installation.md
-  - Tutorial:
+  - Getting Started:
+    - Installation: getting-started/installation.md
     - First Page: tutorial/first-page.md
     - Project Structure: getting-started/project-structure.md
   - JML:
