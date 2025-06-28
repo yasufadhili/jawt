@@ -24,6 +24,10 @@ nav:
     - Pages: references/pages.md
     - Components: references/components.md
     - CLI: references/cli.md
+  - API:
+    - Overview: api/index.md
+    - Browser: api/browser.md
+    - State: api/state.md
   - Resources:
     - Contributing: resources/contributing.md
     - FAQ: resources/faq.md
