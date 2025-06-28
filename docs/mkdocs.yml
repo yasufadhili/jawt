@@ -10,8 +10,9 @@ nav:
   - Installation: installation.md
   - Tutorial:
     - First Page: tutorial/first-page.md
-    - Project Structure: tutorial/project-structure.md
+    - Project Structure: getting-started/project-structure.md
   - JML:
+    - Overview: jml/index.md
     - Pages: jml/pages.md
     - Components: jml/components.md
     - Modules: jml/modules.md
