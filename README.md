@@ -20,9 +20,9 @@ Write your application structure and behaviour using **JML**, a domain-specific 
 
 - [Getting Started](https://yasufadhili.github.io/jawt/) — Quick tutorial on Jawt
 - [Documentation](https://yasufadhili.github.io/jawt/) — Build and use Jawt apps
-- [Architecture](https://yasufadhili.github.io/jawt/) — How Jawt handles pages, components, modules and more
-- [JML](https://yasufadhili.github.io/jawt/) — Jawt's DSL for app development
-- [Jawt CLI](CLI.MD) — Useful commands when working with Jawt
+- [Architecture](https://yasufadhili.github.io/jawt/architecture/) — How Jawt handles pages, components, modules and more
+- [JML](https://yasufadhili.github.io/jawt/jml/) — Jawt's DSL for app development
+- [Jawt CLI](https://yasufadhili.github.io/jawt/references/cli) — Useful commands when working with Jawt
 - [Building](BUILDING.MD) this source code
 
 ## Components
