@@ -1,0 +1,33 @@
+builds:
+  - env:
+      - CGO_ENABLED=0  # Disable CGO for static binaries
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    binary: jawt
+    main: ./
+    ldflags:
+      - -s -w  # Strip debug info for smaller binaries
+    hooks:
+      post:
+        - upx --best --lzma "{{ .Path }}"  # Compress binaries with UPX
+
+archives:
+  - format: binary  # Output raw binaries (no zip/tar.gz)
+    name_template: "jawt-{{ .Os }}-{{ .Arch }}{{ if .Os | eq \"windows\" }}.exe{{ end }}"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+
+release:
+  github:
+    owner: yasufadhili
+    name: jawt
