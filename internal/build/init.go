@@ -241,79 +241,12 @@ Page {
     title: "My App - Built with JAWT"
 
     Main {
-        style: "bg-gray-900 min-h-screen flex items-center justify-center overflow-hidden"
+        style: "min-h-screen bg-gray-50 flex flex-col"
 
-        // Background animated elements
-        Container {
-            style: "absolute inset-0 overflow-hidden"
-
-            Div { style: "absolute top-1/4 left-1/4 w-2 h-2 bg-blue-500 rounded-full pulse-glow" }
-            Div { style: "absolute top-3/4 right-1/4 w-1 h-1 bg-green-500 rounded-full pulse-glow" style: "animation-delay: 1s;" }
-            Div { style: "absolute top-1/2 left-1/6 w-1.5 h-1.5 bg-purple-500 rounded-full pulse-glow" style: "animation-delay: 2s;" }
-            Div { style: "absolute bottom-1/4 right-1/3 w-1 h-1 bg-yellow-500 rounded-full pulse-glow" style: "animation-delay: 1.5s;" }
-
-            // Floating geometric shapes
-            Div { style: "absolute top-1/5 right-1/5 w-8 h-8 border border-gray-700 rotate-45 rocket-launch" style: "animation-delay: 0.5s;" }
-            Div { style: "absolute bottom-1/3 left-1/5 w-6 h-6 border border-gray-600 rounded-full rocket-launch" style: "animation-delay: 1.5s;" }
-
-        }
-
-        // Main content
-        Container {
-            style: "relative z-10 text-center max-w-2xl mx-auto px-6"
-
-            Div {
-                style: "slide-up mb-8"
-
-                Div { style: "text-8xl mb-6 rocket-launch" text: "🚀" }
-            }
-
-            Heading {
-                style: "slide-up-delay-1 text-4xl md:text-5xl font-bold text-white mb-4"
-                text: "Project Initialised"
-            }
-
-            Text {
-                style: "slide-up-delay-2 text-xl text-gray-400 mb-8"
-                text: "Just Another Web Tool"
-            }
-
-            Section {
-                style: "slide-up-delay-3 bg-gray-800 border border-gray-700 rounded-lg p-4 mb-8"
-
-                Text {
-                    style: "text-gray-400 text-sm mb-2"
-                    text:  "Get started by editing"
-                }
-
-                Code {
-                    style: "text-green-400 font-mono text-lg"
-                    text: "app/index.jml"
-                }
-            }
-
-            Section {
-                style: "slide-up-delay-3 flex flex-col sm:flex-row gap-4 justify-center"
-
-                Button  {
-                    style: "bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
-                    text: "Learn More"
-                }
-
-                Button {
-                    style: "bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
-                    text: "Documentation"
-                }
-            }
-
-            Footer {
-                Text {
-                    style: "slide-up-delay-3 text-gray-500 text-sm mt-8"
-                    text: "Happy coding! 🎉"
-                }
-            }
-
-        }
+        Text {
+					style: "text-center text-gray-900"
+					text: "Hello, JAWT!"
+				}
 
     }
 }`
@@ -327,64 +260,7 @@ Page {
 
 Container {
   style: "min-h-screen bg-gray-50 flex flex-col"
-  
-  Header {
-    style: "bg-white shadow-sm border-b px-6 py-4"
-    
-    Title {
-      style: "text-2xl font-bold text-gray-900"
-      text: "JAWT Application"
-    }
-  }
-  
-  Main {
-    style: "flex-1 container mx-auto px-6 py-8"
-    
-    Section {
-      style: "max-w-2xl mx-auto text-center"
-      
-      Heading {
-        style: "text-4xl font-bold text-gray-900 mb-4"
-        text: props.content || "Hello, JAWT!"
-      }
-      
-      Paragraph {
-        style: "text-lg text-gray-600 mb-8"
-        text: "Start building your web application with JAWT's declarative approach."
-      }
-      
-      Card {
-        style: "bg-white rounded-lg shadow-md p-6 text-left"
-        
-        CardTitle {
-          style: "text-xl font-semibold text-gray-800 mb-3"
-          text: "Getting Started"
-        }
-        
-        List {
-          style: "space-y-2 text-gray-600"
-          
-          ListItem {
-            text: "Edit app/index.jml to modify this page"
-          }
-          ListItem {
-            text: "Create new components in the components/ directory"
-          }
-          ListItem {
-            text: "Add assets to the assets/ directory"
-          }
-          ListItem {
-            text: "Run 'jawt build' to build for production"
-          }
-        }
-      }
-    }
-  }
-  
-  Footer {
-    style: "bg-white border-t px-6 py-4 text-center text-gray-500"
-    text: "Built with JAWT"
-  }
+
 }
 `
 
