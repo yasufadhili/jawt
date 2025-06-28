@@ -186,7 +186,7 @@ Ready to start building with JAWT? Here's where to go next:
 
 ### Advanced Topics
 - **[Architecture](architecture/index.md)** - Understanding JAWT's compilation system
-- **[CLI Reference](architecture/cli.md)** - Complete command-line interface guide
+- **[CLI Reference](references/cli.md)** - Complete command-line interface guide
 - **[Configuration](architecture/configuration.md)** - Customising your build process
 - **[Deployment](deployment/index.md)** - Publishing your applications (Soon)
 

@@ -17,9 +17,12 @@ nav:
     - Modules: jml/modules.md
     - Scripts: jml/scripts.md
   - Architecture:
-    - CLI Reference: cli/index.md
-    - Inbuilt Components: architecture/inbuilt-components.md
+    - Jawt Architecture: architecture/index.md
     - Configuration: architecture/configuration.md
+  - References:
+    - Pages: references/pages.md
+    - Components: references/components.md
+    - CLI: references/cli.md
   - Resources:
-    - Contributing: contributing.md
-    - FAQ: faq.md
+    - Contributing: resources/contributing.md
+    - FAQ: resources/faq.md
