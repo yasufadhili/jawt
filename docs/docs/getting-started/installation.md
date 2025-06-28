@@ -152,7 +152,7 @@ jawt uninstall
 
 Now that JAWT is installed, you're ready to start building:
 
-- **[Create Your First Project](../tutorial/first-project.md)** - Build a simple JAWT application from scratch
-- **[Project Structure](project-structure.md)** - Understand how JAWT projects are organised
-- **[JML Quick Start](../jml/quick-start.md)** - Learn the basics of JML syntax
-- **[CLI Reference](../cli/index.md)** - Explore all available JAWT commands
+- **[Create Your First Project](../tutorial/first-page.md)** - Build a simple JAWT application from scratch
+- **[Project Structure](../getting-started/project-structure.md)** - Understand how JAWT projects are organised
+- **[JML Quick Start](../jml/index.md)** - Learn the basics of JML syntax
+- **[CLI Reference](../references/cli.md)** - Explore all available JAWT commands
