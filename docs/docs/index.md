@@ -174,23 +174,24 @@ Ready to start building with JAWT? Here's where to go next:
 
 ### Getting Started
 - **[Installation & Setup](getting-started/installation.md)** - Install JAWT and create your first project
-- **[Tutorial](tutorial/index.md)** - Build a simple application step by step
+- **[Tutorial](tutorial/first-page.md)** - Build a simple application step by step
 - **[Project Structure](getting-started/project-structure.md)** - Understand how JAWT projects are organised
 
 ### Language Reference
-- **[JML Syntax](jml/index.md)** - Complete JML language specification
+- **[JML Syntax](jml/syntax.md)** - Complete JML language specification
 - **[Pages](jml/pages.md)** - Creating pages and handling routing
 - **[Components](jml/components.md)** - Building interactive components
-- **[Modules](jml/modules.md)** - Writing WebAssembly modules
+- **[Modules](jml/modules.md)** - Using modules for computational logic
+- **[Scripts](jml/scripts.md)** - Writing scripts for interacting with components
 
 ### Advanced Topics
 - **[Architecture](architecture/index.md)** - Understanding JAWT's compilation system
-- **[CLI Reference](cli/index.md)** - Complete command-line interface guide
-- **[Configuration](config/index.md)** - Customising your build process
-- **[Deployment](deployment/index.md)** - Publishing your applications
+- **[CLI Reference](architecture/cli.md)** - Complete command-line interface guide
+- **[Configuration](architecture/configuration.md)** - Customising your build process
+- **[Deployment](deployment/index.md)** - Publishing your applications (Soon)
 
 ### Resources
 - **[Examples](examples/index.md)** - Sample applications and patterns
-- **[Migration Guide](migration/index.md)** - Moving from other tools
-- **[FAQ](faq/index.md)** - Common questions and solutions
+- **[Migration Guide](resources/migration.md)** - Moving from other tools
+- **[FAQ](resources/faq.md)** - Common questions and solutions
 - **[Contributing](contributing/index.md)** - Help improve JAWT
