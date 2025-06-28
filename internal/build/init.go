@@ -241,13 +241,12 @@ Page {
     title: "My App - Built with JAWT"
 
     Main {
-        style: "min-h-screen bg-gray-50 flex flex-col"
+        style: "min-h-screen bg-gray-50 flex flex-col justify-center items-center"
 
         Text {
-					style: "text-center text-gray-900"
-					text: "Hello, JAWT!"
+						style: "text-center text-gray-900 text-4xl"
+						text: "Hello, JAWT!"
 				}
-
     }
 }`
 
