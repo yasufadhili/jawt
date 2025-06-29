@@ -60,6 +60,10 @@ func (ds *DevServer) Stop() error {
 	return nil
 }
 
+func (ds *DevServer) GetAddress() string {
+	return ds.server.Addr
+}
+
 // handleRequest handles HTTP requests (placeholder)
 func (ds *DevServer) handleRequest(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "<h1>JAWT Development Server</h1>")
