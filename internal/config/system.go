@@ -35,6 +35,7 @@ type InstallPathsConfig struct {
 	Node       string
 	Npm        string
 	Tsc        string
+	Tailwind   string
 	Scrips     string
 	Components string
 	Modules    string

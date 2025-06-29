@@ -1,23 +1,21 @@
 #!/bin/bash
 
 # Jawt Installation Script
-# Supports full installation with Node.js and TypeScript or executable-only installation
+# Supports full installation with Node.js, TypeScript, and TailwindCSS or executable-only installation
 # Automatically detects system architecture, manages dependencies, and configures environment
-
+# Includes version checking to avoid unnecessary re-downloads
 
 set -euo pipefail
-
-
 
 REPO="yasufadhili/jawt"
 API_URL="https://api.github.com/repos/${REPO}/releases/latest"
 NODE_API_URL="https://nodejs.org/dist/index.json"
 
-
 JAWT_ROOT="/usr/local/jawt"
 JAWT_BIN_DIR="${JAWT_ROOT}/bin"
 JAWT_NODE_DIR="${JAWT_ROOT}/node"
 JAWT_TSC_DIR="${JAWT_ROOT}/tsc"
+JAWT_TAILWIND_DIR="${JAWT_ROOT}/tailwind"
 SYSTEM_BIN_DIR="/usr/local/bin"
 
 BINARY_NAME="jawt"
@@ -26,7 +24,6 @@ TMP_DIR=$(mktemp -d)
 # Ensure temporary directory is cleaned up on exit
 trap 'rm -rf "$TMP_DIR"' EXIT
 
-
 # Colours for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -34,34 +31,26 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Colour
 
-
-
 print_info() {
     echo -e "${BLUE}[INFO]${NC} $1"
 }
-
 
 print_success() {
     echo -e "${GREEN}[SUCCESS]${NC} $1"
 }
 
-
 print_warning() {
     echo -e "${YELLOW}[WARNING]${NC} $1"
 }
-
 
 print_error() {
     echo -e "${RED}[ERROR]${NC} $1" >&2
 }
 
-
 error_exit() {
     print_error "$1"
     exit 1
 }
-
-
 
 download_with_progress() {
     local url="$1"
@@ -73,7 +62,6 @@ download_with_progress() {
         wget --progress=bar:force:noscroll -O "$output" "$url" 2>&1 | \
         while IFS= read -r line; do
             if [[ $line =~ [0-9]+% ]]; then
-                # echo -ne "\r${BLUE}Progress:${NC} $line"
                 echo "..."
             fi
         done
@@ -84,8 +72,6 @@ download_with_progress() {
         error_exit "Neither curl nor wget is available for downloading"
     fi
 }
-
-
 
 extract_with_progress() {
     local archive="$1"
@@ -106,8 +92,6 @@ extract_with_progress() {
     fi
 }
 
-
-
 detect_platform() {
     OS=$(uname -s | tr '[:upper:]' '[:lower:]')
     ARCH=$(uname -m)
@@ -126,8 +110,6 @@ detect_platform() {
 
     print_info "Detected platform: ${OS_NAME}/${ARCH_NAME}"
 }
-
-
 
 check_dependencies() {
     print_info "Checking dependencies..."
@@ -153,14 +135,12 @@ check_dependencies() {
     print_success "All dependencies are available"
 }
 
-
-
 prompt_installation_type() {
     if [ -d "$JAWT_ROOT" ]; then
         print_warning "Jawt installation directory already exists at $JAWT_ROOT"
         echo
         echo "Installation options:"
-        echo "1) Full installation (Jawt + Jawt Node.js + Jawt TypeScript)"
+        echo "1) Full installation (Jawt + Node.js + TypeScript + TailwindCSS)"
         echo "2) Jawt executable only"
         echo "3) Cancel installation"
         echo
@@ -177,7 +157,7 @@ prompt_installation_type() {
     else
         echo
         echo "Installation options:"
-        echo "1) Full installation (Jawt + Jawt Node.js + Jawt TypeScript) [Recommended]"
+        echo "1) Full installation (Jawt + Node.js + TypeScript + TailwindCSS) [Recommended]"
         echo "2) Jawt executable only"
         echo
 
@@ -194,9 +174,6 @@ prompt_installation_type() {
     print_info "Selected installation type: $INSTALL_TYPE"
 }
 
-
-
-
 create_directories() {
     print_info "Creating directory structure..."
 
@@ -205,12 +182,11 @@ create_directories() {
     if [ "$INSTALL_TYPE" = "full" ]; then
         sudo mkdir -p "$JAWT_NODE_DIR"
         sudo mkdir -p "$JAWT_TSC_DIR"
+        sudo mkdir -p "$JAWT_TAILWIND_DIR"
     fi
 
     print_success "Directory structure created"
 }
-
-
 
 get_node_lts_version() {
     print_info "Fetching Node.js LTS version information..."
@@ -224,8 +200,21 @@ get_node_lts_version() {
     print_info "Latest Node.js LTS version: $NODE_VERSION"
 }
 
-
-
+check_existing_node_version() {
+    if [ -x "$JAWT_NODE_DIR/bin/node" ]; then
+        CURRENT_NODE_VERSION=$("$JAWT_NODE_DIR/bin/node" --version 2>/dev/null || echo "")
+        if [ "$CURRENT_NODE_VERSION" = "$NODE_VERSION" ]; then
+            print_success "Node.js $NODE_VERSION is already installed"
+            return 0
+        else
+            print_info "Current Node.js version ($CURRENT_NODE_VERSION) differs from LTS ($NODE_VERSION)"
+            return 1
+        fi
+    else
+        print_info "No existing Node.js installation found"
+        return 1
+    fi
+}
 
 install_nodejs() {
     if [ "$INSTALL_TYPE" != "full" ]; then
@@ -233,6 +222,12 @@ install_nodejs() {
     fi
 
     get_node_lts_version
+
+    # Check if we already have the correct version
+    if check_existing_node_version; then
+        print_info "Skipping Node.js download - already at LTS version"
+        return 0
+    fi
 
     # Determine Node.js architecture naming
     case "$ARCH_NAME" in
@@ -255,40 +250,75 @@ install_nodejs() {
     NODE_ARCHIVE="node-${NODE_VERSION}-${NODE_PLATFORM}-${NODE_ARCH}.${ARCHIVE_EXT}"
     NODE_URL="https://nodejs.org/dist/${NODE_VERSION}/${NODE_ARCHIVE}"
 
-    print_info "Downloading Jawt Node.js ${NODE_VERSION} for ${NODE_PLATFORM}/${NODE_ARCH}..."
+    print_info "Downloading Node.js ${NODE_VERSION} for ${NODE_PLATFORM}/${NODE_ARCH}..."
     download_with_progress "$NODE_URL" "$TMP_DIR/$NODE_ARCHIVE" "Node.js $NODE_VERSION"
 
-    print_info "Installing Jawt Node.js to $JAWT_NODE_DIR..."
+    print_info "Installing Node.js to $JAWT_NODE_DIR..."
+    # Remove existing installation if upgrading
+    if [ -d "$JAWT_NODE_DIR" ]; then
+        sudo rm -rf "$JAWT_NODE_DIR"
+        sudo mkdir -p "$JAWT_NODE_DIR"
+    fi
+
     extract_with_progress "$TMP_DIR/$NODE_ARCHIVE" "$JAWT_NODE_DIR" "Node.js"
 
     # Set proper ownership and permissions
     sudo chown -R root:root "$JAWT_NODE_DIR"
     sudo chmod -R 755 "$JAWT_NODE_DIR"
 
-    print_success "Jawt Node.js installed successfully"
+    print_success "Node.js installed successfully"
 }
 
+check_package_installed() {
+    local package_name="$1"
+    local install_dir="$2"
 
+    if [ -d "$install_dir/node_modules/$package_name" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
 
 install_typescript() {
     if [ "$INSTALL_TYPE" != "full" ]; then
         return 0
     fi
 
-    print_info "Installing Jawt TypeScript..."
+    print_info "Installing TypeScript..."
 
     # Use the installed Node.js to install TypeScript globally in our jawt location
     export PATH="${JAWT_NODE_DIR}/bin:$PATH"
 
-    # Install TypeScript to our jawt directory
-    "$JAWT_NODE_DIR/bin/npm" install -g --prefix "$JAWT_TSC_DIR" typescript
-
-    # TypeScript will be available internally to Jawt but not exposed to system PATH
-
-    print_success "Jawt TypeScript installed successfully"
+    # Check if TypeScript is already installed
+    if check_package_installed "typescript" "$JAWT_TSC_DIR"; then
+        print_success "TypeScript is already installed"
+    else
+        # Install TypeScript to our jawt directory
+        "$JAWT_NODE_DIR/bin/npm" install -g --prefix "$JAWT_TSC_DIR" typescript
+        print_success "TypeScript installed successfully"
+    fi
 }
 
+install_tailwindcss() {
+    if [ "$INSTALL_TYPE" != "full" ]; then
+        return 0
+    fi
 
+    print_info "Installing TailwindCSS..."
+
+    # Use the installed Node.js to install TailwindCSS globally in our jawt location
+    export PATH="${JAWT_NODE_DIR}/bin:$PATH"
+
+    # Check if TailwindCSS is already installed
+    if check_package_installed "tailwindcss" "$JAWT_TAILWIND_DIR"; then
+        print_success "TailwindCSS is already installed"
+    else
+        # Install TailwindCSS and its dependencies to our jawt directory
+        "$JAWT_NODE_DIR/bin/npm" install -g --prefix "$JAWT_TAILWIND_DIR" tailwindcss @tailwindcss/cli autoprefixer postcss
+        print_success "TailwindCSS installed successfully"
+    fi
+}
 
 install_jawt_executable() {
     print_info "Fetching latest Jawt release..."
@@ -304,17 +334,15 @@ install_jawt_executable() {
     fi
 
     # Download the binary
-    download_with_progress "$DL_URL" "$TMP_DIR/$BINARY_NAME" "Jawt executable"
+    download_with_progress "$DL_URL" "$TMP_DIR/$BINARY_NAME" "Jawt"
 
     # Install the binary
-    print_info "Installing Jawt executable..."
+    print_info "Installing Jawt..."
     sudo cp "$TMP_DIR/$BINARY_NAME" "$JAWT_BIN_DIR/$BINARY_NAME"
     sudo chmod +x "$JAWT_BIN_DIR/$BINARY_NAME"
 
-    print_success "Jawt executable installed to $JAWT_BIN_DIR"
+    print_success "Jawt installed to $JAWT_BIN_DIR"
 }
-
-
 
 create_system_executable() {
     print_info "Creating system-wide executable..."
@@ -330,13 +358,15 @@ JAWT_ROOT="/usr/local/jawt"
 JAWT_BIN_DIR="${JAWT_ROOT}/bin"
 JAWT_NODE_DIR="${JAWT_ROOT}/node"
 JAWT_TSC_DIR="${JAWT_ROOT}/tsc"
+JAWT_TAILWIND_DIR="${JAWT_ROOT}/tailwind"
 
 # Set internal environment variables for Jawt's use only
 export JAWT_ROOT
 export JAWT_NODE_PATH="${JAWT_NODE_DIR}/bin/node"
 export JAWT_NPM_PATH="${JAWT_NODE_DIR}/bin/npm"
+export JAWT_NPX_PATH="${JAWT_NODE_DIR}/bin/npm"
 export JAWT_TSC_PATH="${JAWT_TSC_DIR}/bin/tsc"
-export NODE_PATH="${JAWT_ROOT}/node/lib/node_modules"
+export JAWT_TAILWIND_PATH="${JAWT_TAILWIND_DIR}/bin/tailwindcss"
 
 # Execute Jawt with all provided arguments
 # Jawt can use the above environment variables to access its internal tools
@@ -348,7 +378,6 @@ EOF
     print_success "System-wide executable created at $SYSTEM_BIN_DIR/$BINARY_NAME"
 }
 
-
 update_shell_config() {
     print_info "Updating shell configuration..."
 
@@ -359,12 +388,6 @@ update_shell_config() {
     ENV_VARS=(
         "export JAWT_ROOT=\"$JAWT_ROOT\""
     )
-
-    #if [ "$INSTALL_TYPE" = "full" ]; then
-    #    ENV_VARS+=(
-    #        "export NODE_PATH=\"\$JAWT_ROOT/node/lib/node_modules\""
-    #    )
-    #fi
 
     for CONFIG_FILE in "${SHELL_CONFIG_FILES[@]}"; do
         if [ -f "$CONFIG_FILE" ]; then
@@ -391,38 +414,42 @@ update_shell_config() {
     fi
 }
 
-
-
 verify_installation() {
     print_info "Verifying installation..."
 
-    # Test Jawt executable
+    # Test Jawt
     if "$SYSTEM_BIN_DIR/$BINARY_NAME" --version >/dev/null 2>&1; then
-        print_success "Jawt executable is working"
+        print_success "Jawt is working"
     else
-        print_warning "Jawt executable test failed - you may need to restart your shell"
+        print_warning "Jawt test failed - you may need to restart your shell"
     fi
 
     if [ "$INSTALL_TYPE" = "full" ]; then
         # Test Node.js
         if "$JAWT_NODE_DIR/bin/node" --version >/dev/null 2>&1; then
             NODE_VER=$("$JAWT_NODE_DIR/bin/node" --version)
-            print_success "Jawt Node.js is working (version: $NODE_VER)"
+            print_success "Node.js is working (version: $NODE_VER)"
         else
-            print_warning "Jawt Node.js test failed"
+            print_warning "Node.js test failed"
         fi
 
-        # Test TypeScript (internal only)
+        # Test TypeScript
         if "$JAWT_TSC_DIR/bin/tsc" --version >/dev/null 2>&1; then
             TSC_VER=$("$JAWT_TSC_DIR/bin/tsc" --version)
-            print_success "Jawt TypeScript is working ($TSC_VER)"
+            print_success "TypeScript is working ($TSC_VER)"
         else
-            print_warning "Jawt TypeScript test failed"
+            print_warning "TypeScript test failed"
+        fi
+
+        # Test TailwindCSS
+        if "$JAWT_TAILWIND_DIR/bin/tailwindcss" --version >/dev/null 2>&1; then
+            TAILWIND_VER=$("$JAWT_TAILWIND_DIR/bin/tailwindcss" --version)
+            print_success "TailwindCSS is working ($TAILWIND_VER)"
+        else
+            print_warning "TailwindCSS test failed"
         fi
     fi
 }
-
-
 
 print_summary() {
     echo
@@ -435,15 +462,22 @@ print_summary() {
 
     if [ "$INSTALL_TYPE" = "full" ]; then
         echo "Installed components:"
-        echo "  • Jawt executable: $JAWT_BIN_DIR/$BINARY_NAME"
+        echo "  • Jawt: $JAWT_BIN_DIR/$BINARY_NAME"
         echo "  • Jawt Node.js: $JAWT_NODE_DIR"
         echo "  • Jawt TypeScript: $JAWT_TSC_DIR"
+        echo "  • Jawt TailwindCSS: $JAWT_TAILWIND_DIR"
+        echo
+        echo "Available internal tools (accessible via environment variables):"
+        echo "  • JAWT_NODE_PATH   - Node.js runtime"
+        echo "  • JAWT_NPM_PATH    - NPM package manager"
+        echo "  • JAWT_TSC_PATH    - TypeScript compiler"
+        echo "  • JAWT_TAILWIND_PATH - TailwindCSS CLI"
         echo
         echo "Available commands:"
         echo "  • jawt         - Just Another Web Tool"
     else
         echo "Installed components:"
-        echo "  • Jawt executable: $JAWT_BIN_DIR/$BINARY_NAME"
+        echo "  • Jawt: $JAWT_BIN_DIR/$BINARY_NAME"
         echo
         echo "Available commands:"
         echo "  • jawt         - Jawt command-line tool"
@@ -454,16 +488,10 @@ print_summary() {
     print_info "Restart your shell or run 'source ~/.bashrc' (or equivalent) to update your environment."
 }
 
-
 main() {
     echo
     print_info "=== Jawt Installation Script ==="
     echo
-
-    # Check if running as root
-    #if [ "$EUID" -eq 0 ]; then
-    #    error_exit "Please do not run this script as root. Use a regular user account."
-    #fi
 
     # Check for sudo access
     if ! sudo -n true 2>/dev/null; then
@@ -477,6 +505,7 @@ main() {
     create_directories
     install_nodejs
     install_typescript
+    install_tailwindcss
     install_jawt_executable
     create_system_executable
     update_shell_config
