@@ -31,20 +31,20 @@ jobs:
         id: next_version
         run: |
           CURRENT_VERSION="${{ steps.get_latest_release.outputs.latest_release }}"
-          
+
           # Remove 'v' prefix if present
           VERSION_NUMBER=${CURRENT_VERSION#v}
-          
+
           # Handle case where no previous releases exist
           if [ "$VERSION_NUMBER" = "0.0.0" ]; then
             NEXT_VERSION="v0.1.0"
           else
             # Split version into components
             IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION_NUMBER"
-          
+
             # Increment patch version
             PATCH=$((PATCH + 1))
-          
+
             # Construct next version
             NEXT_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
           fi
