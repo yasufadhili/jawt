@@ -131,22 +131,22 @@ func (cm *CompilerManager) getChangedFiles() ([]string, error) {
 	var changedFiles []string
 
 	for _, comp := range cm.project.Components {
-		changed, err := cm.hasChanged(comp.RelativePath)
+		changed, err := cm.hasChanged(comp.AbsolutePath)
 		if err != nil {
 			return nil, fmt.Errorf("error checking component %s: %w", comp.RelativePath, err)
 		}
 		if changed {
-			changedFiles = append(changedFiles, comp.RelativePath)
+			changedFiles = append(changedFiles, comp.AbsolutePath)
 		}
 	}
 
 	for _, page := range cm.project.Pages {
-		changed, err := cm.hasChanged(page.RelativePath)
+		changed, err := cm.hasChanged(page.AbsolutePath)
 		if err != nil {
 			return nil, fmt.Errorf("error checking page %s: %w", page.RelativePath, err)
 		}
 		if changed {
-			changedFiles = append(changedFiles, page.RelativePath)
+			changedFiles = append(changedFiles, page.AbsolutePath)
 		}
 	}
 
@@ -324,11 +324,11 @@ func (cm *CompilerManager) getLastCacheModification() time.Time {
 // buildDependencyGraph populates the dependency graph from the project structure
 func (cm *CompilerManager) buildDependencyGraph() {
 	for _, comp := range cm.project.Components {
-		cm.depGraph.AddFile(comp.RelativePath, Component, comp.Dependencies)
+		cm.depGraph.AddFile(comp.AbsolutePath, Component, comp.Dependencies)
 	}
 
 	for _, page := range cm.project.Pages {
-		cm.depGraph.AddFile(page.RelativePath, Page, page.Dependencies)
+		cm.depGraph.AddFile(page.AbsolutePath, Page, page.Dependencies)
 	}
 }
 
@@ -386,7 +386,7 @@ func (cm *CompilerManager) compileFile(filePath string) error {
 // findComponentByPath finds a component by its file path
 func (cm *CompilerManager) findComponentByPath(filePath string) *project.ComponentInfo {
 	for _, comp := range cm.project.Components {
-		if comp.RelativePath == filePath {
+		if comp.AbsolutePath == filePath {
 			return comp
 		}
 	}
@@ -449,7 +449,7 @@ func (cm *CompilerManager) copyAssets() error {
 // findPageByPath finds a page by its file path
 func (cm *CompilerManager) findPageByPath(filePath string) *project.PageInfo {
 	for _, page := range cm.project.Pages {
-		if page.RelativePath == filePath {
+		if page.AbsolutePath == filePath {
 			return page
 		}
 	}
