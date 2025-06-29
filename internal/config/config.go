@@ -20,6 +20,7 @@ type JawtConfig struct {
 	Project ProjectConfig `json:"project"`
 	Server  ServerConfig  `json:"server"`
 	Build   BuildConfig   `json:"build"`
+	Verbose bool          `json:"verbose"`
 }
 
 // ProjectConfig holds project-specific settings
