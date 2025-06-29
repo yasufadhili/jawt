@@ -168,7 +168,7 @@ func (b *Builder) Build() error {
 
 	// Compile in dependency order
 	if err := b.compiler.CompileProject(); err != nil {
-		buildErr := fmt.Errorf("compilation failed: %w", err)
+		buildErr := err
 		if b.errorState.shouldShowError(buildErr) {
 			b.printError("Compilation", buildErr)
 		}
