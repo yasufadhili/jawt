@@ -26,8 +26,6 @@ func NewDevServer(p *project.Structure) *DevServer {
 
 // Start starts the development server
 func (ds *DevServer) Start() error {
-	fmt.Printf("🚀 Starting development server on port %d...\n", ds.port)
-	fmt.Printf("📍 Visit http://localhost:%d to view your project\n", ds.port)
 
 	if ds.project.TempDir == "" {
 		return fmt.Errorf("TempDir is not set")
@@ -58,6 +56,10 @@ func (ds *DevServer) Stop() error {
 		return ds.server.Close()
 	}
 	return nil
+}
+
+func (ds *DevServer) GetAddress() string {
+	return ds.server.Addr
 }
 
 // handleRequest handles HTTP requests (placeholder)

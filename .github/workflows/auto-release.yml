@@ -1,0 +1,117 @@
+name: Auto Release
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  auto-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get latest release
+        id: get_latest_release
+        run: |
+          # Get the latest release tag, or default to v0.0.0 if no releases exist
+          LATEST_RELEASE=$(gh release list --limit 1 --json tagName --jq '.[0].tagName' 2>/dev/null || echo "v0.0.0")
+          echo "latest_release=$LATEST_RELEASE" >> $GITHUB_OUTPUT
+          echo "Latest release found: $LATEST_RELEASE"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Calculate next version
+        id: next_version
+        run: |
+          CURRENT_VERSION="${{ steps.get_latest_release.outputs.latest_release }}"
+
+          # Remove 'v' prefix if present
+          VERSION_NUMBER=${CURRENT_VERSION#v}
+
+          # Handle case where no previous releases exist
+          if [ "$VERSION_NUMBER" = "0.0.0" ]; then
+            NEXT_VERSION="v0.1.0"
+          else
+            # Split version into components
+            IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION_NUMBER"
+
+            # Increment patch version
+            PATCH=$((PATCH + 1))
+
+            # Construct next version
+            NEXT_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
+          fi
+          
+          echo "next_version=$NEXT_VERSION" >> $GITHUB_OUTPUT
+          echo "Next version will be: $NEXT_VERSION"
+
+      - name: Check if version already exists
+        id: check_version
+        run: |
+          NEXT_VERSION="${{ steps.next_version.outputs.next_version }}"
+          
+          # Check if tag already exists
+          if git tag -l | grep -q "^${NEXT_VERSION}$"; then
+            echo "version_exists=true" >> $GITHUB_OUTPUT
+            echo "Version $NEXT_VERSION already exists, skipping release creation"
+          else
+            echo "version_exists=false" >> $GITHUB_OUTPUT
+            echo "Version $NEXT_VERSION is new, proceeding with release"
+          fi
+
+      - name: Generate release notes
+        id: generate_notes
+        if: steps.check_version.outputs.version_exists == 'false'
+        run: |
+          NEXT_VERSION="${{ steps.next_version.outputs.next_version }}"
+          CURRENT_VERSION="${{ steps.get_latest_release.outputs.latest_release }}"
+          
+          # Generate release notes from commits since last release
+          if [ "$CURRENT_VERSION" != "v0.0.0" ]; then
+            # Get commits since last release
+            COMMITS=$(git log --pretty=format:"- %s (%h)" ${CURRENT_VERSION}..HEAD --no-merges)
+          
+            if [ -n "$COMMITS" ]; then
+              RELEASE_NOTES="## Changes in $NEXT_VERSION"$'\n\n'"$COMMITS"
+            else
+              RELEASE_NOTES="## Changes in $NEXT_VERSION"$'\n\n'"- Minor updates and improvements"
+            fi
+          else
+            # First release
+            RELEASE_NOTES="## Initial Release $NEXT_VERSION"$'\n\n'"- Initial project release"
+          fi
+          
+          # Save release notes to file for multi-line output
+          echo "$RELEASE_NOTES" > release_notes.md
+          echo "Release notes generated and saved to release_notes.md"
+
+      - name: Create release
+        if: steps.check_version.outputs.version_exists == 'false'
+        run: |
+          NEXT_VERSION="${{ steps.next_version.outputs.next_version }}"
+          
+          # Create the release
+          gh release create "$NEXT_VERSION" \
+            --title "Release $NEXT_VERSION" \
+            --notes-file release_notes.md \
+            --latest
+          
+          echo "✅ Successfully created release $NEXT_VERSION"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Release summary
+        run: |
+          if [ "${{ steps.check_version.outputs.version_exists }}" = "true" ]; then
+            echo "ℹ️ Release creation skipped - version ${{ steps.next_version.outputs.next_version }} already exists"
+          else
+            echo "🎉 Successfully created release ${{ steps.next_version.outputs.next_version }}"
+            echo "📝 Release URL: ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ steps.next_version.outputs.next_version }}"
+          fi
