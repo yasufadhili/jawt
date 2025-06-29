@@ -1,6 +1,8 @@
 package build
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"fmt"
 	"github.com/yasufadhili/jawt/internal/config"
 	"github.com/yasufadhili/jawt/internal/project"
@@ -62,7 +64,8 @@ func (es *ErrorState) hashError(err error) string {
 	if err == nil {
 		return ""
 	}
-	return fmt.Sprintf("%x", len(err.Error())+int(err.Error()[0]))
+	h := md5.Sum([]byte(err.Error()))
+	return hex.EncodeToString(h[:])
 }
 
 // shouldShowError determines if we should show this error
