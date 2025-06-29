@@ -62,4 +62,6 @@ func init() {
 	rootCmd.AddCommand(runCmd)
 	rootCmd.AddCommand(buildCmd)
 	rootCmd.AddCommand(versionCmd)
+	rootCmd.AddCommand(tscCmd)
+	//rootCmd.AddCommand(updateCmd) // Not yet useful
 }
