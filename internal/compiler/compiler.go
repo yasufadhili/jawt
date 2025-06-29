@@ -69,6 +69,8 @@ func (c *Compiler) Compile() (*CompileResult, error) {
 	if c.FileType == "Page" {
 		if c.docInfo.RelativePath == "/" {
 			c.docInfo.RelativePath = "index"
+		} else {
+			c.docInfo.RelativePath = filepath.Join(c.docInfo.RelativePath, "index")
 		}
 		outPath = filepath.Join(c.tmpDirPath, c.docInfo.RelativePath+".html")
 	} else {
