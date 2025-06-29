@@ -241,8 +241,6 @@ func (b *Builder) RunDev() error {
 	b.isRunning = true
 	b.mu.Unlock()
 
-	fmt.Println("🚀 Starting development mode...")
-
 	if err := b.Build(); err != nil {
 		fmt.Println("   Initial build failed, watching for changes to retry...")
 	} else {
