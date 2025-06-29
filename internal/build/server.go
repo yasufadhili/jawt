@@ -1,6 +1,7 @@
 package build
 
 import (
+	"errors"
 	"fmt"
 	"github.com/yasufadhili/jawt/internal/project"
 	"net/http"
@@ -41,6 +42,11 @@ func (ds *DevServer) Start() error {
 
 	addr := fmt.Sprintf(":%d", ds.port)
 
+	ds.server = &http.Server{Addr: addr, Handler: nil}
+	if err := ds.server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		return fmt.Errorf("failed to start server: %w", err)
+	}
+
 	err := http.ListenAndServe(addr, nil)
 	if err != nil {
 		return fmt.Errorf("failed to start server: %w", err)
@@ -59,6 +65,9 @@ func (ds *DevServer) Stop() error {
 }
 
 func (ds *DevServer) GetAddress() string {
+	if ds.server == nil {
+		return fmt.Sprintf(":%d", ds.port)
+	}
 	return ds.server.Addr
 }
 
