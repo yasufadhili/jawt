@@ -31,7 +31,7 @@ Write your application structure and behaviour using **JML**, a domain-specific 
 
 - [Compiler](internal/compiler) : Compiles Pages, Modules and Components
 - [Build System](internal/build) : Orchestrates the entire build process
-- [Development Server](internal/server) : Serves Jawt projects locally during development
+- [Development Server](internal/devserver) : Serves Jawt projects locally during development
 
 ## License
 
