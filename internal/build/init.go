@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/yasufadhili/jawt/internal/project"
-	"github.com/yasufadhili/jawt/internal/server"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -182,7 +181,7 @@ func (pi *ProjectInitialiser) generateConfigFiles() error {
 		Components: project.DocumentConfig{
 			Path: "components",
 		},
-		Server: server.Config{
+		Server: project.DevServerConfig{
 			Host: "localhost",
 			Port: 6500,
 		},
