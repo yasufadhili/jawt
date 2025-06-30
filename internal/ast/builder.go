@@ -123,7 +123,6 @@ func (b *Builder) VisitDocumentContent(ctx *parser.DocumentContentContext) inter
 	if ctx.ComponentDefinition() != nil {
 		return b.Visit(ctx.ComponentDefinition())
 	}
-	// TODO: Module Definition
 	return nil
 }
 
