@@ -28,6 +28,7 @@ func (e *Emitter) emitPageHead(stringProps map[string]string) {
 	e.write("<head>")
 	e.indent()
 	e.write("<meta charset=\"utf-8\"/>")
+	e.write("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">")
 	for k, v := range stringProps {
 		switch k {
 		case "title":
@@ -39,7 +40,9 @@ func (e *Emitter) emitPageHead(stringProps map[string]string) {
 }
 
 func (e *Emitter) emitPageBody(p *ast.PageDefinitionNode) {
-
+	if p.Child != nil {
+		e.emitComponentElement(p.Child)
+	}
 }
 
 func (e *Emitter) getPageTitle(p *ast.PageDefinitionNode) string {

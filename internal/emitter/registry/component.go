@@ -103,11 +103,45 @@ func (cr *ComponentRegistry) initialiseBuiltInComponents() {
 	cr.initialiseListComponents()
 }
 
-func (cr *ComponentRegistry) initialiseLayoutComponents() {}
+func (cr *ComponentRegistry) initialiseLayoutComponents() {
+	cr.RegisterComponent(&ComponentDefinition{
+		Name:           "Container",
+		HTMLTag:        "div",
+		Type:           ComponentTypeContainer,
+		DefaultClasses: []string{},
+		Attributes:     map[string]*AttributeDefinition{},
+		Description:    "Just an HTML div",
+	})
+}
 
-func (cr *ComponentRegistry) initialiseSemanticLayoutComponents() {}
+func (cr *ComponentRegistry) initialiseSemanticLayoutComponents() {
+	cr.RegisterComponent(&ComponentDefinition{
+		Name:           "Main",
+		HTMLTag:        "main",
+		Type:           ComponentTypeLayout,
+		DefaultClasses: []string{},
+		Attributes:     map[string]*AttributeDefinition{},
+		Description:    "Main content landmark element",
+	})
+}
 
-func (cr *ComponentRegistry) initialiseTextComponents() {}
+func (cr *ComponentRegistry) initialiseTextComponents() {
+	cr.RegisterComponent(&ComponentDefinition{
+		Name:           "Text",
+		HTMLTag:        "p",
+		Type:           ComponentTypeText,
+		DefaultClasses: []string{},
+		Attributes: map[string]*AttributeDefinition{
+			"variant": {
+				Name:        "variant",
+				Type:        AttributeTypeString,
+				HTMLAttr:    "class",
+				Description: "Text variant (h1, h2, h3, h4, h5, h6, body, caption, small)",
+			},
+		},
+		Description: "Just basic text",
+	})
+}
 
 func (cr *ComponentRegistry) initialiseInputComponents() {}
 

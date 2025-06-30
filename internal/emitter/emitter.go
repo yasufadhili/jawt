@@ -3,22 +3,25 @@ package emitter
 import (
 	"github.com/yasufadhili/jawt/internal/ast"
 	"github.com/yasufadhili/jawt/internal/common"
+	"github.com/yasufadhili/jawt/internal/emitter/registry"
 	"strings"
 )
 
 type Emitter struct {
 	*ast.BaseVisitor
-	document    *ast.DocumentNode
-	indentLevel int
-	target      common.BuildTarget
-	output      strings.Builder
+	document           *ast.DocumentNode
+	indentLevel        int
+	target             common.BuildTarget
+	output             strings.Builder
+	componentProcessor *registry.ComponentProcessor
 }
 
 func NewEmitter(doc *ast.DocumentNode, target common.BuildTarget) *Emitter {
 	return &Emitter{
-		BaseVisitor: &ast.BaseVisitor{},
-		document:    doc,
-		target:      target,
+		BaseVisitor:        &ast.BaseVisitor{},
+		document:           doc,
+		target:             target,
+		componentProcessor: registry.NewComponentProcessor(),
 	}
 }
 
