@@ -33,6 +33,32 @@ func NewProjectInitialiser(targetPath string) *ProjectInitialiser {
 }
 
 func (pi *ProjectInitialiser) InitProject(projectName string) error {
+	// Validate and prepare configuration
+	config, err := pi.prepareConfig(projectName)
+	if err != nil {
+		return fmt.Errorf("failed to prepare configuration: %w", err)
+	}
+
+	pi.config = config
+
+	if err := pi.createDirectoryStructure(); err != nil {
+		return fmt.Errorf("failed to create directory structure: %w", err)
+	}
+
+	if err := pi.generateConfigFiles(); err != nil {
+		return fmt.Errorf("failed to generate configuration files: %w", err)
+	}
+
+	if err := pi.generateTemplateFiles(); err != nil {
+		return fmt.Errorf("failed to generate template files: %w", err)
+	}
+
+	if err := pi.verifyProject(); err != nil {
+		return fmt.Errorf("project verification failed: %w", err)
+	}
+
+	pi.printSuccessMessage()
+
 	return nil
 }
 
