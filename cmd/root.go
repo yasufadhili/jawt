@@ -37,7 +37,7 @@ It offers a streamlined workflow and unified development experience.`,
 			os.Exit(1)
 		}
 
-		projectManager.Project = p
+		projectManager = project.NewProjectManager(p)
 
 	},
 }
