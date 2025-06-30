@@ -1,6 +1,10 @@
 package project
 
-import "time"
+import (
+	"os"
+	"path/filepath"
+	"time"
+)
 
 type Manager struct {
 	Project *Project
@@ -13,7 +17,7 @@ func NewProjectManager(project *Project) *Manager {
 }
 
 // LoadProject initialises a project from a root directory
-func (m *Manager) LoadProject(rootPath string) (*Project, error) {
+func (m *Manager) LoadProject() (*Project, error) {
 	return nil, nil
 }
 
@@ -54,3 +58,15 @@ type Error struct {
 }
 
 type Metadata struct{}
+
+// IsJawtProject checks if the current directory is a JAWT project
+// by checking for the existence of app.json and jawt.config.json
+func IsJawtProject(dir string) bool {
+	appConfigPath := filepath.Join(dir, "app.json")
+	jawtConfigPath := filepath.Join(dir, "jawt.config.json")
+
+	_, appErr := os.Stat(appConfigPath)
+	_, jawtErr := os.Stat(jawtConfigPath)
+
+	return !os.IsNotExist(appErr) && !os.IsNotExist(jawtErr)
+}
