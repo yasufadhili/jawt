@@ -1,13 +1,13 @@
 package project
 
 import (
-	"github.com/yasufadhili/jawt/internal/devserver"
+	"github.com/yasufadhili/jawt/internal/server"
 	"time"
 )
 
 // Config holds configuration for the project (jawt.config.json)
 type Config struct {
-	Server devserver.Config `json:"server"`
+	Server server.Config `json:"server"`
 }
 
 type AppConfig struct {

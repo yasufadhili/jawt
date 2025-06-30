@@ -1,4 +1,4 @@
-package devserver
+package server
 
 type Config struct {
 	Host string `json:"host"`
