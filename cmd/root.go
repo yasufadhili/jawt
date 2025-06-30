@@ -10,7 +10,7 @@ import (
 
 // Global configuration for use across commands
 var (
-	CurrentProject *project.Project
+	projectManager *project.Manager
 	projectDir     string
 )
 
@@ -37,7 +37,7 @@ It offers a streamlined workflow and unified development experience.`,
 			os.Exit(1)
 		}
 
-		CurrentProject = p
+		projectManager.Project = p
 
 	},
 }

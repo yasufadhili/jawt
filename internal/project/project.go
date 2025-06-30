@@ -47,10 +47,15 @@ type Project struct {
 	OutputDir  string                    `json:"output_dir"`
 }
 
-func NewProject(rootPath string) *Project {
+func NewProject(rootPath string) (*Project, error) {
+	config, err := LoadConfig(rootPath)
+	if err != nil {
+		return nil, err
+	}
 	return &Project{
 		RootPath: rootPath,
-	}
+		Config:   config,
+	}, nil
 }
 
 // LoadConfig loads both app.json and jawt.config.json from the specified directory
