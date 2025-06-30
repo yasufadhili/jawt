@@ -21,7 +21,7 @@ Monitors your Jml files for changes and automatically reloads the browser.`,
 			port = int(projectManager.Project.Config.Server.Port)
 		}
 
-		builder, err := build.NewBuilder(projectManager.Project)
+		builder, err := build.NewBuildSystem(projectManager.Project)
 		if err != nil {
 			_, _ = fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
