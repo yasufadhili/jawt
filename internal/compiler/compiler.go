@@ -9,30 +9,26 @@ import (
 	"strings"
 )
 
-type Manager struct {
-}
-
-type Compiler struct {
-	project *project.Project
+type FileCompiler struct {
+	manager *Manager
 	parser  *Parser
 	docInfo *project.DocumentInfo
 	target  common.BuildTarget
 }
 
-func NewCompiler(project *project.Project, docInfo *project.DocumentInfo, target common.BuildTarget) (*Compiler, error) {
-	return &Compiler{
-		project: project,
-		parser:  newParser(),
+func NewFileFileCompiler(manager *Manager, docInfo *project.DocumentInfo) *FileCompiler {
+	return &FileCompiler{
+		manager: manager,
 		docInfo: docInfo,
-		target:  target,
-	}, nil
+		parser:  newParser(),
+	}
 }
 
-func (c *Compiler) Compile() (*CompileResult, error) {
+func (c *FileCompiler) CompileFile() (*FileCompileResult, error) {
 
 	input, err := antlr.NewFileStream(c.docInfo.AbsolutePath)
 	if err != nil {
-		return &CompileResult{
+		return &FileCompileResult{
 			Success: false,
 			DocInfo: c.docInfo,
 		}, fmt.Errorf("failed to read file %s: %w", c.docInfo.AbsolutePath, err)
@@ -40,7 +36,7 @@ func (c *Compiler) Compile() (*CompileResult, error) {
 
 	parseResult := c.parseFile(input)
 
-	result := &CompileResult{
+	result := &FileCompileResult{
 		Success:   parseResult.Success,
 		DocInfo:   c.docInfo,
 		ParseTree: parseResult.Tree,
@@ -57,12 +53,12 @@ func (c *Compiler) Compile() (*CompileResult, error) {
 	return result, nil
 }
 
-func (c *Compiler) CompileChanged() error {
+func (c *FileCompiler) CompileChanged() error {
 	return nil
 }
 
-// CompileResult holds the compilation result with detailed error information
-type CompileResult struct {
+// FileCompileResult holds the compilation result with detailed error information
+type FileCompileResult struct {
 	Success bool
 	Errors  []SyntaxError
 	//AST       *JMLDocumentNode
@@ -71,7 +67,7 @@ type CompileResult struct {
 }
 
 // parseFile handles the actual parsing with custom error handling
-func (c *Compiler) parseFile(input antlr.CharStream) ParseResult {
+func (c *FileCompiler) parseFile(input antlr.CharStream) ParseResult {
 	// Reset parser state for a new file
 	c.parser.errorListener.Reset()
 	c.parser.errorStrategy.Reset()
@@ -117,7 +113,7 @@ func newParser() *Parser {
 }
 
 // printErrors displays syntax errors in a user-friendly format
-func (c *Compiler) printErrors(errors []SyntaxError) {
+func (c *FileCompiler) printErrors(errors []SyntaxError) {
 	for i, err := range errors {
 		fmt.Printf("  %d. Line %d:%d - %s\n", i+1, err.Line, err.Column, err.Message)
 		if err.Symbol != "" && err.Symbol != "<EOF>" {
@@ -136,7 +132,7 @@ func (c *Compiler) printErrors(errors []SyntaxError) {
 }
 
 // getSuggestionForError provides helpful suggestions based on error patterns
-func (c *Compiler) getSuggestionForError(err SyntaxError) string {
+func (c *FileCompiler) getSuggestionForError(err SyntaxError) string {
 	commonMistakes := map[string]string{
 		"missing ')'":           "Try adding a closing parenthesis",
 		"missing '}'":           "Try adding a closing brace",

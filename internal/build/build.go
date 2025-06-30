@@ -12,12 +12,12 @@ import (
 )
 
 type Builder struct {
-	Project    *project.Project
-	ClearCache bool
-	discovery  *project.Discovery
-	watcher    *FileWatcher
-	server     *server.DevServer
-	compiler   *compiler.Compiler
+	project         *project.Project
+	ClearCache      bool
+	discovery       *project.Discovery
+	watcher         *FileWatcher
+	server          *server.DevServer
+	compilerManager *compiler.Manager
 
 	// Error state management
 	errorState *ErrorState
@@ -29,12 +29,14 @@ type Builder struct {
 // NewBuilder creates a new builder instance
 func NewBuilder(p *project.Project) (*Builder, error) {
 	discovery := project.NewProjectDiscovery(p)
+	cm := compiler.NewCompilerManager(p)
 	return &Builder{
-		Project:    p,
-		discovery:  discovery,
-		ClearCache: false,
-		errorState: &ErrorState{},
-		stopChan:   make(chan struct{}),
+		project:         p,
+		discovery:       discovery,
+		compilerManager: cm,
+		ClearCache:      false,
+		errorState:      &ErrorState{},
+		stopChan:        make(chan struct{}),
 	}, nil
 }
 
@@ -43,7 +45,16 @@ func (b *Builder) Build() error {
 	b.mu.Lock()
 	defer b.mu.Unlock()
 
-	// TODO:::
+	p, err := b.discovery.DiscoverProject()
+	if err != nil {
+		buildErr := fmt.Errorf("project discovery failed: %w", err)
+		if b.errorState.shouldShowError(buildErr) {
+			b.printError("Project Discovery", buildErr)
+		}
+		return buildErr
+	}
+	b.project = p
+	b.compilerManager = compiler.NewCompilerManager(p)
 
 	if b.errorState.shouldShowError(nil) {
 		b.printSuccess()
@@ -54,7 +65,7 @@ func (b *Builder) Build() error {
 
 // SetConfig allows manually setting the configuration
 func (b *Builder) SetConfig(cfg *project.Config) {
-	b.Project.Config = cfg
+	b.project.Config = cfg
 }
 
 // ErrorState tracks the current error state to prevent spam
@@ -182,7 +193,7 @@ func (b *Builder) handleWatcherError(err error) {
 // handleFileChange handles file change events
 func (b *Builder) handleFileChange(filePath string) {
 	timestamp := time.Now().Format("15:04:05")
-	fmt.Printf("📝 [%s] File changed: %s\n", timestamp, filePath)
+	fmt.Printf("[%s] File changed: %s\n", timestamp, filePath)
 
 	// Attempt incremental build
 	if err := b.BuildIncremental(); err != nil {
@@ -198,7 +209,7 @@ func (b *Builder) handleFileChange(filePath string) {
 func (b *Builder) GetProject() *project.Project {
 	b.mu.RLock()
 	defer b.mu.RUnlock()
-	return b.Project
+	return b.project
 }
 
 // IsRunning returns whether the builder is currently running

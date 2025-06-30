@@ -17,7 +17,7 @@ func (b *Builder) Run() error {
 		fmt.Println("   Initial build successful!")
 	}
 
-	b.watcher = NewFileWatcher(b.Project)
+	b.watcher = NewFileWatcher(b.project)
 	b.watcher.SetErrorHandler(b.handleWatcherError)
 	b.watcher.SetChangeHandler(b.handleFileChange)
 
@@ -25,7 +25,7 @@ func (b *Builder) Run() error {
 		return fmt.Errorf("failed to start file watcher: %w", err)
 	}
 
-	b.server = server.NewDevServer(b.Project)
+	b.server = server.NewDevServer(b.project)
 	if err := b.server.Start(); err != nil {
 		return fmt.Errorf("failed to start development server: %w", err)
 	}
