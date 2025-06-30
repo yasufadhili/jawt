@@ -102,3 +102,13 @@ func IsJawtProject(dir string) bool {
 
 	return !os.IsNotExist(appErr) && !os.IsNotExist(jawtErr)
 }
+
+type ChangeCallback func(event *FileChangeEvent) error
+
+type FileChangeEvent struct {
+	Type      ChangeType
+	FilePath  string
+	Timestamp time.Time
+}
+
+type ChangeType int
