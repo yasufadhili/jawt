@@ -16,7 +16,7 @@ type FileCompiler struct {
 	target  common.BuildTarget
 }
 
-func NewFileFileCompiler(manager *Manager, docInfo *project.DocumentInfo) *FileCompiler {
+func NewFileCompiler(manager *Manager, docInfo *project.DocumentInfo) *FileCompiler {
 	return &FileCompiler{
 		manager: manager,
 		docInfo: docInfo,
@@ -51,10 +51,6 @@ func (c *FileCompiler) CompileFile() (*FileCompileResult, error) {
 
 	c.docInfo.Compiled = true
 	return result, nil
-}
-
-func (c *FileCompiler) CompileChanged() error {
-	return nil
 }
 
 // FileCompileResult holds the compilation result with detailed error information

@@ -9,6 +9,11 @@ import (
 
 type Manager struct {
 	Project *Project
+	Options DevOptions
+}
+
+type DevOptions struct {
+	Verbose bool
 }
 
 func NewProjectManager(project *Project) *Manager {

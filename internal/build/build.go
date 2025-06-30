@@ -24,6 +24,12 @@ type Builder struct {
 	isRunning  bool
 	stopChan   chan struct{}
 	mu         sync.RWMutex
+
+	options Options
+}
+
+type Options struct {
+	Verbose bool
 }
 
 // NewBuilder creates a new builder instance
@@ -55,6 +61,33 @@ func (b *Builder) Build() error {
 	}
 	b.project = p
 	b.compilerManager = compiler.NewCompilerManager(p)
+
+	if err := b.compilerManager.ValidateDependencies(); err != nil {
+		buildErr := fmt.Errorf("dependency validation failed: %w", err)
+		if b.errorState.shouldShowError(buildErr) {
+			b.printError("Dependency Validation", buildErr)
+		}
+		return buildErr
+	}
+
+	if b.options.Verbose {
+		if err := b.compilerManager.PrintBuildPlan(); err != nil {
+			buildErr := fmt.Errorf("failed to print build plan: %w", err)
+			if b.errorState.shouldShowError(buildErr) {
+				b.printError("Build Plan", buildErr)
+			}
+			return buildErr
+		}
+	}
+
+	// Compile in dependency order
+	if err := b.compilerManager.CompileProject(); err != nil {
+		buildErr := err
+		if b.errorState.shouldShowError(buildErr) {
+			b.printError("Compilation", buildErr)
+		}
+		return buildErr
+	}
 
 	if b.errorState.shouldShowError(nil) {
 		b.printSuccess()
