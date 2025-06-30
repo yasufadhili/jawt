@@ -1,6 +1,7 @@
 package project
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"time"
@@ -75,6 +76,11 @@ func LoadConfig(projectPath string) (*Config, error) {
 		return nil, err
 	}
 	config = jawtConfig
+	jawtConfig.App = *appConfig
+
+	if config.App.Name == "" {
+		return nil, fmt.Errorf("project name is required in app.json")
+	}
 
 	return config, nil
 }
