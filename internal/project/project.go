@@ -27,8 +27,8 @@ func (m *Manager) ValidateProject() []Error {
 }
 
 // GetProjectConfig returns resolved configuration with cascading
-func (m *Manager) GetProjectConfig() (*Config, error) {
-	return nil, nil
+func (m *Manager) GetProjectConfig() *Config {
+	return m.Project.Config
 }
 
 // WatchProject sets up the file system watching for development mode

@@ -1,7 +1,10 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/spf13/cobra"
+	"github.com/yasufadhili/jawt/internal/build"
+	"os"
 )
 
 var port int
@@ -13,6 +16,26 @@ var runCmd = &cobra.Command{
 	Long: `Starts the development server with hot reload functionality.
 Monitors your Jml files for changes and automatically reloads the browser.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		// Use the configured port if not explicitly provided as a flag
+		if !cmd.Flags().Changed("port") && projectManager.Project.Config != nil {
+			port = int(projectManager.Project.Config.Server.Port)
+		}
+
+		builder, err := build.NewBuilder(projectManager.Project)
+		if err != nil {
+			_, _ = fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+
+		if clearCache {
+			builder.ClearCache = true
+		}
+
+		err = builder.Run()
+		if err != nil {
+			_, _ = fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+			os.Exit(1)
+		}
 
 	},
 }

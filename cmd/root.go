@@ -2,10 +2,9 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/spf13/cobra"
 	"github.com/yasufadhili/jawt/internal/project"
 	"os"
-
-	"github.com/spf13/cobra"
 )
 
 // Global configuration for use across commands
@@ -23,6 +22,13 @@ It offers a streamlined workflow and unified development experience.`,
 		// Skip config loading for commands that don't require it
 		if cmd.Name() == "init" || cmd.Name() == "update" || cmd.Name() == "version" {
 			return
+		}
+
+		var err error
+		projectDir, err = os.Getwd()
+		if err != nil {
+			_, _ = fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)
+			os.Exit(1)
 		}
 
 		if !project.IsJawtProject(projectDir) {
