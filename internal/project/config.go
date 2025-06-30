@@ -3,7 +3,6 @@ package project
 import (
 	"fmt"
 	"github.com/spf13/viper"
-	"github.com/yasufadhili/jawt/internal/server"
 	"os"
 	"path/filepath"
 	"time"
@@ -12,7 +11,7 @@ import (
 // Config holds configuration for the project (jawt.config.json)
 type Config struct {
 	App          AppConfig          `json:"app"`
-	Server       server.Config      `json:"server"`
+	Server       DevServerConfig    `json:"server"`
 	Pages        DocumentConfig     `json:"pages"`
 	Components   DocumentConfig     `json:"components"`
 	Scripts      DocumentConfig     `json:"scripts"`
@@ -272,4 +271,9 @@ func (c *Config) GetProjectName() string {
 
 func (c *Config) ShouldMinify() bool {
 	return c.Build.Minify
+}
+
+type DevServerConfig struct {
+	Host string `json:"host"`
+	Port int16  `json:"port"`
 }
