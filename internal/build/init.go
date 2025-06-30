@@ -175,6 +175,7 @@ func (pi *ProjectInitialiser) generateConfigFiles() error {
 
 	// Generate jawt.config.json
 	jawtConfig := project.Config{
+		Name: pi.config.ProjectName,
 		Pages: project.DocumentConfig{
 			Path: "app",
 		},

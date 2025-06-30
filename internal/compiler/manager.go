@@ -33,12 +33,12 @@ type FileRecord struct {
 
 func NewCompilerManager(project *project.Project) *Manager {
 	cm := &Manager{
-		project: project,
-		//depGraph: NewDependencyGraph(),
+		project:  project,
+		depGraph: NewDependencyGraph(),
 	}
 
-	//cm.buildDependencyGraph()
-	//cm.initBuildCache()
+	cm.buildDependencyGraph()
+	cm.initBuildCache()
 
 	return cm
 }
