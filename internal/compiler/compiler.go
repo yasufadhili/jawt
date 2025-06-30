@@ -79,7 +79,7 @@ func (c *FileCompiler) parseFile(input antlr.CharStream) ParseResult {
 	p.AddErrorListener(c.parser.errorListener)
 	p.SetErrorHandler(c.parser.errorStrategy)
 
-	tree := p.JmlDocument()
+	tree := p.Document()
 
 	return ParseResult{
 		Success: !c.parser.errorListener.HasErrors(),
