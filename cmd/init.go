@@ -16,7 +16,13 @@ This includes app/, components/, assets/ directories and essential configuration
 	Run: func(cmd *cobra.Command, args []string) {
 		projectName := args[0]
 
-		err := build.InitProject(projectName)
+		dir, err := os.Getwd()
+		if err != nil {
+			_, _ = fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+
+		err = build.InitProject(dir, projectName)
 		if err != nil {
 			_, _ = fmt.Fprintf(os.Stderr, "Error initialising project: %s\n", err)
 			os.Exit(1)

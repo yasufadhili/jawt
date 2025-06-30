@@ -11,7 +11,7 @@ import (
 
 // Config holds configuration for the project (jawt.config.json)
 type Config struct {
-	App          AppConfig        `json:"app"`
+	App          AppConfig        `json:",omitempty"`
 	Server       server.Config    `json:"server"`
 	Pages        DocumentConfig   `json:"pages"`
 	Components   DocumentConfig   `json:"components"`
