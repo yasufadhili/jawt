@@ -20,11 +20,12 @@ type FileCompiler struct {
 	target  common.BuildTarget
 }
 
-func NewFileCompiler(manager *Manager, docInfo *project.DocumentInfo) *FileCompiler {
+func NewFileCompiler(manager *Manager, docInfo *project.DocumentInfo, target common.BuildTarget) *FileCompiler {
 	return &FileCompiler{
 		manager: manager,
 		docInfo: docInfo,
 		parser:  newParser(),
+		target:  target,
 	}
 }
 
@@ -73,7 +74,7 @@ func (c *FileCompiler) CompileFile() (*FileCompileResult, error) {
 		outPath = filepath.Join(outPath, c.docInfo.RelativePath+".html")
 		fmt.Println(outPath)
 	case common.TargetComponent:
-		outPath = outPath + c.docInfo.RelativePath + ".js"
+		outPath = filepath.Join(outPath, c.docInfo.RelativePath+".js")
 		outPath = strings.ReplaceAll(outPath, ".jml", "")
 		fmt.Println(outPath)
 	}

@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"github.com/yasufadhili/jawt/internal/common"
 	"github.com/yasufadhili/jawt/internal/project"
 	"io"
 	"os"
@@ -409,7 +410,7 @@ func (cm *Manager) findComponentByPath(filePath string) *project.ComponentInfo {
 
 // compileComponent compiles a single component
 func (cm *Manager) compileComponent(comp *project.ComponentInfo) error {
-	c := NewFileCompiler(cm, &comp.DocumentInfo)
+	c := NewFileCompiler(cm, &comp.DocumentInfo, common.TargetComponent)
 
 	res, err := c.CompileFile()
 	if err != nil {
@@ -427,7 +428,7 @@ func (cm *Manager) compileComponent(comp *project.ComponentInfo) error {
 
 // compilePage compiles a single page
 func (cm *Manager) compilePage(page *project.PageInfo) error {
-	c := NewFileCompiler(cm, &page.DocumentInfo)
+	c := NewFileCompiler(cm, &page.DocumentInfo, common.TargetPage)
 
 	res, err := c.CompileFile()
 	if err != nil {
