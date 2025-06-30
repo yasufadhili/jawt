@@ -7,7 +7,7 @@ import (
 
 var tscCmd = &cobra.Command{
 	Use:   "tsc [typescript-args...]",
-	Short: "Run TypeScript compiler",
+	Short: "Compile Typescript code",
 	Long: `Run the TypeScript compiler within Jawt with the provided arguments.
 All arguments are passed directly to tsc.`,
 	Run: func(cmd *cobra.Command, args []string) {
