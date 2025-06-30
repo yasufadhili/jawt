@@ -15,6 +15,11 @@ type Manager struct {
 	project    *project.Project
 	depGraph   *DependencyGraph
 	buildCache *Cache
+	options    Options
+}
+
+type Options struct {
+	Verbose bool
 }
 
 // Cache tracks file modification times and content hashes
@@ -57,6 +62,12 @@ func (cm *Manager) CompileProject() error {
 	buildOrder, err := cm.depGraph.BuildOrder()
 	if err != nil {
 		return fmt.Errorf("failed to determine build order: %w", err)
+	}
+	if cm.options.Verbose {
+		err := cm.PrintBuildPlan()
+		if err != nil {
+			return err
+		}
 	}
 
 	for _, filePath := range buildOrder {
