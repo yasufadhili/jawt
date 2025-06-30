@@ -1,38 +1,52 @@
 package project
 
+import "time"
+
 type Manager struct {
 	Project *Project
-	TempDir string
 }
 
-type Project struct {
-	RootPath string    `json:"root_path"`
-	Config   *Config   `json:"config"`
-	Metadata *Metadata `json:"metadata"`
-}
-
-func NewProjectManager() *Manager {
-	return &Manager{}
+func NewProjectManager(project *Project) *Manager {
+	return &Manager{
+		Project: project,
+	}
 }
 
 // LoadProject initialises a project from a root directory
-func (p *Manager) LoadProject(rootPath string) (*Project, error) {
+func (m *Manager) LoadProject(rootPath string) (*Project, error) {
 	return nil, nil
 }
 
 // ValidateProject checks project structure and configuration
-func (p *Manager) ValidateProject() []Error {
+func (m *Manager) ValidateProject() []Error {
 	return nil
 }
 
 // GetProjectConfig returns resolved configuration with cascading
-func (p *Manager) GetProjectConfig() (*Config, error) {
+func (m *Manager) GetProjectConfig() (*Config, error) {
 	return nil, nil
 }
 
 // WatchProject sets up the file system watching for development mode
-func (p *Manager) WatchProject() error {
+func (m *Manager) WatchProject() error {
 	return nil
+}
+
+type Project struct {
+	RootPath   string                    `json:"root_path"`
+	Config     *Config                   `json:"config"`
+	Metadata   *Metadata                 `json:"metadata"`
+	Pages      map[string]*PageInfo      `json:"pages"`
+	Components map[string]*ComponentInfo `json:"components"`
+	Assets     []string                  `json:"assets"`
+	BuildTime  time.Time                 `json:"build_time"`
+	TempDir    string                    `json:"temp_dir"`
+}
+
+func NewProject(rootPath string) *Project {
+	return &Project{
+		RootPath: rootPath,
+	}
 }
 
 type Error struct {
