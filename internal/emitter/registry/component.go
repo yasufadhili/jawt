@@ -97,6 +97,7 @@ func (cr *ComponentRegistry) GetComponentsByType(compType ComponentType) []*Comp
 // initialiseBuiltInComponents populates the registry with built-in components
 func (cr *ComponentRegistry) initialiseBuiltInComponents() {
 	cr.initialiseLayoutComponents()
+	cr.initialiseSemanticLayoutComponents()
 	cr.initialiseTextComponents()
 	cr.initialiseInputComponents()
 	cr.initialiseNavigationComponents()
