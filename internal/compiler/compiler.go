@@ -3,6 +3,7 @@ package compiler
 import (
 	"fmt"
 	"github.com/antlr4-go/antlr/v4"
+	"github.com/yasufadhili/jawt/internal/common"
 	parser "github.com/yasufadhili/jawt/internal/compiler/parser/generated"
 	"github.com/yasufadhili/jawt/internal/project"
 	"strings"
@@ -12,15 +13,48 @@ type Manager struct {
 }
 
 type Compiler struct {
-	parser *Parser
+	project *project.Project
+	parser  *Parser
+	docInfo *project.DocumentInfo
+	target  common.BuildTarget
 }
 
-func NewCompiler(project *project.Project) (*Compiler, error) {
-	return nil, nil
+func NewCompiler(project *project.Project, docInfo *project.DocumentInfo, target common.BuildTarget) (*Compiler, error) {
+	return &Compiler{
+		project: project,
+		parser:  newParser(),
+		docInfo: docInfo,
+		target:  target,
+	}, nil
 }
 
 func (c *Compiler) Compile() (*CompileResult, error) {
-	return nil, nil
+
+	input, err := antlr.NewFileStream(c.docInfo.AbsolutePath)
+	if err != nil {
+		return &CompileResult{
+			Success: false,
+			DocInfo: c.docInfo,
+		}, fmt.Errorf("failed to read file %s: %w", c.docInfo.AbsolutePath, err)
+	}
+
+	parseResult := c.parseFile(input)
+
+	result := &CompileResult{
+		Success:   parseResult.Success,
+		DocInfo:   c.docInfo,
+		ParseTree: parseResult.Tree,
+		Errors:    parseResult.Errors,
+	}
+
+	if !parseResult.Success {
+		fmt.Printf("❌ Parsing failed for %s with %d errors:\n", c.docInfo.Name, len(parseResult.Errors))
+		c.printErrors(parseResult.Errors)
+		return result, nil
+	}
+
+	c.docInfo.Compiled = true
+	return result, nil
 }
 
 func (c *Compiler) CompileChanged() error {
