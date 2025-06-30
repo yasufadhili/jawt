@@ -3,9 +3,13 @@ package compiler
 import (
 	"fmt"
 	"github.com/antlr4-go/antlr/v4"
+	"github.com/yasufadhili/jawt/internal/ast"
 	"github.com/yasufadhili/jawt/internal/common"
 	parser "github.com/yasufadhili/jawt/internal/compiler/parser/generated"
+	"github.com/yasufadhili/jawt/internal/emitter"
 	"github.com/yasufadhili/jawt/internal/project"
+	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -49,15 +53,50 @@ func (c *FileCompiler) CompileFile() (*FileCompileResult, error) {
 		return result, nil
 	}
 
+	astBuilder := ast.NewAstBuilder()
+	astRoot := astBuilder.Visit(parseResult.Tree).(*ast.DocumentNode)
+	result.AST = astRoot
+
+	// TODO: Symbol Collection & Semantic Analysis -> Via TypeScript too
+
+	e := emitter.NewEmitter(astRoot, c.target)
+	output := e.Emit()
+
+	outPath := c.manager.project.OutputDir
+	switch c.target {
+	case common.TargetPage:
+		if c.docInfo.RelativePath == "/" {
+			c.docInfo.RelativePath = "index"
+		} else {
+			c.docInfo.RelativePath = filepath.Join(c.docInfo.RelativePath, "index")
+		}
+		outPath = filepath.Join(outPath, c.docInfo.RelativePath+".html")
+		fmt.Println(outPath)
+	case common.TargetComponent:
+		outPath = outPath + c.docInfo.RelativePath + ".js"
+		outPath = strings.ReplaceAll(outPath, ".jml", "")
+		fmt.Println(outPath)
+	}
+
+	outDir := filepath.Dir(outPath)
+	if err := os.MkdirAll(outDir, 0755); err != nil {
+		return nil, fmt.Errorf("failed to create output directory %s: %w", outDir, err)
+	}
+
+	osErr := os.WriteFile(outPath, []byte(output), 0644)
+	if osErr != nil {
+		return nil, fmt.Errorf("failed to write output file %s: %w", outPath, osErr)
+	}
+
 	c.docInfo.Compiled = true
 	return result, nil
 }
 
 // FileCompileResult holds the compilation result with detailed error information
 type FileCompileResult struct {
-	Success bool
-	Errors  []SyntaxError
-	//AST       *JMLDocumentNode
+	Success   bool
+	Errors    []SyntaxError
+	AST       *ast.DocumentNode
 	ParseTree antlr.ParseTree
 	DocInfo   *project.DocumentInfo
 }

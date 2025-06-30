@@ -128,7 +128,7 @@ func (cm *Manager) CompileChanged() error {
 
 // initBuildCache initialises the build cache
 func (cm *Manager) initBuildCache() {
-	cacheFile := filepath.Join(cm.project.OutputDir, ".jawt_cache.json")
+	cacheFile := filepath.Join(cm.project.RootPath, ".cache", ".jawt_cache.json")
 	cm.buildCache = &Cache{
 		CacheFile: cacheFile,
 		Files:     make(map[string]FileRecord),
@@ -326,7 +326,7 @@ func (cm *Manager) updateCacheRecord(filePath string) error {
 	cm.buildCache.Files[filePath] = FileRecord{
 		LastModified: info.ModTime(),
 		Hash:         hash,
-		OutputPath:   "", // Could be populated with the actual output path
+		OutputPath:   filePath,
 		Dependencies: dependencies,
 	}
 
