@@ -1,18 +1,103 @@
 package project
 
 import (
+	"fmt"
+	"github.com/spf13/viper"
 	"github.com/yasufadhili/jawt/internal/server"
+	"os"
+	"path/filepath"
 	"time"
 )
 
 // Config holds configuration for the project (jawt.config.json)
 type Config struct {
-	Server server.Config `json:"server"`
+	App          AppConfig        `json:"app"`
+	Server       server.Config    `json:"server"`
+	Pages        DocumentConfig   `json:"pages"`
+	Components   DocumentConfig   `json:"components"`
+	Scripts      DocumentConfig   `json:"scripts"`
+	Dependencies DependencyConfig `json:"dependencies"`
+	Build        BuildConfig      `json:"build"`
 }
 
 type AppConfig struct {
 	Name    string `json:"name"`
 	Version string `json:"version"`
+	Author  string `json:"author"`
+	License string `json:"license"`
+}
+
+type DocumentConfig struct {
+	Path  string `json:"path"`
+	Alias string `json:"alias"`
+}
+
+type DependencyConfig struct {
+	Name    string `json:"name"`
+	Version string `json:"version"`
+	Type    string `json:"type"`
+}
+
+type BuildConfig struct {
+	OutputPath string `json:"outputPath"`
+}
+
+func loadJawtConfig(projectDir string) (*Config, error) {
+	v := viper.New()
+	jawtConfigPath := filepath.Join(projectDir, "jawt.config.json")
+	if _, err := os.Stat(jawtConfigPath); os.IsNotExist(err) {
+		return nil, fmt.Errorf("jawt.config.json not found in %s", projectDir)
+	}
+
+	v.SetConfigFile(jawtConfigPath)
+	v.SetConfigType("json")
+
+	if err := v.ReadInConfig(); err != nil {
+		return nil, fmt.Errorf("failed to read jawt.config.json: %w", err)
+	}
+
+	var config Config
+	if err := v.Unmarshal(&config); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal jawt.config.json: %w", err)
+	}
+
+	// Set defaults if not specified in config
+	if config.Server.Port == 0 {
+		config.Server.Port = 6500
+	}
+	if config.Pages.Path == "" {
+		config.Pages.Path = "app"
+	}
+	if config.Components.Path == "" {
+		config.Components.Path = "components"
+	}
+	if config.Build.OutputPath == "" {
+		config.Build.OutputPath = "dist"
+	}
+
+	return &config, nil
+}
+
+func loadAppConfig(projectDir string) (*AppConfig, error) {
+	v := viper.New()
+
+	appConfigPath := filepath.Join(projectDir, "app.json")
+	if _, err := os.Stat(appConfigPath); os.IsNotExist(err) {
+		return nil, fmt.Errorf("app.json not found in %s", projectDir)
+	}
+	v.SetConfigFile(appConfigPath)
+	v.SetConfigType("json")
+
+	if err := v.ReadInConfig(); err != nil {
+		return nil, fmt.Errorf("failed to read app.json: %w", err)
+	}
+
+	var config AppConfig
+	if err := v.Unmarshal(&config); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal app.json: %w", err)
+	}
+
+	return &config, nil
 }
 
 // DocumentInfo contains common metadata shared by all document types
