@@ -1,9 +1,11 @@
 package server
 
 import (
+	"errors"
 	"fmt"
 	"github.com/yasufadhili/jawt/internal/project"
 	"net/http"
+	"os"
 )
 
 type DevServer struct {
@@ -32,7 +34,27 @@ func NewDevServer(project *project.Project) *DevServer {
 func (s *DevServer) Start() error {
 	fmt.Printf("📡 Development server running on http://%s\n", s.GetAddress())
 	fmt.Println("   Press Ctrl+C to stop")
-	return nil
+
+	if s.project.OutputDir == "" {
+		return fmt.Errorf("no output directory specified")
+	}
+
+	if stat, err := os.Stat(s.project.OutputDir); os.IsNotExist(err) || !stat.IsDir() {
+		return fmt.Errorf("output directory %s does not exist", s.project.OutputDir)
+	}
+
+	fileServer := http.FileServer(http.Dir(s.project.OutputDir))
+
+	http.Handle("/", fileServer)
+
+	addr := fmt.Sprintf(":%d", s.port)
+
+	s.server = &http.Server{Addr: addr, Handler: fileServer}
+	if err := s.server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		return fmt.Errorf("failed to start server: %w", err)
+	}
+
+	return http.ListenAndServe(fmt.Sprintf(":%d", s.port), fileServer)
 }
 
 // Stop stops the development server

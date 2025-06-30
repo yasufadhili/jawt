@@ -72,11 +72,9 @@ func (c *FileCompiler) CompileFile() (*FileCompileResult, error) {
 			c.docInfo.RelativePath = filepath.Join(c.docInfo.RelativePath, "index")
 		}
 		outPath = filepath.Join(outPath, c.docInfo.RelativePath+".html")
-		fmt.Println(outPath)
 	case common.TargetComponent:
 		outPath = filepath.Join(outPath, c.docInfo.RelativePath+".js")
 		outPath = strings.ReplaceAll(outPath, ".jml", "")
-		fmt.Println(outPath)
 	}
 
 	outDir := filepath.Dir(outPath)
