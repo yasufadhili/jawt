@@ -203,10 +203,10 @@ func (b *Builder) printError(context string, err error) {
 // printSuccess prints success messages
 func (b *Builder) printSuccess() {
 	timestamp := time.Now().Format("15:04:05")
-	//stats := b.compiler.GetCompilationStats()
+	stats := b.compilerManager.GetCompilationStats()
 
 	fmt.Printf("\n✅ [%s] Build completed successfully!\n", timestamp)
-	//fmt.Printf("   %s\n", stats.String())
+	fmt.Printf("   %s\n", stats.String())
 	fmt.Printf("   Watching for changes...\n\n")
 }
 
@@ -275,20 +275,20 @@ func (b *Builder) GetStats() Stats {
 		ErrorCount: b.errorState.errorCount,
 	}
 
-	//if b.compiler != nil {
-	//	compStats := b.compiler.GetCompilationStats()
-	//	stats.CompilationStats = &compStats
-	//}
+	if b.compilerManager != nil {
+		compStats := b.compilerManager.GetCompilationStats()
+		stats.CompilationStats = &compStats
+	}
 
 	return stats
 }
 
 // Stats holds overall build statistics
 type Stats struct {
-	IsRunning  bool
-	HasErrors  bool
-	ErrorCount int
-	//CompilationStats *CompilationStats
+	IsRunning        bool
+	HasErrors        bool
+	ErrorCount       int
+	CompilationStats *compiler.CompilationStats
 }
 
 // String returns a formatted string of build stats
@@ -304,9 +304,9 @@ func (s Stats) String() string {
 	}
 
 	compInfo := ""
-	//if s.CompilationStats != nil {
-	//	compInfo = fmt.Sprintf(", %s", s.CompilationStats.String())
-	//}
+	if s.CompilationStats != nil {
+		compInfo = fmt.Sprintf(", %s", s.CompilationStats.String())
+	}
 
 	return fmt.Sprintf("Status: %s%s%s", status, errorInfo, compInfo)
 }
