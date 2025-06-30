@@ -3,7 +3,7 @@ package build
 import "fmt"
 
 // BuildIncremental performs incremental build with error handling
-func (b *Builder) BuildIncremental() error {
+func (b *BuildSystem) BuildIncremental() error {
 	b.mu.Lock()
 	defer b.mu.Unlock()
 

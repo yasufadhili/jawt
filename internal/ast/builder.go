@@ -11,7 +11,7 @@ type Builder struct {
 	*parser.BaseJMLVisitor
 }
 
-func NewBuilder() *Builder {
+func NewAstBuilder() *Builder {
 	return &Builder{
 		BaseJMLVisitor: &parser.BaseJMLVisitor{},
 	}

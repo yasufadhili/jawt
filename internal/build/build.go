@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-type Builder struct {
+type BuildSystem struct {
 	project         *project.Project
 	ClearCache      bool
 	discovery       *project.Discovery
@@ -32,11 +32,11 @@ type Options struct {
 	Verbose bool
 }
 
-// NewBuilder creates a new builder instance
-func NewBuilder(p *project.Project) (*Builder, error) {
+// NewBuildSystem creates a new builder instance
+func NewBuildSystem(p *project.Project) (*BuildSystem, error) {
 	discovery := project.NewProjectDiscovery(p)
 	cm := compiler.NewCompilerManager(p)
-	return &Builder{
+	return &BuildSystem{
 		project:         p,
 		discovery:       discovery,
 		compilerManager: cm,
@@ -47,7 +47,7 @@ func NewBuilder(p *project.Project) (*Builder, error) {
 }
 
 // Build performs a full project build with error state management
-func (b *Builder) Build() error {
+func (b *BuildSystem) Build() error {
 	b.mu.Lock()
 	defer b.mu.Unlock()
 
@@ -97,7 +97,7 @@ func (b *Builder) Build() error {
 }
 
 // SetConfig allows manually setting the configuration
-func (b *Builder) SetConfig(cfg *project.Config) {
+func (b *BuildSystem) SetConfig(cfg *project.Config) {
 	b.project.Config = cfg
 }
 
@@ -188,7 +188,7 @@ func (es *ErrorState) getErrorSummary() string {
 }
 
 // printError prints error messages with context
-func (b *Builder) printError(context string, err error) {
+func (b *BuildSystem) printError(context string, err error) {
 	timestamp := time.Now().Format("15:04:05")
 	summary := b.errorState.getErrorSummary()
 
@@ -201,7 +201,7 @@ func (b *Builder) printError(context string, err error) {
 }
 
 // printSuccess prints success messages
-func (b *Builder) printSuccess() {
+func (b *BuildSystem) printSuccess() {
 	timestamp := time.Now().Format("15:04:05")
 	stats := b.compilerManager.GetCompilationStats()
 
@@ -211,25 +211,25 @@ func (b *Builder) printSuccess() {
 }
 
 // printIncrementalSuccess prints incremental build success
-func (b *Builder) printIncrementalSuccess() {
+func (b *BuildSystem) printIncrementalSuccess() {
 	timestamp := time.Now().Format("15:04:05")
 	fmt.Printf("✅ [%s] Incremental build completed\n", timestamp)
 }
 
 // handleWatcherError handles errors from the file watcher
-func (b *Builder) handleWatcherError(err error) {
+func (b *BuildSystem) handleWatcherError(err error) {
 	if b.errorState.shouldShowError(err) {
 		b.printError("File Watcher", err)
 	}
 }
 
 // handleFileChange handles file change events
-func (b *Builder) handleFileChange(filePath string) {
+func (b *BuildSystem) handleFileChange(filePath string) {
 	timestamp := time.Now().Format("15:04:05")
 	fmt.Printf("[%s] File changed: %s\n", timestamp, filePath)
 
 	// Attempt incremental build
-	if err := b.BuildIncremental(); err != nil {
+	if err := b.Build(); err != nil {
 		fmt.Printf("   Incremental build failed, trying full rebuild...\n")
 		if err := b.Build(); err != nil {
 			// Full build also failed - error already handled by Build()
@@ -239,33 +239,33 @@ func (b *Builder) handleFileChange(filePath string) {
 }
 
 // GetProject returns the current project structure
-func (b *Builder) GetProject() *project.Project {
+func (b *BuildSystem) GetProject() *project.Project {
 	b.mu.RLock()
 	defer b.mu.RUnlock()
 	return b.project
 }
 
 // IsRunning returns whether the builder is currently running
-func (b *Builder) IsRunning() bool {
+func (b *BuildSystem) IsRunning() bool {
 	b.mu.RLock()
 	defer b.mu.RUnlock()
 	return b.isRunning
 }
 
 // GetErrorState returns the current error state (for testing/debugging)
-func (b *Builder) GetErrorState() *ErrorState {
+func (b *BuildSystem) GetErrorState() *ErrorState {
 	return b.errorState
 }
 
 // ClearErrorState manually clears the error state
-func (b *Builder) ClearErrorState() {
+func (b *BuildSystem) ClearErrorState() {
 	b.errorState.mu.Lock()
 	defer b.errorState.mu.Unlock()
 	b.errorState.reset()
 }
 
 // GetStats returns current build statistics
-func (b *Builder) GetStats() Stats {
+func (b *BuildSystem) GetStats() Stats {
 	b.mu.RLock()
 	defer b.mu.RUnlock()
 

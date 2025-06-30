@@ -5,7 +5,7 @@ import (
 	"github.com/yasufadhili/jawt/internal/server"
 )
 
-func (b *Builder) Run() error {
+func (b *BuildSystem) Run() error {
 
 	b.mu.Lock()
 	b.isRunning = true

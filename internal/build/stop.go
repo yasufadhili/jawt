@@ -3,7 +3,7 @@ package build
 import "fmt"
 
 // Stop stops all running services
-func (b *Builder) Stop() {
+func (b *BuildSystem) Stop() {
 	b.mu.Lock()
 	defer b.mu.Unlock()
 
