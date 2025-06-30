@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
+	"github.com/yasufadhili/jawt/internal/compiler"
 	"github.com/yasufadhili/jawt/internal/project"
 	"github.com/yasufadhili/jawt/internal/server"
 	"sync"
@@ -13,9 +14,10 @@ import (
 type Builder struct {
 	Project    *project.Project
 	ClearCache bool
-
-	watcher *FileWatcher
-	server  *server.DevServer
+	discovery  *project.Discovery
+	watcher    *FileWatcher
+	server     *server.DevServer
+	compiler   *compiler.Compiler
 
 	// Error state management
 	errorState *ErrorState
@@ -24,9 +26,12 @@ type Builder struct {
 	mu         sync.RWMutex
 }
 
-func NewBuilder(project *project.Project) (*Builder, error) {
+// NewBuilder creates a new builder instance
+func NewBuilder(p *project.Project) (*Builder, error) {
+	discovery := project.NewProjectDiscovery(p)
 	return &Builder{
-		Project:    project,
+		Project:    p,
+		discovery:  discovery,
 		ClearCache: false,
 		errorState: &ErrorState{},
 		stopChan:   make(chan struct{}),
