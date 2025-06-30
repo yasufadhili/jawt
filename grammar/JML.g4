@@ -1,7 +1,7 @@
 grammar JML;
 
 
-jmlDocument
+document
     : doctypeSpecifier imports? documentContent EOF
 ;
 
