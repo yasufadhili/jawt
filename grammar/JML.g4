@@ -33,7 +33,8 @@ imports
 
 importStatement
     : 'import' doctype IDENTIFIER 'from' STRING
-    | 'import' 'browser'                              // Browser API import
+    | 'import' IDENTIFIER 'from' STRING
+    | 'import' IDENTIFIER
 ;
 
 
