@@ -228,16 +228,16 @@ func (pi *ProjectInitialiser) generateTemplateFiles() error {
 _doctype page index
 
 Page {
-    title: "My App - Built with JAWT"
+	title: "My App - Built with JAWT"
 
-    Main {
-        style: "min-h-screen bg-gray-50 flex flex-col justify-center items-center"
+	Main {
+		style: "min-h-screen bg-gray-50 flex flex-col justify-center items-center"
 
-        Text {
-						style: "text-center text-gray-900 text-4xl"
-						text: "Hello, JAWT!"
-				}
-    }
+		Text {
+			style: "text-center text-gray-900 text-4xl"
+			text: "Hello, JAWT!"	
+		}
+	}
 }`
 
 	if err := pi.writeTextFile("app/index.jml", indexContent); err != nil {
@@ -288,15 +288,12 @@ func (pi *ProjectInitialiser) verifyProject() error {
 func (pi *ProjectInitialiser) printSuccessMessage() {
 	fmt.Printf("✅ Project '%s' initialised successfully!\n\n", pi.config.ProjectName)
 
-	if pi.config.ProjectName != filepath.Base(pi.targetPath) {
-		fmt.Printf("📁 Run 'cd %s' to enter the project directory\n", pi.config.ProjectName)
-	}
+	fmt.Printf("📂 Project location: %s\n", pi.targetPath)
+	fmt.Println("\nNext steps:")
+	fmt.Printf("  cd %s\n", pi.config.ProjectName)
+	fmt.Println("  jawt run")
 
-	fmt.Printf("🚀 Run 'jawt run' to start the development server\n")
-	fmt.Printf("🏗️  Run 'jawt build' to build for production\n")
-	fmt.Printf("📖 Check README.md for more information\n\n")
-
-	fmt.Printf("🎉 Happy coding with Jawt!\n")
+	fmt.Printf("\n🎉 Happy coding with Jawt!\n")
 }
 
 // writeJSONFile writes data as JSON to a file
