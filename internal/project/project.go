@@ -53,6 +53,27 @@ func NewProject(rootPath string) *Project {
 	}
 }
 
+// LoadConfig loads both app.json and jawt.config.json from the specified directory
+func LoadConfig(projectPath string) (*Config, error) {
+	config := &Config{}
+
+	// Load app.json
+	appConfig, err := loadAppConfig(projectPath)
+	if err != nil {
+		return nil, err
+	}
+	config.App = *appConfig
+
+	// Load jawt.config.json
+	jawtConfig, err := loadJawtConfig(projectPath)
+	if err != nil {
+		return nil, err
+	}
+	config = jawtConfig
+
+	return config, nil
+}
+
 type Error struct {
 	Message string `json:"message"`
 }
