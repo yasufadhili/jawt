@@ -2,9 +2,16 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/yasufadhili/jawt/internal/project"
 	"os"
 
 	"github.com/spf13/cobra"
+)
+
+// Global configuration for use across commands
+var (
+	CurrentProject *project.Project
+	projectDir     string
 )
 
 var rootCmd = &cobra.Command{
@@ -13,6 +20,24 @@ var rootCmd = &cobra.Command{
 	Long: `Jawt is a tool for creating, developing, and building minimal web applications.
 It offers a streamlined workflow and unified development experience.`,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		// Skip config loading for commands that don't require it
+		if cmd.Name() == "init" || cmd.Name() == "update" || cmd.Name() == "version" {
+			return
+		}
+
+		if !project.IsJawtProject(projectDir) {
+			_, _ = fmt.Fprintf(os.Stderr, "Error: Current directory is not a JAWT project.\n")
+			_, _ = fmt.Fprintf(os.Stderr, "Run 'jawt init <project-name>' to create a new project.\n")
+			os.Exit(1)
+		}
+
+		p, err := project.NewProject(projectDir)
+		if err != nil {
+			_, _ = fmt.Fprintf(os.Stderr, "Error loading project configuration: %v\n", err)
+			os.Exit(1)
+		}
+
+		CurrentProject = p
 
 	},
 }
