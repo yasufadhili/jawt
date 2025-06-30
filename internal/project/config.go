@@ -40,6 +40,7 @@ type DependencyConfig struct {
 
 type BuildConfig struct {
 	OutputPath string `json:"outputPath"`
+	Minify     bool   `json:"minify"`
 }
 
 func loadJawtConfig(projectDir string) (*Config, error) {
@@ -257,4 +258,18 @@ func (p *Project) FindComponentByName(name string) *ComponentInfo {
 
 func (p *Project) FindPageByName(name string) *PageInfo {
 	return p.Pages[name]
+}
+
+// Convenience methods for accessing nested configuration values
+
+func (c *Config) GetPort() int { return int(c.Server.Port) }
+
+func (c *Config) GetOutputDir() string { return c.Build.OutputPath }
+
+func (c *Config) GetProjectName() string {
+	return c.App.Name
+}
+
+func (c *Config) ShouldMinify() bool {
+	return c.Build.Minify
 }
