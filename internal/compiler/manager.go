@@ -419,7 +419,7 @@ func (cm *Manager) compileComponent(comp *project.ComponentInfo) error {
 	if !res.Success {
 		fmt.Printf("Found %d syntax errors\n", len(res.Errors))
 		for _, err := range res.Errors {
-			_ = fmt.Errorf(err.Error())
+			fmt.Println(err.Error())
 		}
 		return fmt.Errorf("compilation failed")
 	}
@@ -438,7 +438,7 @@ func (cm *Manager) compilePage(page *project.PageInfo) error {
 	if !res.Success {
 		fmt.Printf("Found %d syntax errors\n", len(res.Errors))
 		for _, err := range res.Errors {
-			_ = fmt.Errorf(err.Error())
+			fmt.Println(err.Error())
 		}
 		return fmt.Errorf("compilation failed")
 	}
