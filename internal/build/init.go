@@ -3,6 +3,8 @@ package build
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/yasufadhili/jawt/internal/project"
+	"github.com/yasufadhili/jawt/internal/server"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -173,16 +175,20 @@ func (pi *ProjectInitialiser) generateConfigFiles() error {
 	}
 
 	// Generate jawt.config.json
-	jawtConfig := map[string]interface{}{
-		"project": map[string]interface{}{
-			"name": pi.config.ProjectName,
+	jawtConfig := project.Config{
+		Pages: project.DocumentConfig{
+			Path: "app",
 		},
-		"server": map[string]interface{}{
-			"port": 6500,
+		Components: project.DocumentConfig{
+			Path: "components",
 		},
-		"build": map[string]interface{}{
-			"output": "dist",
-			"minify": true,
+		Server: server.Config{
+			Host: "localhost",
+			Port: 6500,
+		},
+		Build: project.BuildConfig{
+			Minify:     true,
+			OutputPath: "dist",
 		},
 	}
 
