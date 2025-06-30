@@ -10,8 +10,8 @@ var debugPort int
 
 var debugCmd = &cobra.Command{
 	Use:   "debug",
-	Short: "Start JAWT debugger",
-	Long: `Starts the JAWT debugger, which provides debugging tools and insights
+	Short: "Start Jawt debugger",
+	Long: `Starts the Jawt debugger, which provides debugging tools and insights
 into your application's compilation and runtime behaviour.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// FUTURE
