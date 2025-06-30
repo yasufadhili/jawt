@@ -19,6 +19,9 @@ func NewDevServer(project *project.Project) *DevServer {
 		port = 6500
 	}
 	host := project.Config.Server.Host
+	if host == "" {
+		host = "localhost"
+	}
 	return &DevServer{
 		project: project,
 		port:    int(port),
