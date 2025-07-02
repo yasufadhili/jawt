@@ -33,6 +33,10 @@ Write your application structure and behaviour using **JML**, a domain-specific 
 - [Build System](internal/build) : Orchestrates the entire build process
 - [Development Server](internal/devserver) : Serves Jawt projects locally during development
 
-## License
+## Licensing
 
-All parts of the Jawt Toolchain are licensed under the [MIT Licence](LICENSE).
+This project is primarily licensed under the [MIT Licence](LICENSE). 
+
+It also includes code from the new [TypeScript compiler](https://github.com/microsoft/typesctipt-go),
+which is licensed under the [Apache License 2.0](./LICENSE-APACHE). See the `internal/tsc/` directory for details.
+
