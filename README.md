@@ -36,15 +36,3 @@ Write your application structure and behaviour using **JML**, a domain-specific 
 ## License
 
 All parts of the Jawt Toolchain are licensed under the [MIT Licence](LICENSE).
-
-## Status
-
-[![Build JAWT](https://github.com/yasufadhili/jawt/actions/workflows/build.yml/badge.svg)](https://github.com/yasufadhili/jawt/actions/workflows/build.yml)
-
-[![Test JAWT](https://github.com/yasufadhili/jawt/actions/workflows/test.yml/badge.svg)](https://github.com/yasufadhili/jawt/actions/workflows/test.yml)
-
-[![Build and Deploy Docs](https://github.com/yasufadhili/jawt/actions/workflows/docs.yml/badge.svg)](https://github.com/yasufadhili/jawt/actions/workflows/docs.yml)
-
-[![pages-build-deployment](https://github.com/yasufadhili/jawt/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/yasufadhili/jawt/actions/workflows/pages/pages-build-deployment)
-
-[![Release JAWT Binaries](https://github.com/yasufadhili/jawt/actions/workflows/release.yml/badge.svg)](https://github.com/yasufadhili/jawt/actions/workflows/release.yml)
