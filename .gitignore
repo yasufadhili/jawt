@@ -57,7 +57,7 @@ __debug_bin*
 
 # Built binaries
 /bin
-/cmd/tsgo/tsgo
+/cmd/tsc/tsgo
 /tsgo
 
 # Benchmarking results
