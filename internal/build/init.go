@@ -3,43 +3,37 @@ package build
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/yasufadhili/jawt/internal/project"
 	"os"
 	"os/user"
 	"path/filepath"
 	"regexp"
 )
 
-// ProjectInitializer handles creating new JAWT projects
-type ProjectInitializer struct {
+type ProjectInitialiser struct {
 	targetPath string
 	config     *InitConfig
 }
 
-// InitConfig holds configuration for project initialization
 type InitConfig struct {
 	ProjectName string `json:"name"`
 	Author      string `json:"author"`
 	Version     string `json:"version"`
-	Description string `json:"description"`
-	Template    string `json:"template"`
-	Port        int    `json:"port"`
 }
 
-// InitProject Package-level convenience function for external use
-func InitProject(targetPath, projectName string) error {
-	initializer := NewProjectInitializer(targetPath)
-	return initializer.InitProject(projectName)
+func InitProject(targetPath string, projectName string) error {
+	initialiser := NewProjectInitialiser(targetPath)
+	return initialiser.InitProject(projectName)
 }
 
-// NewProjectInitializer creates a new project initializer
-func NewProjectInitializer(targetPath string) *ProjectInitializer {
-	return &ProjectInitializer{
+// NewProjectInitialiser creates a new project initialiser
+func NewProjectInitialiser(targetPath string) *ProjectInitialiser {
+	return &ProjectInitialiser{
 		targetPath: targetPath,
 	}
 }
 
-// InitProject initializes a new JAWT project
-func (pi *ProjectInitializer) InitProject(projectName string) error {
+func (pi *ProjectInitialiser) InitProject(projectName string) error {
 	// Validate and prepare configuration
 	config, err := pi.prepareConfig(projectName)
 	if err != nil {
@@ -48,32 +42,29 @@ func (pi *ProjectInitializer) InitProject(projectName string) error {
 
 	pi.config = config
 
-	// Create directory structure
 	if err := pi.createDirectoryStructure(); err != nil {
 		return fmt.Errorf("failed to create directory structure: %w", err)
 	}
 
-	// Generate configuration files
 	if err := pi.generateConfigFiles(); err != nil {
 		return fmt.Errorf("failed to generate configuration files: %w", err)
 	}
 
-	// Generate template files
 	if err := pi.generateTemplateFiles(); err != nil {
 		return fmt.Errorf("failed to generate template files: %w", err)
 	}
 
-	// Verify project structure
 	if err := pi.verifyProject(); err != nil {
 		return fmt.Errorf("project verification failed: %w", err)
 	}
 
 	pi.printSuccessMessage()
+
 	return nil
 }
 
 // prepareConfig validates input and prepares initialization configuration
-func (pi *ProjectInitializer) prepareConfig(projectName string) (*InitConfig, error) {
+func (pi *ProjectInitialiser) prepareConfig(projectName string) (*InitConfig, error) {
 	var actualProjectName string
 	//var targetDir string
 
@@ -103,14 +94,11 @@ func (pi *ProjectInitializer) prepareConfig(projectName string) (*InitConfig, er
 		ProjectName: actualProjectName,
 		Author:      currentUser,
 		Version:     "1.0.0",
-		Description: fmt.Sprintf("A JAWT project called %s", actualProjectName),
-		Template:    "default",
-		Port:        6500,
 	}, nil
 }
 
 // createDirectoryStructure creates the project directory structure
-func (pi *ProjectInitializer) createDirectoryStructure() error {
+func (pi *ProjectInitialiser) createDirectoryStructure() error {
 	// Determine target directory
 
 	d, e := os.Getwd()
@@ -121,7 +109,7 @@ func (pi *ProjectInitializer) createDirectoryStructure() error {
 
 	var targetDir string
 	if pi.config.ProjectName == filepath.Base(pi.targetPath) {
-		// Initializing in the current directory
+		// Initialising in the current directory
 		targetDir = pi.targetPath
 	} else {
 		// Creating a new directory
@@ -152,7 +140,6 @@ func (pi *ProjectInitializer) createDirectoryStructure() error {
 		"app",
 		"components",
 		"assets",
-		".dist", // Build output directory
 	}
 
 	// Create the main directory if it doesn't exist
@@ -174,13 +161,12 @@ func (pi *ProjectInitializer) createDirectoryStructure() error {
 }
 
 // generateConfigFiles creates the project configuration files
-func (pi *ProjectInitializer) generateConfigFiles() error {
+func (pi *ProjectInitialiser) generateConfigFiles() error {
 	// Generate app.json
 	appConfig := map[string]interface{}{
-		"name":        pi.config.ProjectName,
-		"author":      pi.config.Author,
-		"version":     pi.config.Version,
-		"description": pi.config.Description,
+		"name":    pi.config.ProjectName,
+		"author":  pi.config.Author,
+		"version": pi.config.Version,
 	}
 
 	if err := pi.writeJSONFile("app.json", appConfig); err != nil {
@@ -188,16 +174,21 @@ func (pi *ProjectInitializer) generateConfigFiles() error {
 	}
 
 	// Generate jawt.config.json
-	jawtConfig := map[string]interface{}{
-		"project": map[string]interface{}{
-			"name": pi.config.ProjectName,
+	jawtConfig := project.Config{
+		Name: pi.config.ProjectName,
+		Pages: project.DocumentConfig{
+			Path: "app",
 		},
-		"server": map[string]interface{}{
-			"port": pi.config.Port,
+		Components: project.DocumentConfig{
+			Path: "components",
 		},
-		"build": map[string]interface{}{
-			"output": "dist",
-			"minify": true,
+		Server: project.DevServerConfig{
+			Host: "localhost",
+			Port: 6500,
+		},
+		Build: project.BuildConfig{
+			Minify:     true,
+			OutputPath: "dist",
 		},
 	}
 
@@ -206,7 +197,8 @@ func (pi *ProjectInitializer) generateConfigFiles() error {
 	}
 
 	// Generate .gitignore
-	gitignoreContent := `# Build output
+	gitignoreContent := `
+# Build output
 .dist/
 
 # Development files
@@ -216,6 +208,9 @@ func (pi *ProjectInitializer) generateConfigFiles() error {
 # OS files
 .DS_Store
 Thumbs.db
+
+# Node
+node_modules/
 
 # Editor files
 .vscode/
@@ -232,22 +227,23 @@ Thumbs.db
 	return nil
 }
 
-func (pi *ProjectInitializer) generateTemplateFiles() error {
+func (pi *ProjectInitialiser) generateTemplateFiles() error {
 
 	// Generate app/index.jml
-	indexContent := `_doctype page index
+	indexContent := `
+_doctype page index
 
 Page {
-    title: "My App - Built with JAWT"
+	title: "My App - Built with JAWT"
 
-    Main {
-        style: "min-h-screen bg-gray-50 flex flex-col justify-center items-center"
+	Main {
+		style: "min-h-screen bg-gray-50 flex flex-col justify-center items-center"
 
-        Text {
-						style: "text-center text-gray-900 text-4xl"
-						text: "Hello, JAWT!"
-				}
-    }
+		Text {
+			style: "text-center text-gray-900 text-4xl"
+			text: "Hello, JAWT!"	
+		}
+	}
 }`
 
 	if err := pi.writeTextFile("app/index.jml", indexContent); err != nil {
@@ -255,7 +251,8 @@ Page {
 	}
 
 	// Generate components/layout.jml
-	layoutContent := `_doctype component Layout
+	layoutContent := `
+_doctype component Layout
 
 Container {
   style: "min-h-screen bg-gray-50 flex flex-col"
@@ -288,58 +285,25 @@ Container {
 }
 
 // verifyProject checks that the project was created correctly
-func (pi *ProjectInitializer) verifyProject() error {
-	// Use the project discovery system to verify structure
-	discovery := NewProjectDiscovery(pi.targetPath)
-	project, err := discovery.DiscoverProject()
-	if err != nil {
-		return fmt.Errorf("project verification failed: %w", err)
-	}
-
-	// Check that essential files exist
-	requiredFiles := []string{
-		"app.json",
-		"jawt.config.json",
-		"app/index.jml",
-		"components/layout.jml",
-	}
-
-	for _, file := range requiredFiles {
-		fullPath := filepath.Join(pi.targetPath, file)
-		if _, err := os.Stat(fullPath); os.IsNotExist(err) {
-			return fmt.Errorf("required file missing: %s", file)
-		}
-	}
-
-	// Verify the project structure matches expected
-	if len(project.Pages) == 0 {
-		return fmt.Errorf("no pages discovered in project")
-	}
-
-	if len(project.Components) == 0 {
-		return fmt.Errorf("no components discovered in project")
-	}
-
+func (pi *ProjectInitialiser) verifyProject() error {
+	// TODO: Use the project discovery system to verify structure
 	return nil
 }
 
 // printSuccessMessage displays success information
-func (pi *ProjectInitializer) printSuccessMessage() {
+func (pi *ProjectInitialiser) printSuccessMessage() {
 	fmt.Printf("✅ Project '%s' initialised successfully!\n\n", pi.config.ProjectName)
 
-	if pi.config.ProjectName != filepath.Base(pi.targetPath) {
-		fmt.Printf("📁 Run 'cd %s' to enter the project directory\n", pi.config.ProjectName)
-	}
+	fmt.Printf("📂 Project location: %s\n", pi.targetPath)
+	fmt.Println("\nNext steps:")
+	fmt.Printf("  cd %s\n", pi.config.ProjectName)
+	fmt.Println("  jawt run")
 
-	fmt.Printf("🚀 Run 'jawt run' to start the development server\n")
-	fmt.Printf("🏗️  Run 'jawt build' to build for production\n")
-	fmt.Printf("📖 Check README.md for more information\n\n")
-
-	fmt.Printf("🎉 Happy coding with JAWT!\n")
+	fmt.Printf("\n🎉 Happy coding with Jawt!\n")
 }
 
 // writeJSONFile writes data as JSON to a file
-func (pi *ProjectInitializer) writeJSONFile(filename string, data interface{}) error {
+func (pi *ProjectInitialiser) writeJSONFile(filename string, data interface{}) error {
 	fullPath := filepath.Join(pi.targetPath, filename)
 
 	jsonData, err := json.MarshalIndent(data, "", "  ")
@@ -351,7 +315,7 @@ func (pi *ProjectInitializer) writeJSONFile(filename string, data interface{}) e
 }
 
 // writeTextFile writes text content to a file
-func (pi *ProjectInitializer) writeTextFile(filename, content string) error {
+func (pi *ProjectInitialiser) writeTextFile(filename, content string) error {
 	fullPath := filepath.Join(pi.targetPath, filename)
 
 	// Ensure directory exists

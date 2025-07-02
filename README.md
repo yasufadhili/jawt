@@ -31,20 +31,12 @@ Write your application structure and behaviour using **JML**, a domain-specific 
 
 - [Compiler](internal/compiler) : Compiles Pages, Modules and Components
 - [Build System](internal/build) : Orchestrates the entire build process
-- [Development Server](internal/server) : Serves Jawt projects locally during development
+- [Development Server](internal/devserver) : Serves Jawt projects locally during development
 
-## License
+## Licensing
 
-All parts of the Jawt Toolchain are licensed under the [MIT Licence](LICENSE).
+This project is primarily licensed under the [MIT Licence](LICENSE). 
 
-## Status
+It also includes code from the new [TypeScript compiler](https://github.com/microsoft/typesctipt-go),
+which is licensed under the [Apache License 2.0](./LICENSE-APACHE). See the `internal/tsc/` directory for details.
 
-[![Build JAWT](https://github.com/yasufadhili/jawt/actions/workflows/build.yml/badge.svg)](https://github.com/yasufadhili/jawt/actions/workflows/build.yml)
-
-[![Test JAWT](https://github.com/yasufadhili/jawt/actions/workflows/test.yml/badge.svg)](https://github.com/yasufadhili/jawt/actions/workflows/test.yml)
-
-[![Build and Deploy Docs](https://github.com/yasufadhili/jawt/actions/workflows/docs.yml/badge.svg)](https://github.com/yasufadhili/jawt/actions/workflows/docs.yml)
-
-[![pages-build-deployment](https://github.com/yasufadhili/jawt/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/yasufadhili/jawt/actions/workflows/pages/pages-build-deployment)
-
-[![Release JAWT Binaries](https://github.com/yasufadhili/jawt/actions/workflows/release.yml/badge.svg)](https://github.com/yasufadhili/jawt/actions/workflows/release.yml)

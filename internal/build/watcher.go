@@ -12,11 +12,10 @@ import (
 )
 
 type FileWatcher struct {
-	project   *project.Structure
-	compiler  *CompilerManager
+	project   *project.Project
 	watcher   *fsnotify.Watcher
 	isRunning bool
-	stopChan  chan struct{}
+	stopCh    chan struct{}
 	mu        sync.RWMutex
 
 	// Event debouncing
@@ -34,27 +33,25 @@ type FileWatcher struct {
 }
 
 // NewFileWatcher creates a new file watcher instance
-func NewFileWatcher(project *project.Structure, compiler *CompilerManager) *FileWatcher {
+func NewFileWatcher(project *project.Project) *FileWatcher {
 	return &FileWatcher{
 		project:       project,
-		compiler:      compiler,
-		stopChan:      make(chan struct{}),
+		stopCh:        make(chan struct{}),
 		debounceMap:   make(map[string]*time.Timer),
-		debounceDelay: 300 * time.Millisecond, // 300ms debounce
+		debounceDelay: 300 * time.Millisecond,
 		watchedExts: map[string]bool{
 			".jml":  true,
-			".js":   true,
+			".ts":   true,
 			".css":  true,
-			".html": true,
 			".json": true,
-			".md":   true,
 		},
 		ignoredDirs: map[string]bool{
-			".git":   true,
-			".jawt":  true,
-			"dist":   true,
-			"build":  true,
-			".cache": true,
+			".git":        true,
+			".jawt":       true,
+			"dist":        true,
+			"build":       true,
+			".cache":      true,
+			".jawt-cache": true,
 		},
 	}
 }
@@ -92,7 +89,7 @@ func (fw *FileWatcher) RemoveWatchedExtension(ext string) {
 
 // shouldWatchFile determines if a file should be watched
 func (fw *FileWatcher) shouldWatchFile(filePath string) bool {
-	// Check if file a extension is watched
+	// Check if a file extension is watched
 	ext := filepath.Ext(filePath)
 	if !fw.watchedExts[ext] {
 		return false
@@ -148,12 +145,12 @@ func (fw *FileWatcher) Start() error {
 
 // addWatchPaths adds all relevant paths to the watcher
 func (fw *FileWatcher) addWatchPaths() error {
-	if err := fw.watcher.Add(fw.project.Root); err != nil {
+	if err := fw.watcher.Add(fw.project.RootPath); err != nil {
 		return err
 	}
 
 	// Walk through the project structure and add directories
-	return filepath.Walk(fw.project.Root, func(path string, info os.FileInfo, err error) error {
+	return filepath.Walk(fw.project.RootPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return nil // Skip errors, continue walking
 		}
@@ -191,7 +188,7 @@ func (fw *FileWatcher) processEvents() {
 				fw.errorHandler(fmt.Errorf("file watcher error: %w", err))
 			}
 
-		case <-fw.stopChan:
+		case <-fw.stopCh:
 			return
 		}
 	}
@@ -221,7 +218,7 @@ func (fw *FileWatcher) debounceFileChange(filePath string) {
 	fw.debounceMu.Lock()
 	defer fw.debounceMu.Unlock()
 
-	// Cancel existing timer for this file
+	// Cancel the existing timer for this file
 	if timer, exists := fw.debounceMap[filePath]; exists {
 		timer.Stop()
 	}
@@ -230,7 +227,7 @@ func (fw *FileWatcher) debounceFileChange(filePath string) {
 	fw.debounceMap[filePath] = time.AfterFunc(fw.debounceDelay, func() {
 		fw.triggerFileChange(filePath)
 
-		// Clean up timer
+		// Clean up the timer
 		fw.debounceMu.Lock()
 		delete(fw.debounceMap, filePath)
 		fw.debounceMu.Unlock()
@@ -241,7 +238,7 @@ func (fw *FileWatcher) debounceFileChange(filePath string) {
 func (fw *FileWatcher) triggerFileChange(filePath string) {
 	if fw.changeHandler != nil {
 		// Convert to a relative path for cleaner output
-		relPath, err := filepath.Rel(fw.project.Root, filePath)
+		relPath, err := filepath.Rel(fw.project.RootPath, filePath)
 		if err != nil {
 			relPath = filePath
 		}
@@ -259,7 +256,7 @@ func (fw *FileWatcher) Stop() {
 	}
 
 	fw.isRunning = false
-	close(fw.stopChan)
+	close(fw.stopCh)
 
 	// Cancel all pending debounce timers
 	fw.debounceMu.Lock()

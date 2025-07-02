@@ -1,188 +1,119 @@
 package project
 
-import "time"
+import (
+	"fmt"
+	"os"
+	"path/filepath"
+	"time"
+)
 
-// Structure represents the entire project structure
-type Structure struct {
-	Root       string                    `json:"root"`
+type Manager struct {
+	Project *Project
+	Options DevOptions
+}
+
+type DevOptions struct {
+	Verbose bool
+}
+
+func NewProjectManager(project *Project) *Manager {
+	return &Manager{
+		Project: project,
+	}
+}
+
+// LoadProject initialises a project from a root directory
+func (m *Manager) LoadProject() (*Project, error) {
+	return nil, nil
+}
+
+// ValidateProject checks project structure and configuration
+func (m *Manager) ValidateProject() []Error {
+	return nil
+}
+
+// GetProjectConfig returns resolved configuration with cascading
+func (m *Manager) GetProjectConfig() *Config {
+	return m.Project.Config
+}
+
+// WatchProject sets up the file system watching for development mode
+func (m *Manager) WatchProject() error {
+	return nil
+}
+
+type Project struct {
+	RootPath   string                    `json:"root_path"`
 	Config     *Config                   `json:"config"`
+	Metadata   *Metadata                 `json:"metadata"`
 	Pages      map[string]*PageInfo      `json:"pages"`
 	Components map[string]*ComponentInfo `json:"components"`
 	Assets     []string                  `json:"assets"`
 	BuildTime  time.Time                 `json:"build_time"`
-	TempDir    string                    `json:"temp_dir"`
+	OutputDir  string                    `json:"output_dir"`
 }
 
-// DocumentInfo contains common metadata shared by all document types
-type DocumentInfo struct {
-	Name         string            `json:"name"`
-	Title        string            `json:"title"`
-	RelativePath string            `json:"relative_path"`
-	AbsolutePath string            `json:"absolute_path"`
-	Dependencies []string          `json:"dependencies"`
-	Imports      map[string]string `json:"imports"`
-	LastModified time.Time         `json:"last_modified"`
-	Compiled     bool              `json:"compiled"`
-}
-
-// PageInfo contains metadata about a page file
-type PageInfo struct {
-	DocumentInfo
-	Route string `json:"route"`
-}
-
-// ComponentInfo contains metadata about a component file
-type ComponentInfo struct {
-	DocumentInfo
-	UsedBy []string `json:"used_by"` // Pages/components that use this component
-}
-
-// Config holds configuration for the project to be used by the build system
-type Config struct {
-	Name        string       `json:"name"`
-	Version     string       `json:"version"`
-	Author      string       `json:"author"`
-	Description string       `json:"description"`
-	Server      ServerConfig `json:"server"`
-}
-
-// ServerConfig contains server-specific configuration
-type ServerConfig struct {
-	Port int    `json:"port"`
-	Host string `json:"host"`
-}
-
-// Document interface defines common behaviour for all document types
-type Document interface {
-	GetName() string
-	GetTitle() string
-	GetRelativePath() string
-	GetAbsolutePath() string
-	GetDependencies() []string
-	GetImports() map[string]string
-	GetLastModified() time.Time
-	IsCompiled() bool
-	SetCompiled(bool)
-}
-
-func (d *DocumentInfo) GetName() string {
-	return d.Name
-}
-
-func (d *DocumentInfo) GetTitle() string {
-	return d.Title
-}
-
-func (d *DocumentInfo) GetRelativePath() string {
-	return d.RelativePath
-}
-
-func (d *DocumentInfo) GetAbsolutePath() string {
-	return d.AbsolutePath
-}
-
-func (d *DocumentInfo) GetDependencies() []string {
-	return d.Dependencies
-}
-
-func (d *DocumentInfo) GetImports() map[string]string {
-	return d.Imports
-}
-
-func (d *DocumentInfo) GetLastModified() time.Time {
-	return d.LastModified
-}
-
-func (d *DocumentInfo) IsCompiled() bool {
-	return d.Compiled
-}
-
-func (d *DocumentInfo) SetCompiled(compiled bool) {
-	d.Compiled = compiled
-}
-
-func (p *PageInfo) GetRoute() string {
-	return p.Route
-}
-
-func (p *PageInfo) SetRoute(route string) {
-	p.Route = route
-}
-
-func (c *ComponentInfo) GetUsedBy() []string {
-	return c.UsedBy
-}
-
-func (c *ComponentInfo) AddUsedBy(name string) {
-	// Avoid duplicates
-	for _, existing := range c.UsedBy {
-		if existing == name {
-			return
-		}
+func NewProject(rootPath string) (*Project, error) {
+	config, err := LoadConfig(rootPath)
+	if err != nil {
+		return nil, err
 	}
-	c.UsedBy = append(c.UsedBy, name)
+	return &Project{
+		RootPath: rootPath,
+		Config:   config,
+	}, nil
 }
 
-func (c *ComponentInfo) RemoveUsedBy(name string) {
-	for i, existing := range c.UsedBy {
-		if existing == name {
-			c.UsedBy = append(c.UsedBy[:i], c.UsedBy[i+1:]...)
-			return
-		}
+// LoadConfig loads both app.json and jawt.config.json from the specified directory
+func LoadConfig(projectPath string) (*Config, error) {
+	config := &Config{}
+
+	// Load app.json
+	appConfig, err := loadAppConfig(projectPath)
+	if err != nil {
+		return nil, err
 	}
-}
+	config.App = *appConfig
 
-func (s *Structure) GetAllDocuments() []Document {
-	var documents []Document
+	// Load jawt.config.json
+	jawtConfig, err := loadJawtConfig(projectPath)
+	if err != nil {
+		return nil, err
+	}
+	config = jawtConfig
+	jawtConfig.App = *appConfig
 
-	for _, page := range s.Pages {
-		documents = append(documents, page)
+	if config.App.Name == "" {
+		return nil, fmt.Errorf("project name is required in app.json")
 	}
 
-	for _, component := range s.Components {
-		documents = append(documents, component)
-	}
-
-	return documents
+	return config, nil
 }
 
-func (s *Structure) GetCompiledDocuments() []Document {
-	var compiled []Document
-
-	for _, doc := range s.GetAllDocuments() {
-		if doc.IsCompiled() {
-			compiled = append(compiled, doc)
-		}
-	}
-
-	return compiled
+type Error struct {
+	Message string `json:"message"`
 }
 
-func (s *Structure) GetUncompiledDocuments() []Document {
-	var uncompiled []Document
+type Metadata struct{}
 
-	for _, doc := range s.GetAllDocuments() {
-		if !doc.IsCompiled() {
-			uncompiled = append(uncompiled, doc)
-		}
-	}
+// IsJawtProject checks if the current directory is a JAWT project
+// by checking for the existence of app.json and jawt.config.json
+func IsJawtProject(dir string) bool {
+	appConfigPath := filepath.Join(dir, "app.json")
+	jawtConfigPath := filepath.Join(dir, "jawt.config.json")
 
-	return uncompiled
+	_, appErr := os.Stat(appConfigPath)
+	_, jawtErr := os.Stat(jawtConfigPath)
+
+	return !os.IsNotExist(appErr) && !os.IsNotExist(jawtErr)
 }
 
-func (s *Structure) FindPageByRoute(route string) *PageInfo {
-	for _, page := range s.Pages {
-		if page.Route == route {
-			return page
-		}
-	}
-	return nil
+type ChangeCallback func(event *FileChangeEvent) error
+
+type FileChangeEvent struct {
+	Type      ChangeType
+	FilePath  string
+	Timestamp time.Time
 }
 
-func (s *Structure) FindComponentByName(name string) *ComponentInfo {
-	return s.Components[name]
-}
-
-func (s *Structure) FindPageByName(name string) *PageInfo {
-	return s.Pages[name]
-}
+type ChangeType int

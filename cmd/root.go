@@ -2,47 +2,49 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/yasufadhili/jawt/internal/config"
-	"os"
-
 	"github.com/spf13/cobra"
+	"github.com/yasufadhili/jawt/internal/project"
+	"os"
 )
 
 // Global configuration for use across commands
 var (
-	projectConfig *config.Config
-	projectDir    string
+	projectManager *project.Manager
+	projectDir     string
 )
 
 var rootCmd = &cobra.Command{
 	Use:   "jawt",
-	Short: "JAWT - Just Another Web Tool",
-	Long: `JAWT is a tool for creating, developing, and building minimal web applications.
+	Short: "Jawt - Just Another Web Tool",
+	Long: `Jawt is a tool for creating, developing, and building minimal web applications.
 It offers a streamlined workflow and unified development experience.`,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		// Skip config loading for commands that don't require it
-		if cmd.Name() == "init" || cmd.Name() == "version" {
+		if cmd.Name() == "init" || cmd.Name() == "update" || cmd.Name() == "version" {
 			return
 		}
 
 		var err error
 		projectDir, err = os.Getwd()
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)
+			_, _ = fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)
 			os.Exit(1)
 		}
 
-		if !config.IsJawtProject(projectDir) {
-			fmt.Fprintf(os.Stderr, "Error: Current directory is not a JAWT project.\n")
-			fmt.Fprintf(os.Stderr, "Run 'jawt init <project-name>' to create a new project.\n")
+		if !project.IsJawtProject(projectDir) {
+			_, _ = fmt.Fprintf(os.Stderr, "Error: Current directory is not a JAWT project.\n")
+			_, _ = fmt.Fprintf(os.Stderr, "Run 'jawt init <project-name>' to create a new project.\n")
 			os.Exit(1)
 		}
 
-		projectConfig, err = config.LoadConfig(projectDir)
+		p, err := project.NewProject(projectDir)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error loading project configuration: %v\n", err)
+			_, _ = fmt.Fprintf(os.Stderr, "Error loading project configuration: %v\n", err)
 			os.Exit(1)
 		}
+
+		projectManager = project.NewProjectManager(p)
+
 	},
 }
 
@@ -63,5 +65,5 @@ func init() {
 	rootCmd.AddCommand(buildCmd)
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(tscCmd)
-	//rootCmd.AddCommand(updateCmd) // Not yet useful
+	rootCmd.AddCommand(updateCmd)
 }
