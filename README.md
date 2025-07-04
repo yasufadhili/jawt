@@ -1,6 +1,6 @@
 # JAWT—Just Another Web Tool
 
-**JAWT is a toolchain that enables building minimal web applications using a declarative approach.** 
+**JAWT is a toolchain for building web applications using a declarative approach.** 
 
 Write your application structure and behaviour using **JML**, a domain-specific language for JAWT.
 
@@ -11,8 +11,9 @@ Write your application structure and behaviour using **JML**, a domain-specific 
 - **Declarative Syntax**: Express your UI structure clearly and concisely
 - **Component System**: Build reusable components with props and composition
 - **Hot Reload**: See changes instantly during development
-- **Minimal Bundle**: Generates lightweight, optimized output
+- **Minimal Bundle**: Generates lightweight, optimised output
 - **Zero Configuration**: Works out of the box with sensible defaults
+- **Type Safety**: Use TypeScript for scripting UI functionality
 
 ## Resources
 
@@ -25,26 +26,6 @@ Write your application structure and behaviour using **JML**, a domain-specific 
 - [Jawt CLI](https://yasufadhili.github.io/jawt/references/cli) — Useful commands when working with Jawt
 - [Building](BUILDING.MD) this source code
 
-## Components
-
-**This project repo consists of several components that make up JAWT**
-
-- [Compiler](internal/compiler) : Compiles Pages, Modules and Components
-- [Build System](internal/build) : Orchestrates the entire build process
-- [Development Server](internal/server) : Serves Jawt projects locally during development
-
 ## License
 
 All parts of the Jawt Toolchain are licensed under the [MIT Licence](LICENSE).
-
-## Status
-
-[![Build JAWT](https://github.com/yasufadhili/jawt/actions/workflows/build.yml/badge.svg)](https://github.com/yasufadhili/jawt/actions/workflows/build.yml)
-
-[![Test JAWT](https://github.com/yasufadhili/jawt/actions/workflows/test.yml/badge.svg)](https://github.com/yasufadhili/jawt/actions/workflows/test.yml)
-
-[![Build and Deploy Docs](https://github.com/yasufadhili/jawt/actions/workflows/docs.yml/badge.svg)](https://github.com/yasufadhili/jawt/actions/workflows/docs.yml)
-
-[![pages-build-deployment](https://github.com/yasufadhili/jawt/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/yasufadhili/jawt/actions/workflows/pages/pages-build-deployment)
-
-[![Release JAWT Binaries](https://github.com/yasufadhili/jawt/actions/workflows/release.yml/badge.svg)](https://github.com/yasufadhili/jawt/actions/workflows/release.yml)
