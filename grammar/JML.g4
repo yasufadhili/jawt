@@ -103,7 +103,8 @@ jmlPropsAccess
 // TypeScript
 
 tsSource
-    : tsSourceElements? EOF
+    : tsSourceElements EOF
+    | EOF
     ;
 
 tsSourceElements
