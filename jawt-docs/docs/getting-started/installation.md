@@ -4,7 +4,7 @@ Getting JAWT up and running is straightforward. Choose your platform below and f
 
 ## Quick Installation
 
-### Linux
+### Linux (Debian/Ubuntu)
 
 Install JAWT with a single command that automatically downloads and configures everything:
 
