@@ -2,49 +2,17 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
-	"github.com/yasufadhili/jawt/internal/project"
 	"os"
-)
 
-// Global configuration for use across commands
-var (
-	projectManager *project.Manager
-	projectDir     string
+	"github.com/spf13/cobra"
 )
 
 var rootCmd = &cobra.Command{
 	Use:   "jawt",
-	Short: "Jawt - Just Another Web Tool",
-	Long: `Jawt is a tool for creating, developing, and building minimal web applications.
+	Short: "JAWT - Just Another Web Tool",
+	Long: `JAWT is a tool for creating, developing, and building web applications.
 It offers a streamlined workflow and unified development experience.`,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		// Skip config loading for commands that don't require it
-		if cmd.Name() == "init" || cmd.Name() == "update" || cmd.Name() == "version" {
-			return
-		}
-
-		var err error
-		projectDir, err = os.Getwd()
-		if err != nil {
-			_, _ = fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)
-			os.Exit(1)
-		}
-
-		if !project.IsJawtProject(projectDir) {
-			_, _ = fmt.Fprintf(os.Stderr, "Error: Current directory is not a JAWT project.\n")
-			_, _ = fmt.Fprintf(os.Stderr, "Run 'jawt init <project-name>' to create a new project.\n")
-			os.Exit(1)
-		}
-
-		p, err := project.NewProject(projectDir)
-		if err != nil {
-			_, _ = fmt.Fprintf(os.Stderr, "Error loading project configuration: %v\n", err)
-			os.Exit(1)
-		}
-
-		projectManager = project.NewProjectManager(p)
-
 	},
 }
 
@@ -58,12 +26,12 @@ func Execute() {
 
 func init() {
 	rootCmd.PersistentFlags().BoolP("help", "h", false, "Display help information for the command")
-	rootCmd.Flags().BoolP("version", "v", false, "Display JAWT version information")
+	rootCmd.Flags().BoolP("version", "v", false, "Display Jawt version information")
 
-	rootCmd.AddCommand(initCmd)
-	rootCmd.AddCommand(runCmd)
-	rootCmd.AddCommand(buildCmd)
-	rootCmd.AddCommand(versionCmd)
-	rootCmd.AddCommand(tscCmd)
-	rootCmd.AddCommand(updateCmd)
+	// rootCmd.AddCommand(initCmd)
+	// rootCmd.AddCommand(runCmd)
+	// rootCmd.AddCommand(buildCmd)
+	// rootCmd.AddCommand(versionCmd)
+	// rootCmd.AddCommand(tscCmd)
+	//rootCmd.AddCommand(updateCmd) // Not yet useful
 }

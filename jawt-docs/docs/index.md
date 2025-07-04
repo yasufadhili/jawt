@@ -1,35 +1,34 @@
-# Just Another Web Tool
+# Just Another Web Tool (JAWT)
 
-**JAWT is a web development toolchain that enables building minimal, performant web applications using a declarative approach.**
+**Jawt is a development toolchain that enables building web applications using a declarative approach.**
 
-Write your applications using **JML**, a domain-specific language that compiles to optimised web standards—HTML for pages, JavaScript for interactive components, and WebAssembly for performance-critical modules.
+Write your applications using **JML**, a domain-specific language for Jawt app structure, combined with TypeScript for dynamic functionality.
 
-## What is JAWT?
+## What is Jawt?
 
-JAWT provides a unified development experience through its intelligent compilation system. Instead of juggling multiple technologies and build configurations, you write everything in JML and let JAWT handle the complexity of modern web development.
+Jawt provides a unified development experience through its intelligent compilation system. Instead of juggling multiple technologies and build configurations, you write everything in Jml and TypeScript, letting Jawt handle the complexity of modern web development.
 
 ### Key Features
 
-- **Single Language, Multiple Targets**: Write JML code that compiles to HTML, JavaScript, and WebAssembly as needed
+- **Unified Language Approach**: Write JML for structure and TypeScript for logic
 - **Component-Driven Architecture**: Build reusable components with clear interfaces and composition patterns
 - **Zero Configuration**: Works out of the box with sensible defaults whilst remaining customisable
 - **Hot Module Replacement**: See changes instantly during development with intelligent reloading
 - **Optimised Builds**: Automatic code splitting, tree shaking, and performance optimisation
-- **Type Safety**: Leverage TypeScript-like type checking for robust applications
+- **Type Safety**: Full TypeScript support for robust applications
 
 ## Understanding JML
 
-JML combines the structural clarity of markup languages with TypeScript-like scripting capabilities. Every JML file begins with a document type declaration that determines its compilation target:
+JML combines the structural clarity of markup languages with component-driven development. Every JML file begins with a document type declaration that determines its purpose:
 
 ```jml
-_doctype page home          // Compiles to HTML document
-_doctype component Button   // Compiles to JavaScript web component  
-_doctype module calculator  // Compiles to WebAssembly module
+_doctype page home          // Defines a complete web page
+_doctype component Button   // Defines a reusable component
 ```
 
 ### Document Types Explained
 
-**Pages** define complete web pages with metadata and structure. They compile to HTML documents and serve as your application's entry points:
+**Pages** define complete web pages with metadata and structure. They serve as your application's entry points:
 
 ```jml
 _doctype page dashboard
@@ -47,7 +46,7 @@ Page {
 }
 ```
 
-**Components** encapsulate reusable UI elements with properties, state, and event handling. They compile to modern JavaScript web components:
+**Components** encapsulate reusable UI elements with properties, state, and event handling:
 
 ```jml
 _doctype component UserCard
@@ -68,18 +67,28 @@ Container {
 }
 ```
 
-**Modules** handle computational logic and performance-critical operations. They compile to WebAssembly for near-native performance:
+## TypeScript Integration
 
-```jml
-_doctype module imageProcessor
+JAWT seamlessly integrates TypeScript for dynamic functionality. Write your scripts in TypeScript and import them directly into your JML components:
 
-export function processImage(data: ImageData): ImageData {
-    // Heavy image processing logic
-    return optimiseImage(data)
+```typescript
+// scripts/analytics.ts
+export function trackPageView(page: string): void {
+    // Analytics logic
 }
 
-function optimiseImage(data: ImageData): ImageData {
-    // WebAssembly-optimised processing
+export function trackUserAction(action: string, data?: any): void {
+    // User interaction tracking
+}
+```
+
+```jml
+_doctype component Analytics
+
+import script analytics from "scripts/analytics"
+
+Container {
+    onClick: () => analytics.trackUserAction("button_click", { id: props.buttonId })
 }
 ```
 
@@ -92,7 +101,7 @@ JAWT's CLI provides everything you need to build applications efficiently:
 3. **Build** for production: `jawt build`
 4. **Debug** when needed: `jawt debug`
 
-The unified compiler handles all document types intelligently, resolving dependencies across your entire application and generating optimised output for each target.
+The unified compiler handles all document types intelligently, resolving dependencies across your entire application and generating optimised output.
 
 ## Architecture Philosophy
 
@@ -100,9 +109,9 @@ JAWT follows a clear separation of concerns:
 
 - **Pages** handle structure and routing
 - **Components** manage user interaction and state
-- **Modules** provide computational performance
+- **Scripts** provide dynamic functionality and business logic
 
-This architecture enables optimal loading strategies—pages load instantly, components activate when needed, and modules execute computations at near-native speed.
+This architecture enables optimal loading strategies and maintainable code organisation.
 
 ## Quick Start Example
 
@@ -116,8 +125,8 @@ my-app/
 ├── components/
 │   ├── layout.jml             # Shared layout
 │   └── user-card.jml          # Reusable component
-└── modules/
-    └── analytics.jml          # Performance module
+└── scripts/
+    └── analytics.ts           # TypeScript functionality
 ```
 
 **Page** (`app/index.jml`):
@@ -139,7 +148,7 @@ Page {
 ```jml
 _doctype component Layout
 
-import module analytics from "modules/analytics"
+import script analytics from "scripts/analytics"
 
 Container {
     style: "min-h-screen bg-gray-50"
@@ -155,18 +164,21 @@ Container {
         }
     }
     
-    onClick: () => analytics.trackPageView()
+    onClick: () => analytics.trackPageView("home")
+}
+```
+
+**Script** (`scripts/analytics.ts`):
+```typescript
+export function trackPageView(page: string): void {
+    console.log(`Page view: ${page}`)
+    // Analytics implementation
 }
 ```
 
 ## Browser Support
 
-JAWT generates modern web standards that work across all current browsers:
-
-- **HTML5**: Semantic, accessible markup
-- **ES2020+**: Modern JavaScript with automatic polyfills
-- **WebAssembly**: Supported in all major browsers since 2017
-- **CSS Grid/Flexbox**: Modern layout with Tailwind CSS integration
+JAWT generates modern web standards that work across all current browsers with automatic polyfills and optimisation.
 
 ## Next Steps
 
@@ -181,14 +193,13 @@ Ready to start building with JAWT? Here's where to go next:
 - **[JML Syntax](jml/syntax.md)** - Complete JML language specification
 - **[Pages](jml/pages.md)** - Creating pages and handling routing
 - **[Components](jml/components.md)** - Building interactive components
-- **[Modules](jml/modules.md)** - Using modules for computational logic
-- **[Scripts](jml/scripts.md)** - Writing scripts for interacting with components
+- **[Scripts](jml/scripts.md)** - Writing TypeScript scripts for dynamic functionality
 
 ### Advanced Topics
 - **[Architecture](architecture/index.md)** - Understanding JAWT's compilation system
 - **[CLI Reference](references/cli.md)** - Complete command-line interface guide
 - **[Configuration](architecture/configuration.md)** - Customising your build process
-- **[Deployment](deployment/index.md)** - Publishing your applications (Soon)
+- **[Deployment](deployment/index.md)** - Publishing your applications
 
 ### Resources
 - **[Examples](examples/index.md)** - Sample applications and patterns

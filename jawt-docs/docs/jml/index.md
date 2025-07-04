@@ -1,20 +1,19 @@
-# JML Language Overview
+# JML Overview
 
-**JML is the heart of JAWT development.** It's a declarative language that combines structural clarity with the programming power of TypeScript, designed specifically for building modern applications.
+**JML is the heart of JAWT development.** It's a declarative language that combines structural clarity with the programming power of TypeScript, designed specifically for building modern web applications.
 
 ## What Makes JML Special
 
 Think of JML as a blueprint language for your applications. JML lets you describe what your application should be rather than how to build it piece by piece.
 
-### The Three Pillars of JML
+### The Two Pillars of JML
 
-JML is built around three core document types, each serving a distinct purpose:
+JML is built around two core document types, each serving a distinct purpose:
 
 1. **Pages** — The foundations of your application
 2. **Components** — The reusable building blocks
-3. **Modules** — The performance engines
 
-This separation is like having specialised tools in a workshop: you wouldn't use a hammer for precision work, nor tweezers for heavy lifting. Each document type excels at its intended purpose.
+This separation is like having specialised tools in a workshop: pages handle structure and routing, whilst components provide reusable functionality and interactivity.
 
 ## Language Philosophy
 
@@ -81,10 +80,9 @@ Page {
 **Key characteristics:**
 
 - Must begin with `_doctype page`
-
 - Can only have one direct child component
-- Compile to complete HTML documents
 - Handle routing and page metadata
+- Serve as application entry points
 
 ### Components: Reusable Building Blocks
 
@@ -118,40 +116,12 @@ Card {
 
 - Begin with `_doctype component`
 - Accept props for customisation
-- Compile to JavaScript web components
-- Can import other components and modules
-
-### Modules: Performance Powerhouses
-
-Modules are like specialised engines—they handle computationally intensive tasks with maximum efficiency. Think of them as the high-performance components.
-
-```jml
-_doctype module calculations
-
-export function fibonacci(n: number): number {
-    if (n <= 1) return n
-    return fibonacci(n - 1) + fibonacci(n - 2)
-}
-
-export function isPrime(num: number): boolean {
-    if (num <= 1) return false
-    for (let i = 2; i <= Math.sqrt(num); i++) {
-        if (num % i === 0) return false
-    }
-    return true
-}
-```
-
-**Key characteristics:**
-
-- Begin with `_doctype module`
-- Compile to WebAssembly for maximum performance
-- Cannot directly interact with the DOM
-- Export functions for use by components
+- Can import other components and scripts
+- Encapsulate reusable functionality
 
 ## The Import System
 
-JML's import system is like a well-organised library—you can easily find and use exactly what you need:
+JML's import system allows you to easily combine components and integrate TypeScript functionality:
 
 ```jml
 // Import components from the global components directory
@@ -161,16 +131,82 @@ import component Card from "components/card"
 // Import from the same directory (page-specific components)
 import component LocalWidget from "widget"
 
-// Import modules for performance-critical operations
-import module MathUtils from "modules/math"
+// Import TypeScript scripts for dynamic functionality
+import script analytics from "scripts/analytics"
+import script utils from "scripts/utils"
 
 // Import browser APIs (components only)
 import browser
 ```
 
+## TypeScript Integration
+
+JML seamlessly integrates with TypeScript through the script import system. Write your dynamic functionality in TypeScript and import it directly into your JML components:
+
+```typescript
+// scripts/counter.ts
+export class Counter {
+    private count: number = 0
+    
+    increment(): number {
+        return ++this.count
+    }
+    
+    decrement(): number {
+        return --this.count
+    }
+    
+    getValue(): number {
+        return this.count
+    }
+}
+
+export function formatCount(count: number): string {
+    return `Count: ${count}`
+}
+```
+
+```jml
+_doctype component CounterWidget
+
+import script counter from "scripts/counter"
+
+Container {
+    style: "flex items-center space-x-4"
+    
+    Button {
+        text: "-"
+        onClick: () => handleDecrement()
+        style: "bg-red-500 text-white px-3 py-1 rounded"
+    }
+    
+    Text {
+        content: counter.formatCount(currentCount)
+        style: "font-mono text-lg"
+    }
+    
+    Button {
+        text: "+"
+        onClick: () => handleIncrement()
+        style: "bg-green-500 text-white px-3 py-1 rounded"
+    }
+}
+
+const counterInstance = new counter.Counter()
+let currentCount = 0
+
+function handleIncrement(): void {
+    currentCount = counterInstance.increment()
+}
+
+function handleDecrement(): void {
+    currentCount = counterInstance.decrement()
+}
+```
+
 ## Styling with Tailwind CSS
 
-JML integrates seamlessly with Tailwind CSS through the `style` property — you can achieve any design without mixing from scratch:
+JML integrates seamlessly with Tailwind CSS through the `style` property:
 
 ```jml
 Container {
@@ -194,34 +230,45 @@ Container {
 JML makes adding interactivity as natural as describing static content:
 
 ```jml
-_doctype component Counter
+_doctype component TodoList
+
+import script todoManager from "scripts/todo-manager"
 
 Container {
-    style: "flex items-center space-x-4"
+    style: "max-w-md mx-auto"
     
-    Button {
-        text: "-"
-        onClick: () => setCount(count - 1)
-        style: "bg-red-500 text-white px-3 py-1 rounded"
+    Input {
+        placeholder: "Add a new task..."
+        onEnter: (value) => addTodo(value)
+        style: "w-full p-2 border rounded mb-4"
     }
     
-    Text {
-        content: `Count: ${count}`
-        style: "font-mono text-lg"
-    }
-    
-    Button {
-        text: "+"
-        onClick: () => setCount(count + 1)
-        style: "bg-green-500 text-white px-3 py-1 rounded"
+    List {
+        style: "space-y-2"
+        
+        for (todo in todos) {
+            TodoItem {
+                text: todo.text
+                completed: todo.completed
+                onToggle: () => toggleTodo(todo.id)
+                onDelete: () => deleteTodo(todo.id)
+            }
+        }
     }
 }
 
-let count = 0
+let todos = []
 
-function setCount(newCount: number): void {
-    count = newCount
-    // Component automatically re-renders
+function addTodo(text: string): void {
+    todos = todoManager.addTodo(todos, text)
+}
+
+function toggleTodo(id: string): void {
+    todos = todoManager.toggleTodo(todos, id)
+}
+
+function deleteTodo(id: string): void {
+    todos = todoManager.deleteTodo(todos, id)
 }
 ```
 
@@ -229,7 +276,7 @@ function setCount(newCount: number): void {
 
 ### Hot Module Replacement
 
-Changes to your JML files are reflected instantly in the browser, like having a live preview that updates as you type. This creates a fluid development experience where you can see your changes immediately.
+Changes to your JML files are reflected instantly in the browser, creating a fluid development experience where you can see your changes immediately.
 
 ### Type Safety
 
@@ -293,9 +340,10 @@ my-jawt-app/
 │   ├── layout.jml
 │   ├── button.jml
 │   └── card.jml
-├── modules/               # WebAssembly modules
-│   ├── math.jml
-│   └── image-processing.jml
+├── scripts/               # TypeScript functionality
+│   ├── analytics.ts
+│   ├── utils.ts
+│   └── api.ts
 └── jawt.config.json       # Configuration
 ```
 
@@ -303,7 +351,7 @@ my-jawt-app/
 
 ### Unified Development Experience
 
-Instead of juggling HTML, CSS, JavaScript, and build configurations, JML provides a single, cohesive language for describing your entire application.
+Instead of juggling HTML, CSS, JavaScript, and build configurations, JML provides a single, cohesive language for describing your application structure, with TypeScript handling the dynamic functionality.
 
 ### Optimised Output
 
@@ -311,7 +359,7 @@ Each document type compiles to its optimal target:
 
 - Pages become lean HTML with proper metadata
 - Components become efficient Web Components
-- Modules become high-performance WebAssembly
+- TypeScript scripts provide full JavaScript functionality
 
 ### Maintainable Code
 
@@ -353,8 +401,7 @@ This overview provides the foundation for understanding JML. To dive deeper into
 
 - **[Pages](./pages.md)** — Learn about routing, metadata, and page structure
 - **[Components](./components.md)** — Master props, state, and component lifecycle
-- **[Modules](./modules.md)** — Harness WebAssembly for performance-critical code
-- **[Scripting](./scripts.md)** — Explore JML's programming capabilities in detail
+- **[Scripts](./scripts.md)** — Explore TypeScript integration and dynamic functionality
 
 ---
 
