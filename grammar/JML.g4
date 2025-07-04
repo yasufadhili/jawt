@@ -214,10 +214,6 @@ functionDeclaration
     : 'async'? 'function' identifier callSignature ('{' functionBody '}' | eos)
     ;
 
-callSignature
-    : typeParameters? '(' parameterList? ')' typeAnnotation?
-    ;
-
 parameterList
     : restParameter
     | parameter (',' parameter)* (',' restParameter)?
