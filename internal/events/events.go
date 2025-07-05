@@ -251,6 +251,6 @@ func CreateHotReloadEvent(source string, files []string) *Event {
 	return NewEvent(HotReloadEvent, source).WithData("files", files)
 }
 
-func CreateErrorEvent(source string, err error) *Event {
+func CreateProcessErrorEvent(source string, processName string, err error) *Event {
 	return NewEvent(ErrorEvent, source).WithData("error", err.Error())
 }
