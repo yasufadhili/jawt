@@ -60,6 +60,19 @@ func (p *Printer) VisitImportDeclaration(n *ImportDeclaration) {
 	p.indent--
 }
 
+func (p *Printer) VisitImportSpecifier(n *ImportSpecifier) {
+	if n.Imported != nil {
+		p.printf("ImportSpecifier (%s as %s)", n.Imported.Name, n.Local.Name)
+	} else {
+		p.printf("ImportSpecifier (%s)", n.Local.Name)
+	}
+}
+
+func (p *Printer) VisitImportDefaultSpecifier(n *ImportDefaultSpecifier) {
+	p.printf("ImportDefaultSpecifier (%s)", n.Local.Name)
+}
+
+func (p *Printer) VisitImportNamespaceSpecifier(n *ImportNamespaceSpe
 func (p *Printer) VisitExportDeclaration(n *ExportDeclaration) {
 	prefix := ""
 	if n.Default {

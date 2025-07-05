@@ -55,6 +55,7 @@ type Visitor interface {
 	VisitDocument(n *Document)
 
 	// Declarations
+
 	VisitImportDeclaration(n *ImportDeclaration)
 	VisitExportDeclaration(n *ExportDeclaration)
 	VisitVariableDeclaration(n *VariableDeclaration)
@@ -66,7 +67,12 @@ type Visitor interface {
 	VisitPropertyDeclaration(n *PropertyDeclaration)
 	VisitStateDeclaration(n *StateDeclaration)
 
+	VisitImportNamespaceSpecifier(n *ImportNamespaceSpecifier)
+	VisitImportSpecifier(n *ImportSpecifier)
+	VisitImportDefaultSpecifier(n *ImportDefaultSpecifier)
+
 	// Statements
+
 	VisitBlockStatement(n *BlockStatement)
 	VisitExpressionStatement(n *ExpressionStatement)
 	VisitIfStatement(n *IfStatement)
@@ -80,6 +86,7 @@ type Visitor interface {
 	VisitTryStatement(n *TryStatement)
 
 	// Expressions
+
 	VisitIdentifier(n *Identifier)
 	VisitLiteral(n *Literal)
 	VisitArrayLiteral(n *ArrayLiteral)
@@ -168,15 +175,27 @@ type ImportSpecifier struct {
 	Imported *Identifier // The name of the binding as it is exported
 }
 
+func (n *ImportSpecifier) Pos() Position    { return n.Position }
+func (n *ImportSpecifier) Accept(v Visitor) { v.VisitImportSpecifier(n) }
+func (n *ImportSpecifier) String() string   { return "ImportSpecifier" }
+
 type ImportDefaultSpecifier struct {
 	Position
 	Local *Identifier
 }
 
+func (n *ImportDefaultSpecifier) Pos() Position    { return n.Position }
+func (n *ImportDefaultSpecifier) Accept(v Visitor) { v.VisitImportDefaultSpecifier(n) }
+func (n *ImportDefaultSpecifier) String() string   { return "ImportDefaultSpecifier" }
+
 type ImportNamespaceSpecifier struct {
 	Position
 	Local *Identifier
 }
+
+func (n *ImportNamespaceSpecifier) Pos() Position    { return n.Position }
+func (n *ImportNamespaceSpecifier) Accept(v Visitor) { v.VisitImportNamespaceSpecifier(n) }
+func (n *ImportNamespaceSpecifier) String() string   { return "ImportNamespaceSpecifier" }
 
 // ExportDeclaration represents an export statement. e.g. `export const a = 1`
 type ExportDeclaration struct {

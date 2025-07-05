@@ -12,16 +12,19 @@ func (v *BaseVisitor) VisitDocument(n *Document) {}
 
 // Declarations
 
-func (v *BaseVisitor) VisitImportDeclaration(n *ImportDeclaration)       {}
-func (v *BaseVisitor) VisitExportDeclaration(n *ExportDeclaration)       {}
-func (v *BaseVisitor) VisitVariableDeclaration(n *VariableDeclaration)   {}
-func (v *BaseVisitor) VisitFunctionDeclaration(n *FunctionDeclaration)   {}
-func (v *BaseVisitor) VisitClassDeclaration(n *ClassDeclaration)         {}
-func (v *BaseVisitor) VisitInterfaceDeclaration(n *InterfaceDeclaration) {}
-func (v *BaseVisitor) VisitTypeAliasDeclaration(n *TypeAliasDeclaration) {}
-func (v *BaseVisitor) VisitEnumDeclaration(n *EnumDeclaration)           {}
-func (v *BaseVisitor) VisitPropertyDeclaration(n *PropertyDeclaration)   {}
-func (v *BaseVisitor) VisitStateDeclaration(n *StateDeclaration)         {}
+func (v *BaseVisitor) VisitImportDeclaration(n *ImportDeclaration)               {}
+func (v *BaseVisitor) VisitImportSpecifier(n *ImportSpecifier)                   {}
+func (v *BaseVisitor) VisitImportDefaultSpecifier(n *ImportDefaultSpecifier)     {}
+func (v *BaseVisitor) VisitImportNamespaceSpecifier(n *ImportNamespaceSpecifier) {}
+func (v *BaseVisitor) VisitExportDeclaration(n *ExportDeclaration)               {}
+func (v *BaseVisitor) VisitVariableDeclaration(n *VariableDeclaration)           {}
+func (v *BaseVisitor) VisitFunctionDeclaration(n *FunctionDeclaration)           {}
+func (v *BaseVisitor) VisitClassDeclaration(n *ClassDeclaration)                 {}
+func (v *BaseVisitor) VisitInterfaceDeclaration(n *InterfaceDeclaration)         {}
+func (v *BaseVisitor) VisitTypeAliasDeclaration(n *TypeAliasDeclaration)         {}
+func (v *BaseVisitor) VisitEnumDeclaration(n *EnumDeclaration)                   {}
+func (v *BaseVisitor) VisitPropertyDeclaration(n *PropertyDeclaration)           {}
+func (v *BaseVisitor) VisitStateDeclaration(n *StateDeclaration)                 {}
 
 // Statements
 

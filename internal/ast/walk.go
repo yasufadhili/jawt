@@ -27,6 +27,15 @@ func Walk(v Visitor, node Node) {
 			Walk(v, spec)
 		}
 		Walk(v, n.Source)
+	case *ImportSpecifier:
+		Walk(v, n.Local)
+		if n.Imported != nil {
+			Walk(v, n.Imported)
+		}
+	case *ImportDefaultSpecifier:
+		Walk(v, n.Local)
+	case *ImportNamespaceSpecifier:
+		Walk(v, n.Local)
 	case *ExportDeclaration:
 		Walk(v, n.Declaration)
 	case *VariableDeclaration:
