@@ -106,6 +106,7 @@ type Visitor interface {
 	// Types
 	VisitTypeAnnotation(n *TypeAnnotation)
 	VisitTypeReference(n *TypeReference)
+	VisitObjectType(n *ObjectType)
 }
 
 // =================================================================================================
@@ -767,3 +768,7 @@ type ObjectType struct {
 	Position
 	Members []Node // PropertySignature, MethodSignature, etc.
 }
+
+func (n *ObjectType) Pos() Position { return n.Position }
+
+func (n *ObjectType) Accept(v Visitor) { v.VisitObjectType(n) }
