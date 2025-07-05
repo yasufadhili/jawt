@@ -53,6 +53,26 @@ type ProjectConfig struct {
 		OutputDir string `json:"outputDir"`
 		Minify    bool   `json:"minify"`
 	} `json:"build"`
+
+	// Build configuration
+	OutputDir string `json:"output_dir"`
+	DistDir   string `json:"dist_dir"`
+	ShadowDOM bool   `json:"shadow_dom"`
+
+	// Development settings
+	DevPort    int      `json:"dev_port"`
+	EnableHMR  bool     `json:"enable_hmr"`
+	WatchPaths []string `json:"watch_paths"`
+
+	// TypeScript configuration
+	TSConfigPath string `json:"ts_config_path"`
+
+	// Tailwind configuration
+	TailwindConfigPath string `json:"tailwind_config_path"`
+
+	// Custom build scripts
+	PreBuildScripts  []string `json:"pre_build_scripts"`
+	PostBuildScripts []string `json:"post_build_scripts"`
 }
 
 // DefaultJawtConfig returns a default jawt configuration
