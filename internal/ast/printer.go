@@ -72,7 +72,10 @@ func (p *Printer) VisitImportDefaultSpecifier(n *ImportDefaultSpecifier) {
 	p.printf("ImportDefaultSpecifier (%s)", n.Local.Name)
 }
 
-func (p *Printer) VisitImportNamespaceSpecifier(n *ImportNamespaceSpe
+func (p *Printer) VisitImportNamespaceSpecifier(n *ImportNamespaceSpecifier) {
+	p.printf("ImportNamespaceSpecifier (%s)", n.Local.Name)
+}
+
 func (p *Printer) VisitExportDeclaration(n *ExportDeclaration) {
 	prefix := ""
 	if n.Default {

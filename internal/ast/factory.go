@@ -42,6 +42,27 @@ func NewExportDeclaration(pos Position, declaration Declaration, isDefault bool)
 	}
 }
 
+func NewImportDefaultSpecifier(pos Position, local *Identifier) *ImportDefaultSpecifier {
+	return &ImportDefaultSpecifier{
+		Position: pos,
+		Local:    local,
+	}
+}
+
+func NewImportNamespaceSpecifier(pos Position, local *Identifier) *ImportNamespaceSpecifier {
+	return &ImportNamespaceSpecifier{
+		Position: pos,
+	}
+}
+
+func NewImportSpecifier(pos Position, imported *Identifier, local *Identifier) *ImportSpecifier {
+	return &ImportSpecifier{
+		Position: pos,
+		Imported: imported,
+		Local:    local,
+	}
+}
+
 // NewVariableDeclaration creates a new VariableDeclaration node.
 func NewVariableDeclaration(pos Position, kind string, declarations []*VariableDeclarator) *VariableDeclaration {
 	return &VariableDeclaration{
