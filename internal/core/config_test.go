@@ -387,7 +387,7 @@ func TestJawtConfigValidate(t *testing.T) {
 				CacheDir:    "cache",
 			},
 			expectError: true,
-			errorMsg:    "invalid default port",
+			errorMsg:    "invalid default port: " + strconv.Itoa(0),
 		},
 		{
 			name: "invalid port - negative",
@@ -397,7 +397,7 @@ func TestJawtConfigValidate(t *testing.T) {
 				CacheDir:    "cache",
 			},
 			expectError: true,
-			errorMsg:    "invalid default port",
+			errorMsg:    "invalid default port: " + strconv.Itoa(-1),
 		},
 		{
 			name: "invalid port - too high",
@@ -407,7 +407,7 @@ func TestJawtConfigValidate(t *testing.T) {
 				CacheDir:    "cache",
 			},
 			expectError: true,
-			errorMsg:    "invalid default port",
+			errorMsg:    "invalid default port: " + strconv.Itoa(65536),
 		},
 		{
 			name: "empty temp dir",
