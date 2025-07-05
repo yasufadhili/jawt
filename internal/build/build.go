@@ -3,6 +3,7 @@ package build
 import (
 	"fmt"
 	"github.com/fsnotify/fsnotify"
+	"github.com/yasufadhili/jawt/internal/compiler"
 	"github.com/yasufadhili/jawt/internal/core"
 	"os"
 	"strings"
@@ -50,16 +51,9 @@ type BuildSystem struct {
 	docs     map[string]*DocumentInfo  // Map of a document path to DocumentInfo
 	pages    map[string]*PageInfo      // Map of page path to PageInfo
 	comps    map[string]*ComponentInfo // Map of a component path to ComponentInfo
-	compiler Compiler
+	compiler *compiler.Compiler
 	watcher  FileWatcher
 	depGraph DependencyGraph
-}
-
-// Compiler is an interface for compiling documents
-type Compiler interface {
-	CompileDocument(doc *DocumentInfo) error
-	CompilePage(page *PageInfo) error
-	CompileComponent(comp *ComponentInfo) error
 }
 
 // FileWatcher is an interface for watching files for changes
@@ -70,7 +64,7 @@ type FileWatcher interface {
 }
 
 // NewBuildSystem creates a new BuildSystem
-func NewBuildSystem(ctx *core.JawtContext, compiler Compiler, watcher FileWatcher) *BuildSystem {
+func NewBuildSystem(ctx *core.JawtContext, compiler *compiler.Compiler, watcher FileWatcher) *BuildSystem {
 	return &BuildSystem{
 		ctx:      ctx,
 		docs:     make(map[string]*DocumentInfo),
@@ -434,19 +428,19 @@ func (bs *BuildSystem) RemoveDocument(path string) {
 // CompileDocument compiles a single document
 func (bs *BuildSystem) CompileDocument(path string) error {
 	bs.mu.RLock()
-	doc, exists := bs.docs[path]
+	// doc, exists := bs.docs[path]
 	bs.mu.RUnlock()
 
-	if !exists {
-		return nil // Document doesn't exist, nothing to compile
-	}
+	// if !exists {
+	// 	return nil // Document doesn't exist, nothing to compile
+	// }
 
-	if err := bs.compiler.CompileDocument(doc); err != nil {
-		return err
-	}
+	// if _, err := bs.compiler.Compile(doc.AbsPath); err != nil {
+	// 	return err
+	// }
 
 	bs.mu.Lock()
-	doc.IsCompiled = true
+	// doc.IsCompiled = true
 	bs.mu.Unlock()
 
 	return nil
