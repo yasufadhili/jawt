@@ -1,0 +1,5 @@
+grammar Jml;
+
+document
+    :
+;
