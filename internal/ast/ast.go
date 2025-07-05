@@ -58,15 +58,15 @@ type DocumentVisitor interface {
 type DocType int
 
 const (
-	DoctypePage DocType = iota
-	DoctypeComponent
+	DocTypePage DocType = iota
+	DocTypeComponent
 )
 
 func (d DocType) String() string {
 	switch d {
-	case DoctypePage:
+	case DocTypePage:
 		return "page"
-	case DoctypeComponent:
+	case DocTypeComponent:
 		return "component"
 	default:
 		return "unknown"
