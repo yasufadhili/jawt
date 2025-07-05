@@ -43,17 +43,17 @@ func TestDefaultJawtConfig(t *testing.T) {
 func TestDefaultProjectConfig(t *testing.T) {
 	config := DefaultProjectConfig()
 
-	if config.Name != "jawt-project" {
-		t.Errorf("expected Name to be 'jawt-project', got %s", config.Name)
+	if config.App.Name != "jawt-project" {
+		t.Errorf("expected Name to be 'jawt-project', got %s", config.App.Name)
 	}
-	if config.Version != "1.0.0" {
-		t.Errorf("expected Version to be '1.0.0', got %s", config.Version)
+	if config.App.Version != "1.0.0" {
+		t.Errorf("expected Version to be '1.0.0', got %s", config.App.Version)
 	}
-	if config.Description != "A Jawt application" {
-		t.Errorf("expected Description to be 'A Jawt application', got %s", config.Description)
+	if config.App.Description != "A Jawt application" {
+		t.Errorf("expected Description to be 'A Jawt application', got %s", config.App.Description)
 	}
-	if config.OutputDir != ".jawt/build" {
-		t.Errorf("expected OutputDir to be '.jawt/build', got %s", config.OutputDir)
+	if config.Build.OutputDir != ".jawt/build" {
+		t.Errorf("expected OutputDir to be '.jawt/build', got %s", config.Build.OutputDir)
 	}
 	if config.DistDir != ".jawt/dist" {
 		t.Errorf("expected DistDir to be '.jawt/dist', got %s", config.DistDir)
@@ -275,8 +275,8 @@ func TestLoadProjectConfig(t *testing.T) {
 			}
 
 			if tt.configData != nil {
-				if config.Name != tt.configData.Name {
-					t.Errorf("expected Name %s, got %s", tt.configData.Name, config.Name)
+				if config.App.Name != tt.configData.Name {
+					t.Errorf("expected Name %s, got %s", tt.configData.Name, config.App.Name)
 				}
 				if config.Version != tt.configData.Version {
 					t.Errorf("expected Version %s, got %s", tt.configData.Version, config.Version)
@@ -356,8 +356,8 @@ func TestProjectConfigSave(t *testing.T) {
 		t.Fatalf("failed to load saved config: %v", err)
 	}
 
-	if loadedConfig.Name != config.Name {
-		t.Errorf("expected Name %s, got %s", config.Name, loadedConfig.Name)
+	if loadedConfig.Name != config.App.Name {
+		t.Errorf("expected Name %s, got %s", config.App.Name, loadedConfig.Name)
 	}
 	if loadedConfig.Version != config.Version {
 		t.Errorf("expected Version %s, got %s", config.Version, loadedConfig.Version)

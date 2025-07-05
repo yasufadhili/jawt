@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/yasufadhili/jawt/internal/execute"
 )
 
 var port int
@@ -14,10 +13,6 @@ var runCmd = &cobra.Command{
 	Long: `Starts the development server with hot reload functionality.
 Monitors your JML files for changes and automatically reloads the browser.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := execute.RunDev()
-		if err != nil {
-			panic(err)
-		}
 	},
 }
 

@@ -25,32 +25,34 @@ type JawtConfig struct {
 	EnableTreeShaking  bool `json:"enable_tree_shaking"`
 }
 
-// ProjectConfig represents project-specific configuration (jawt.project.json)
+// ProjectConfig represents the new project-specific configuration structure
 type ProjectConfig struct {
-	// Project metadata
-	Name        string `json:"name"`
-	Version     string `json:"version"`
-	Description string `json:"description"`
-
-	// Build configuration
-	OutputDir string `json:"output_dir"`
-	DistDir   string `json:"dist_dir"`
-	ShadowDOM bool   `json:"shadow_dom"`
-
-	// Development settings
-	DevPort    int      `json:"dev_port"`
-	EnableHMR  bool     `json:"enable_hmr"`
-	WatchPaths []string `json:"watch_paths"`
-
-	// TypeScript configuration
-	TSConfigPath string `json:"ts_config_path"`
-
-	// Tailwind configuration
-	TailwindConfigPath string `json:"tailwind_config_path"`
-
-	// Custom build scripts
-	PreBuildScripts  []string `json:"pre_build_scripts"`
-	PostBuildScripts []string `json:"post_build_scripts"`
+	App struct {
+		Name        string `json:"name"`
+		Author      string `json:"author"`
+		Version     string `json:"version"`
+		Description string `json:"description"`
+	} `json:"app"`
+	Components struct {
+		Path  string `json:"path"`
+		Alias string `json:"alias"`
+	} `json:"components"`
+	Pages struct {
+		Path  string `json:"path"`
+		Alias string `json:"alias"`
+	} `json:"pages"`
+	Scripts struct {
+		Path  string `json:"path"`
+		Alias string `json:"alias"`
+	} `json:"scripts"`
+	Server struct {
+		Host string `json:"host"`
+		Port int    `json:"port"`
+	} `json:"server"`
+	Build struct {
+		OutputDir string `json:"outputDir"`
+		Minify    bool   `json:"minify"`
+	} `json:"build"`
 }
 
 // DefaultJawtConfig returns a default jawt configuration
@@ -71,19 +73,50 @@ func DefaultJawtConfig() *JawtConfig {
 // DefaultProjectConfig returns a default project configuration
 func DefaultProjectConfig() *ProjectConfig {
 	return &ProjectConfig{
-		Name:               "jawt-project",
-		Version:            "1.0.0",
-		Description:        "A Jawt application",
-		OutputDir:          ".jawt/build",
-		DistDir:            ".jawt/dist",
-		ShadowDOM:          false,
-		DevPort:            6500,
-		EnableHMR:          true,
-		WatchPaths:         []string{"app", "components", "scripts"},
-		TSConfigPath:       "tsconfig.json",
-		TailwindConfigPath: "tailwind.config.js",
-		PreBuildScripts:    []string{},
-		PostBuildScripts:   []string{},
+		App: struct {
+			Name        string `json:"name"`
+			Author      string `json:"author"`
+			Version     string `json:"version"`
+			Description string `json:"description"`
+		}{
+			Name:   "jawt-project",
+			Author: "",
+		},
+		Components: struct {
+			Path  string `json:"path"`
+			Alias string `json:"alias"`
+		}{
+			Path:  "components",
+			Alias: "",
+		},
+		Pages: struct {
+			Path  string `json:"path"`
+			Alias string `json:"alias"`
+		}{
+			Path:  "pages",
+			Alias: "",
+		},
+		Scripts: struct {
+			Path  string `json:"path"`
+			Alias string `json:"alias"`
+		}{
+			Path:  "scripts",
+			Alias: "",
+		},
+		Server: struct {
+			Host string `json:"host"`
+			Port int    `json:"port"`
+		}{
+			Host: "localhost",
+			Port: 6500,
+		},
+		Build: struct {
+			OutputDir string `json:"outputDir"`
+			Minify    bool   `json:"minify"`
+		}{
+			OutputDir: "build",
+			Minify:    true,
+		},
 	}
 }
 
@@ -135,8 +168,8 @@ func LoadProjectConfig(projectDir string) (*ProjectConfig, error) {
 }
 
 // Save saves the jawt configuration to the specified path
-func (tc *JawtConfig) Save(configPath string) error {
-	data, err := json.MarshalIndent(tc, "", "  ")
+func (jc *JawtConfig) Save(configPath string) error {
+	data, err := json.MarshalIndent(jc, "", "  ")
 	if err != nil {
 		return fmt.Errorf("failed to marshal jawt config: %w", err)
 	}
@@ -157,16 +190,16 @@ func (pc *ProjectConfig) Save(projectDir string) error {
 }
 
 // Validate validates the jawt configuration
-func (tc *JawtConfig) Validate() error {
-	if tc.DefaultPort <= 0 || tc.DefaultPort > 65535 {
-		return fmt.Errorf("invalid default port: %d", tc.DefaultPort)
+func (jc *JawtConfig) Validate() error {
+	if jc.DefaultPort <= 0 || jc.DefaultPort > 65535 {
+		return fmt.Errorf("invalid default port: %d", jc.DefaultPort)
 	}
 
-	if tc.TempDir == "" {
+	if jc.TempDir == "" {
 		return fmt.Errorf("temp directory cannot be empty")
 	}
 
-	if tc.CacheDir == "" {
+	if jc.CacheDir == "" {
 		return fmt.Errorf("cache directory cannot be empty")
 	}
 
@@ -175,21 +208,83 @@ func (tc *JawtConfig) Validate() error {
 
 // Validate validates the project configuration
 func (pc *ProjectConfig) Validate() error {
-	if pc.Name == "" {
+	if pc.App.Name == "" {
 		return fmt.Errorf("project name cannot be empty")
 	}
 
-	if pc.OutputDir == "" {
-		return fmt.Errorf("output directory cannot be empty")
+	if pc.Components.Path == "" {
+		return fmt.Errorf("components path cannot be empty")
 	}
 
-	if pc.DistDir == "" {
-		return fmt.Errorf("dist directory cannot be empty")
+	if pc.Pages.Path == "" {
+		return fmt.Errorf("pages path cannot be empty")
 	}
 
-	if pc.DevPort <= 0 || pc.DevPort > 65535 {
-		return fmt.Errorf("invalid dev port: %d", pc.DevPort)
+	if pc.Scripts.Path == "" {
+		return fmt.Errorf("scripts path cannot be empty")
+	}
+
+	if pc.Build.OutputDir == "" {
+		return fmt.Errorf("build output directory cannot be empty")
+	}
+
+	if pc.Server.Port <= 0 || pc.Server.Port > 65535 {
+		return fmt.Errorf("invalid server port: %d", pc.Server.Port)
+	}
+
+	if pc.Server.Host == "" {
+		return fmt.Errorf("server host cannot be empty")
 	}
 
 	return nil
+}
+
+// GetComponentsPath returns the full path to the components directory
+func (pc *ProjectConfig) GetComponentsPath(projectRoot string) string {
+	return filepath.Join(projectRoot, pc.Components.Path)
+}
+
+// GetPagesPath returns the full path to the pages directory
+func (pc *ProjectConfig) GetPagesPath(projectRoot string) string {
+	return filepath.Join(projectRoot, pc.Pages.Path)
+}
+
+// GetScriptsPath returns the full path to the scripts directory
+func (pc *ProjectConfig) GetScriptsPath(projectRoot string) string {
+	return filepath.Join(projectRoot, pc.Scripts.Path)
+}
+
+// GetBuildPath returns the full path to the build output directory
+func (pc *ProjectConfig) GetBuildPath(projectRoot string) string {
+	return filepath.Join(projectRoot, pc.Build.OutputDir)
+}
+
+// GetServerAddress returns the full server address
+func (pc *ProjectConfig) GetServerAddress() string {
+	return fmt.Sprintf("%s:%d", pc.Server.Host, pc.Server.Port)
+}
+
+// IsMinificationEnabled returns whether minification is enabled
+func (pc *ProjectConfig) IsMinificationEnabled() bool {
+	return pc.Build.Minify
+}
+
+// SetProjectName sets the project name
+func (pc *ProjectConfig) SetProjectName(name string) {
+	pc.App.Name = name
+}
+
+// SetAuthor sets the project author
+func (pc *ProjectConfig) SetAuthor(author string) {
+	pc.App.Author = author
+}
+
+// SetServerPort sets the server port
+func (pc *ProjectConfig) SetServerPort(port int) {
+	pc.Server.Port = port
+}
+
+// SetMinification enables or disables minification
+func (pc *ProjectConfig) SetMinification(enabled bool) {
+	pc.Build.Minify = enabled
 }
