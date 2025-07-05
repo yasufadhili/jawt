@@ -3,11 +3,11 @@ package process
 import (
 	"context"
 	"fmt"
+	"github.com/yasufadhili/jawt/internal/events"
 	"sync"
 	"time"
 
 	"github.com/yasufadhili/jawt/internal/core"
-	"github.com/yasufadhili/jawt/internal/runtime"
 )
 
 // ProcessManager manages all external processes
@@ -15,7 +15,7 @@ type ProcessManager struct {
 	ctx      context.Context
 	cancel   context.CancelFunc
 	logger   core.Logger
-	eventBus core.EventBus
+	eventBus events.EventBus
 
 	mu        sync.RWMutex
 	processes map[string]*ManagedProcess
@@ -23,7 +23,7 @@ type ProcessManager struct {
 	wg sync.WaitGroup
 }
 
-func NewProcessManager(ctx context.Context, logger core.Logger, eventBus core.EventBus) *ProcessManager {
+func NewProcessManager(ctx context.Context, logger core.Logger, eventBus events.EventBus) *ProcessManager {
 	managerCtx, cancel := context.WithCancel(ctx)
 
 	return &ProcessManager{
@@ -185,10 +185,10 @@ func (pm *ProcessManager) StartTypeScriptWatch(ctx *core.JawtContext) error {
 		RestartDelay:     2 * time.Second,
 		MaxRestarts:      10,
 		OutputHandler: func(output string) {
-			pm.eventBus.Publish(runtime.ProcessOutputEvent("process_manager", "typescript", output))
+			pm.eventBus.Publish(events.ProcessOutputEvent("process_manager", "typescript", output))
 		},
 		ErrorHandler: func(err error) {
-			pm.eventBus.Publish(runtime.ProcessErrorEvent("process_manager", "typescript", err))
+			pm.eventBus.Publish(events.ProcessErrorEvent("process_manager", "typescript", err))
 		},
 	}
 
@@ -206,10 +206,10 @@ func (pm *ProcessManager) StartTailwindWatch(ctx *core.JawtContext) error {
 		RestartDelay:     2 * time.Second,
 		MaxRestarts:      10,
 		OutputHandler: func(output string) {
-			pm.eventBus.Publish(runtime.ProcessOutputEvent("process_manager", "tailwind", output))
+			pm.eventBus.Publish(events.ProcessOutputEvent("process_manager", "tailwind", output))
 		},
 		ErrorHandler: func(err error) {
-			pm.eventBus.Publish(runtime.ProcessErrorEvent("process_manager", "tailwind", err))
+			pm.eventBus.Publish(events.ProcessErrorEvent("process_manager", "tailwind", err))
 		},
 	}
 
@@ -227,10 +227,10 @@ func (pm *ProcessManager) StartDevServer(ctx *core.JawtContext, serverBinary str
 		RestartDelay:     5 * time.Second,
 		MaxRestarts:      5,
 		OutputHandler: func(output string) {
-			pm.eventBus.Publish(runtime.ProcessOutputEvent("process_manager", "devserver", output))
+			pm.eventBus.Publish(events.ProcessOutputEvent("process_manager", "devserver", output))
 		},
 		ErrorHandler: func(err error) {
-			pm.eventBus.Publish(runtime.ProcessErrorEvent("process_manager", "devserver", err))
+			pm.eventBus.Publish(events.ProcessErrorEvent("process_manager", "devserver", err))
 		},
 	}
 

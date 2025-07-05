@@ -2,7 +2,7 @@ package core
 
 import (
 	"context"
-	"github.com/yasufadhili/jawt/internal/runtime"
+	"github.com/yasufadhili/jawt/internal/events"
 	"sync"
 )
 
@@ -66,7 +66,7 @@ func (tc *JawtContext) GetMetadata(key string) (interface{}, bool) {
 
 // EventBus interface for pub-sub communication
 type EventBus interface {
-	Publish(event runtime.Event)
+	Publish(event events.Event)
 	Subscribe(eventType string, handler EventHandler) error
 	Unsubscribe(eventType string, handler EventHandler) error
 	Start() error
@@ -74,7 +74,7 @@ type EventBus interface {
 }
 
 // EventHandler handles events from the event bus
-type EventHandler func(event runtime.Event)
+type EventHandler func(event events.Event)
 
 // Logger interface for structured logging
 type Logger interface {

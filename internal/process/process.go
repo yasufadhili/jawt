@@ -5,7 +5,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/yasufadhili/jawt/internal/core"
-	"github.com/yasufadhili/jawt/internal/runtime"
+	"github.com/yasufadhili/jawt/internal/events"
 	"io"
 	"os/exec"
 	"sync"
@@ -62,7 +62,7 @@ type ManagedProcess struct {
 	ctx      context.Context
 	cancel   context.CancelFunc
 	logger   core.Logger
-	eventBus core.EventBus
+	eventBus events.EventBus
 
 	mu           sync.RWMutex
 	cmd          *exec.Cmd
@@ -77,7 +77,7 @@ type ManagedProcess struct {
 }
 
 // NewManagedProcess creates a new managed process
-func NewManagedProcess(name string, options ProcessOptions, ctx context.Context, logger core.Logger, eventBus core.EventBus) *ManagedProcess {
+func NewManagedProcess(name string, options ProcessOptions, ctx context.Context, logger core.Logger, eventBus events.EventBus) *ManagedProcess {
 	processCtx, cancel := context.WithCancel(ctx)
 
 	return &ManagedProcess{
@@ -215,7 +215,7 @@ func (mp *ManagedProcess) run() {
 					core.StringField("process", mp.name),
 					core.ErrorField(err))
 
-				mp.eventBus.Publish(runtime.ProcessErrorEvent("managed_process", mp.name, err))
+				mp.eventBus.Publish(events.ProcessErrorEvent("managed_process", mp.name, err))
 
 				// Check if we should restart
 				if mp.options.RestartOnFailure && mp.restartCount < mp.options.MaxRestarts {
@@ -270,7 +270,7 @@ func (mp *ManagedProcess) runOnce() error {
 		core.StringField("process", mp.name),
 		core.IntField("pid", mp.pid))
 
-	mp.eventBus.Publish(runtime.CreateProcessStopEvent("managed_process", mp.name, mp.pid))
+	mp.eventBus.Publish(events.CreateProcessStopEvent("managed_process", mp.name, mp.pid))
 
 	// Handle output
 	var wg sync.WaitGroup
@@ -299,7 +299,7 @@ func (mp *ManagedProcess) runOnce() error {
 		core.StringField("process", mp.name),
 		core.IntField("pid", mp.pid))
 
-	mp.eventBus.Publish(runtime.CreateProcessStopEvent("managed_process", mp.name, mp.pid))
+	mp.eventBus.Publish(events.CreateProcessStopEvent("managed_process", mp.name, mp.pid))
 
 	return err
 }
