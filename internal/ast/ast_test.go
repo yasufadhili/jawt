@@ -16,7 +16,7 @@ func TestPrinter(t *testing.T) {
 		NewDocument(pos, DocTypePage, NewIdentifier(pos, "HomePage"), []Statement{
 			// import component Card from "./Card.jml"
 			NewImportDeclaration(pos, []Node{
-				NewImportSpecifier(pos, NewIdentifier(pos, "Card"), nil),
+				NewImportSpecifier(pos, NewIdentifier(pos, "Card")),
 			}, NewLiteral(pos, "string", "./Card.jml"), false),
 
 			// export default const name = "World"

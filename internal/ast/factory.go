@@ -55,10 +55,9 @@ func NewImportNamespaceSpecifier(pos Position, local *Identifier) *ImportNamespa
 	}
 }
 
-func NewImportSpecifier(pos Position, imported *Identifier, local *Identifier) *ImportSpecifier {
+func NewImportSpecifier(pos Position, local *Identifier) *ImportSpecifier {
 	return &ImportSpecifier{
 		Position: pos,
-		Imported: imported,
 		Local:    local,
 	}
 }
