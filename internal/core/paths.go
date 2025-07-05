@@ -60,13 +60,13 @@ func NewProjectPaths(projectRoot string, projectConfig *ProjectConfig, jawtConfi
 
 	// Set up output directories based on config
 	paths.JawtDir = filepath.Join(absProjectRoot, ".jawt")
-	paths.BuildDir = filepath.Join(absProjectRoot, projectConfig.OutputDir)
-	paths.DistDir = filepath.Join(absProjectRoot, projectConfig.DistDir)
-	paths.TempDir = filepath.Join(absProjectRoot, jawtConfig.TempDir)
-	paths.CacheDir = filepath.Join(absProjectRoot, jawtConfig.CacheDir)
+	paths.BuildDir = filepath.Join(paths.JawtDir, "build")
+	paths.DistDir = filepath.Join(paths.JawtDir, "dist")
+	paths.TempDir = filepath.Join(paths.JawtDir, "temp")
+	paths.CacheDir = filepath.Join(paths.JawtDir, "cache")
 
 	// Set up generated output directories
-	paths.TypeScriptOutputDir = filepath.Join(paths.BuildDir, "typescript")
+	paths.TypeScriptOutputDir = filepath.Join(paths.BuildDir, "ts")
 	paths.TailwindOutputDir = filepath.Join(paths.BuildDir, "styles")
 	paths.ComponentsOutputDir = filepath.Join(paths.BuildDir, "components")
 

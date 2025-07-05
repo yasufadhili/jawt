@@ -47,8 +47,7 @@ func InitProject(ctx *core.JawtContext, projectName string, targetDir string) er
 		return fmt.Errorf("failed to create initial files: %w", err)
 	}
 
-	ctx.Logger.Info("Project initialised successfully",
-		core.Field{Key: "path", Value: projectDir})
+	// ctx.Logger.Info("Project initialised successfully", core.Field{Key: "path", Value: projectDir})
 
 	printSuccessMessage(sanitisedName, projectDir)
 
@@ -273,8 +272,6 @@ func createProjectStructure(projectDir string) error {
 		"components",
 		"scripts",
 		"assets",
-		"assets/images",
-		"public",
 	}
 
 	for _, dir := range directories {
@@ -367,13 +364,13 @@ func generateConfigFiles(projectDir, projectName string) error {
 		return fmt.Errorf("failed to save project config: %w", err)
 	}
 
-	if err := createTSConfig(projectDir); err != nil {
-		return fmt.Errorf("failed to create TypeScript config: %w", err)
-	}
+	// if err := createTSConfig(projectDir); err != nil {
+	//	return fmt.Errorf("failed to create TypeScript config: %w", err)
+	// }
 
-	if err := createTailwindConfig(projectDir); err != nil {
-		return fmt.Errorf("failed to create Tailwind config: %w", err)
-	}
+	// if err:= createTailwindConfig(projectDir); err != nil {
+	// 	return fmt.Errorf("failed to create Tailwind config: %w", err)
+	// }
 
 	return nil
 }
