@@ -174,13 +174,18 @@ func (bs *BuildSystem) buildDependencyGraph() error {
 }
 
 func (bs *BuildSystem) extractDependencies(doc *DocumentInfo) ([]string, error) {
-	// This method will parse the JML file and extract:
-	// - Component imports
-	// - Page references
-	// - Asset references
-	// - Any other dependencies
+	reporter := diagnostic.NewReporter()
+	_, err := compiler.ParseFile(doc.AbsPath, reporter)
 
-	// Placeholder implementation
+	if reporter.HasErrors() {
+		return nil, fmt.Errorf("failed to parse %s due to errors", doc.AbsPath)
+	}
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse %s: %w", doc.AbsPath, err)
+	}
+
+	// TODO: Extract actual dependencies from the AST
 	return []string{}, nil
 }
 
@@ -428,19 +433,28 @@ func (bs *BuildSystem) RemoveDocument(path string) {
 // CompileDocument compiles a single document
 func (bs *BuildSystem) CompileDocument(path string) error {
 	bs.mu.RLock()
-	// doc, exists := bs.docs[path]
+	doc, exists := bs.docs[path]
 	bs.mu.RUnlock()
 
-	// if !exists {
-	// 	return nil // Document doesn't exist, nothing to compile
-	// }
+	if !exists {
+		return nil // Document doesn't exist, nothing to compile
+	}
 
-	// if _, err := bs.compiler.Compile(doc.AbsPath); err != nil {
-	// 	return err
-	// }
+	reporter := diagnostic.NewReporter()
+	_, err := bs.compiler.Compile(doc.AbsPath, reporter)
+
+	if reporter.HasErrors() {
+		printer := diagnostic.NewPrinter()
+		printer.Print(reporter)
+		return fmt.Errorf("failed to compile %s due to errors", doc.AbsPath)
+	}
+
+	if err != nil {
+		return fmt.Errorf("failed to compile %s: %w", doc.AbsPath, err)
+	}
 
 	bs.mu.Lock()
-	// doc.IsCompiled = true
+	doc.IsCompiled = true
 	bs.mu.Unlock()
 
 	return nil

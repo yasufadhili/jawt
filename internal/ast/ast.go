@@ -146,6 +146,20 @@ const (
 	DocTypeComponent DocType = "component"
 )
 
+func (d DocType) String() string {
+	return string(d)
+}
+
+// ImportKind represents the type of import declaration.
+type ImportKind string
+
+const (
+	ImportKindComponent ImportKind = "component"
+	ImportKindScript    ImportKind = "script"
+	ImportKindBrowser   ImportKind = "browser"
+	ImportKindModule    ImportKind = "module"
+)
+
 func (n *Document) Pos() Position    { return n.Position }
 func (n *Document) Accept(v Visitor) { v.VisitDocument(n) }
 func (n *Document) String() string   { return fmt.Sprintf("Document(%s)", n.Name) }

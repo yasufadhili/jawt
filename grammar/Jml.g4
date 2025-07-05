@@ -490,8 +490,8 @@ leftHandSideExpression
     ;
 
 newExpression
-    : memberExpression
-    | 'new' newExpression
+    : memberExpression      # MemberNewExpression
+    | 'new' newExpression   # NewNewExpression
     ;
 
 callExpression
