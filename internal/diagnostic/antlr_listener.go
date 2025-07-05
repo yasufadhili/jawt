@@ -25,8 +25,9 @@ func (l *AntlrErrorListener) SyntaxError(recognizer antlr.Recognizer, offendingS
 		Line:   line,
 		Column: column,
 		File:   l.File,
+		// TODO: Calculate Start and End offsets from offendingSymbol
 	}
 
-	err := NewError(msg, pos, SeverityError, "parser")
-	l.Reporter.Add(err)
+	diag := NewDiagnostic("SYNTAX_ERROR", msg, pos, SeverityError, "parser")
+	l.Reporter.Add(diag)
 }

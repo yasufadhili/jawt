@@ -4,22 +4,25 @@ import (
 	"fmt"
 )
 
-// Error represents a single error in the toolchain.
-type Error struct {
+// Diagnostic represents a single diagnostic message (error, warning, or info).
+type Diagnostic struct {
+	Code     DiagnosticCode
 	Message  string
 	Pos      Position
 	Severity Severity
 	Origin   string
 }
 
-// Position represents a location in a file.
+// Position represents a location in a file, with start and end offsets.
 type Position struct {
 	Line   int
 	Column int
+	Start  int // 0-based byte offset of the start of the diagnostic
+	End    int // 0-based byte offset of the end of the diagnostic
 	File   string
 }
 
-// Severity represents the severity of an error.
+// Severity represents the severity of a diagnostic.
 type Severity int
 
 const (
@@ -45,9 +48,13 @@ func (s Severity) String() string {
 	}
 }
 
-// NewError creates a new error.
-func NewError(message string, pos Position, severity Severity, origin string) *Error {
-	return &Error{
+// DiagnosticCode represents a unique code for a diagnostic message.
+type DiagnosticCode string
+
+// NewDiagnostic creates a new diagnostic.
+func NewDiagnostic(code DiagnosticCode, message string, pos Position, severity Severity, origin string) *Diagnostic {
+	return &Diagnostic{
+		Code:     code,
 		Message:  message,
 		Pos:      pos,
 		Severity: severity,
@@ -55,7 +62,7 @@ func NewError(message string, pos Position, severity Severity, origin string) *E
 	}
 }
 
-// Error returns the string representation of the error.
-func (e *Error) Error() string {
-	return fmt.Sprintf("[%s] %s:%d:%d: %s (%s)", e.Severity, e.Pos.File, e.Pos.Line, e.Pos.Column, e.Message, e.Origin)
+// Error returns the string representation of the diagnostic.
+func (d *Diagnostic) Error() string {
+	return fmt.Sprintf("[%s] %s:%d:%d: %s (%s) [%s]", d.Severity, d.Pos.File, d.Pos.Line, d.Pos.Column, d.Message, d.Origin, d.Code)
 }
