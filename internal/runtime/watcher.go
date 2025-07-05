@@ -29,9 +29,12 @@ type FileWatcher struct {
 	watchPatterns  []string
 	ignorePatterns []string
 
+	eventHandler func(fsnotify.Event) // Callback for file events
+
 	wg sync.WaitGroup
 }
 
+// NewFileWatcher creates a new FileWatcher instance
 func NewFileWatcher(ctx context.Context, logger core.Logger) (*FileWatcher, error) {
 	watcherCtx, cancel := context.WithCancel(ctx)
 
@@ -56,6 +59,7 @@ func NewFileWatcher(ctx context.Context, logger core.Logger) (*FileWatcher, erro
 	}, nil
 }
 
+// Start starts the file watcher
 func (fw *FileWatcher) Start() error {
 	fw.logger.Info("Starting file watcher")
 
@@ -65,6 +69,7 @@ func (fw *FileWatcher) Start() error {
 	return nil
 }
 
+// Stop stops the file watcher
 func (fw *FileWatcher) Stop() error {
 	fw.logger.Info("Stopping file watcher")
 
@@ -78,6 +83,7 @@ func (fw *FileWatcher) Stop() error {
 	return nil
 }
 
+// AddPath adds a single path to watch
 func (fw *FileWatcher) AddPath(path string) error {
 	fw.mu.Lock()
 	defer fw.mu.Unlock()
@@ -100,6 +106,7 @@ func (fw *FileWatcher) AddPath(path string) error {
 	return nil
 }
 
+// RemovePath removes a path from watching
 func (fw *FileWatcher) RemovePath(path string) error {
 	fw.mu.Lock()
 	defer fw.mu.Unlock()
@@ -168,6 +175,7 @@ func (fw *FileWatcher) SetWatchPatterns(patterns []string) {
 	fw.logger.Debug("Set watch patterns", core.StringField("patterns", strings.Join(patterns, ", ")))
 }
 
+// SetIgnorePatterns sets the file patterns to ignore
 func (fw *FileWatcher) SetIgnorePatterns(patterns []string) {
 	fw.mu.Lock()
 	defer fw.mu.Unlock()
@@ -183,6 +191,14 @@ func (fw *FileWatcher) SetDebounceDelay(delay time.Duration) {
 
 	fw.debounceDelay = delay
 	fw.logger.Debug("Set debounce delay", core.DurationField("delay", delay))
+}
+
+// OnEvent registers a callback for handling file events
+func (fw *FileWatcher) OnEvent(handler func(fsnotify.Event)) {
+	fw.mu.Lock()
+	defer fw.mu.Unlock()
+	fw.eventHandler = handler
+	fw.logger.Debug("Registered file event handler")
 }
 
 // watchLoop is the main watch loop
@@ -228,8 +244,12 @@ func (fw *FileWatcher) handleEvent(event fsnotify.Event) {
 		core.StringField("file", event.Name),
 		core.StringField("operation", event.Op.String()))
 
-	// TODO: Actually do something
-
+	// Call registered event handler if set
+	fw.mu.RLock()
+	if fw.eventHandler != nil {
+		fw.eventHandler(event)
+	}
+	fw.mu.RUnlock()
 }
 
 // shouldIgnoreFile checks if a file should be ignored
