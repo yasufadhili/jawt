@@ -52,6 +52,7 @@ type BuildSystem struct {
 	comps    map[string]*ComponentInfo // Map of a component path to ComponentInfo
 	compiler Compiler
 	watcher  FileWatcher
+	depGraph DependencyGraph
 }
 
 // Compiler is an interface for compiling documents
@@ -77,6 +78,7 @@ func NewBuildSystem(ctx *core.JawtContext, compiler Compiler, watcher FileWatche
 		comps:    make(map[string]*ComponentInfo),
 		compiler: compiler,
 		watcher:  watcher,
+		depGraph: NewDependencyGraph(),
 	}
 }
 
@@ -107,6 +109,7 @@ func (bs *BuildSystem) DiscoverProject() error {
 		return fmt.Errorf("failed to discover project files: %w", err)
 	}
 
+	// First pass: Add all documents to build system and dependency graph
 	for _, path := range jmlFiles {
 		docInfo, err := CreateDocumentInfo(path, bs.ctx.Paths.ProjectRoot)
 		if err != nil {
@@ -117,10 +120,29 @@ func (bs *BuildSystem) DiscoverProject() error {
 		}
 
 		bs.AddDocument(docInfo)
+
+		// Add node to dependency graph
+		if err := bs.depGraph.AddNode(docInfo.AbsPath, docInfo.Type); err != nil {
+			bs.ctx.Logger.Warn("Failed to add document to dependency graph",
+				core.StringField("path", path),
+				core.ErrorField(err))
+		}
 	}
 
-	if err := AnalyseDependencies(bs.docs); err != nil {
-		return fmt.Errorf("failed to analyse dependencies: %w", err)
+	// Second pass: Analyse dependencies and build graph
+	if err := bs.buildDependencyGraph(); err != nil {
+		return fmt.Errorf("failed to build dependency graph: %w", err)
+	}
+
+	if err := bs.depGraph.ValidateGraph(); err != nil {
+		return fmt.Errorf("invalid dependency graph: %w", err)
+	}
+
+	if bs.depGraph.HasCycle() {
+		cycles := bs.depGraph.GetCycles()
+		bs.ctx.Logger.Warn("Circular dependencies detected",
+			core.IntField("cycle_count", len(cycles)))
+		// Could return error or just warn depending on requirements
 	}
 
 	bs.ctx.Logger.Info("Project discovery completed",
@@ -130,14 +152,65 @@ func (bs *BuildSystem) DiscoverProject() error {
 	return nil
 }
 
+func (bs *BuildSystem) buildDependencyGraph() error {
+	bs.ctx.Logger.Info("Building dependency graph")
+
+	// Parse each document to extract its dependencies
+	for path, doc := range bs.docs {
+		dependencies, err := bs.extractDependencies(doc)
+		if err != nil {
+			bs.ctx.Logger.Error("Failed to extract dependencies",
+				core.StringField("path", path),
+				core.ErrorField(err))
+			continue
+		}
+
+		// Add dependencies to graph
+		for _, dep := range dependencies {
+			if err := bs.depGraph.AddDependency(path, dep); err != nil {
+				bs.ctx.Logger.Error("Failed to add dependency to graph",
+					core.StringField("from", path),
+					core.StringField("to", dep),
+					core.ErrorField(err))
+			}
+		}
+	}
+
+	return nil
+}
+
+func (bs *BuildSystem) extractDependencies(doc *DocumentInfo) ([]string, error) {
+	// This method will parse the JML file and extract:
+	// - Component imports
+	// - Page references
+	// - Asset references
+	// - Any other dependencies
+
+	// Placeholder implementation
+	return []string{}, nil
+}
+
 // CompileAll compiles all documents in the project
 func (bs *BuildSystem) CompileAll() error {
 	bs.ctx.Logger.Info("Compiling all documents")
 
-	// TODO: Implement full compilation
-	// 1. Determine compilation order based on dependencies
-	// 2. Compile each document
-	// 3. Update compilation status
+	compilationOrder, err := bs.depGraph.GetCompilationOrder()
+	if err != nil {
+		return fmt.Errorf("failed to determine compilation order: %w", err)
+	}
+
+	bs.ctx.Logger.Info("Compilation order determined",
+		core.IntField("document_count", len(compilationOrder)))
+
+	// Compile in dependency order
+	for _, path := range compilationOrder {
+		if err := bs.CompileDocument(path); err != nil {
+			bs.ctx.Logger.Error("Failed to compile document",
+				core.StringField("path", path),
+				core.ErrorField(err))
+			return err
+		}
+	}
 
 	return nil
 }
@@ -190,38 +263,40 @@ func (bs *BuildSystem) HandleFileCreated(path string) {
 		return
 	}
 
+	// Add to build system (includes adding to dependency graph)
 	bs.AddDocument(docInfo)
 
-	// Analyse dependencies for the new document
-	docs := map[string]*DocumentInfo{path: docInfo}
-	if err := AnalyseDependencies(docs); err != nil {
-		bs.ctx.Logger.Error("Failed to analyse dependencies for new file",
+	// Extract and add dependencies to graph
+	dependencies, err := bs.extractDependencies(docInfo)
+	if err != nil {
+		bs.ctx.Logger.Error("Failed to extract dependencies for new file",
 			core.StringField("path", path),
 			core.ErrorField(err))
+	} else {
+		for _, dep := range dependencies {
+			if err := bs.depGraph.AddDependency(path, dep); err != nil {
+				bs.ctx.Logger.Error("Failed to add dependency to graph",
+					core.StringField("from", path),
+					core.StringField("to", dep),
+					core.ErrorField(err))
+			}
+		}
 	}
 
+	// Compile the new document
 	if err := bs.CompileDocument(path); err != nil {
 		bs.ctx.Logger.Error("Failed to compile new file",
 			core.StringField("path", path),
 			core.ErrorField(err))
 	}
-
-	bs.ctx.Logger.Info("Successfully processed new JML file",
-		core.StringField("path", path),
-		core.StringField("type", bs.getDocumentTypeString(docInfo.Type)))
 }
 
 // HandleFileModified handles a file being modified
 func (bs *BuildSystem) HandleFileModified(path string) {
 	bs.ctx.Logger.Info("JML file modified", core.StringField("path", path))
 
-	// Check if we know about this file
-	if _, exists := bs.GetDocumentInfo(path); !exists {
-		bs.ctx.Logger.Info("Modified file not in build system, treating as new file",
-			core.StringField("path", path))
-		bs.HandleFileCreated(path)
-		return
-	}
+	// Get old dependencies before updating
+	oldDeps := bs.depGraph.GetDependencies(path)
 
 	// Re-parse and update document info
 	docInfo, err := CreateDocumentInfo(path, bs.ctx.Paths.ProjectRoot)
@@ -232,8 +307,20 @@ func (bs *BuildSystem) HandleFileModified(path string) {
 		return
 	}
 
+	// Extract new dependencies
+	newDeps, err := bs.extractDependencies(docInfo)
+	if err != nil {
+		bs.ctx.Logger.Error("Failed to extract new dependencies",
+			core.StringField("path", path),
+			core.ErrorField(err))
+		newDeps = []string{}
+	}
+
+	//  Update dependency graph
+	bs.updateDependenciesInGraph(path, oldDeps, newDeps)
+
 	// Update in build system
-	bs.AddDocument(docInfo) // This will overwrite the existing entry
+	bs.AddDocument(docInfo)
 
 	// Recompile the document
 	if err := bs.CompileDocument(path); err != nil {
@@ -311,6 +398,12 @@ func (bs *BuildSystem) AddDocument(doc *DocumentInfo) {
 	case DocumentTypeComponent:
 		bs.comps[doc.AbsPath] = &ComponentInfo{DocumentInfo: *doc}
 	}
+
+	if err := bs.depGraph.AddNode(doc.AbsPath, doc.Type); err != nil {
+		bs.ctx.Logger.Error("Failed to add document to dependency graph",
+			core.StringField("path", doc.AbsPath),
+			core.ErrorField(err))
+	}
 }
 
 // RemoveDocument removes a document from the build system
@@ -329,6 +422,12 @@ func (bs *BuildSystem) RemoveDocument(path string) {
 
 		// Remove from main document map
 		delete(bs.docs, path)
+
+		if err := bs.depGraph.RemoveNode(path); err != nil {
+			bs.ctx.Logger.Error("Failed to remove document from dependency graph",
+				core.StringField("path", path),
+				core.ErrorField(err))
+		}
 	}
 }
 
@@ -355,22 +454,64 @@ func (bs *BuildSystem) CompileDocument(path string) error {
 
 // RecompileDependents recompiles all documents that depend on the given document
 func (bs *BuildSystem) RecompileDependents(path string) error {
-	bs.mu.RLock()
-	doc, exists := bs.docs[path]
-	bs.mu.RUnlock()
+	dependents := bs.depGraph.GetDependents(path)
 
-	if !exists {
-		return nil // Document doesn't exist, nothing to do
+	bs.ctx.Logger.Info("Recompiling dependents",
+		core.StringField("changed_file", path),
+		core.IntField("dependent_count", len(dependents)))
+
+	// Get compilation order for just the dependents
+	compilationOrder, err := bs.getCompilationOrderForNodes(dependents)
+	if err != nil {
+		return fmt.Errorf("failed to get compilation order for dependents: %w", err)
 	}
 
-	// Recompile all documents that depend on this one
-	for _, depPath := range doc.DependedBy {
+	// Recompile in dependency order
+	for _, depPath := range compilationOrder {
 		if err := bs.CompileDocument(depPath); err != nil {
-			return err
+			return fmt.Errorf("failed to recompile dependent %s: %w", depPath, err)
 		}
 	}
 
 	return nil
+}
+
+func (bs *BuildSystem) getCompilationOrderForNodes(nodes []string) ([]string, error) {
+	// This would create a subgraph with just the specified nodes
+	// and their dependencies, then return topological order
+
+	// Placeholder implementation
+	return nodes, nil
+}
+
+func (bs *BuildSystem) updateDependenciesInGraph(path string, oldDeps, newDeps []string) {
+	// Remove old dependencies that are no longer present
+	for _, oldDep := range oldDeps {
+		found := false
+		for _, newDep := range newDeps {
+			if oldDep == newDep {
+				found = true
+				break
+			}
+		}
+		if !found {
+			bs.depGraph.RemoveDependency(path, oldDep)
+		}
+	}
+
+	// Add new dependencies
+	for _, newDep := range newDeps {
+		found := false
+		for _, oldDep := range oldDeps {
+			if newDep == oldDep {
+				found = true
+				break
+			}
+		}
+		if !found {
+			bs.depGraph.AddDependency(path, newDep)
+		}
+	}
 }
 
 // isJMLFile checks if a file is a JML file we should process
