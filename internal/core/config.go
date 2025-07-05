@@ -113,7 +113,7 @@ func DefaultProjectConfig() *ProjectConfig {
 			Path  string `json:"path"`
 			Alias string `json:"alias"`
 		}{
-			Path:  "pages",
+			Path:  "app",
 			Alias: "",
 		},
 		Scripts: struct {
