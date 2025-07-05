@@ -1,0 +1,25 @@
+/**
+ * Main script for JAWT application
+ */
+
+export function handlePageLoad(): void {
+    console.log('JAWT application loaded successfully!');
+}
+
+export function logMessage(message: string): void {
+    console.log(`[JAWT] ${message}`);
+}
+
+// Example of a utility function
+export function formatDate(date: Date): string {
+    return date.toLocaleDateString('en-GB', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+}
+
+// Initialise application
+document.addEventListener('DOMContentLoaded', () => {
+    handlePageLoad();
+});

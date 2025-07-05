@@ -1,0 +1,66 @@
+_doctype component Layout
+
+import script main from "scripts/main"
+
+Container {
+    style: "min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100"
+
+    Header {
+        style: "bg-white shadow-sm p-6"
+
+        Container {
+            style: "max-w-4xl mx-auto"
+
+            if (props.showWelcome) {
+                Text {
+                    content: "Welcome to " + props.projectName
+                    style: "text-3xl font-bold text-gray-800 mb-2"
+                }
+
+                Text {
+                    content: "Your JAWT application is ready!"
+                    style: "text-lg text-gray-600"
+                }
+            }
+        }
+    }
+
+    Main {
+        style: "flex-1 p-6"
+
+        Container {
+            style: "max-w-4xl mx-auto"
+
+            Card {
+                style: "bg-white rounded-lg shadow-md p-8 mb-8"
+
+                Text {
+                    content: "Getting Started"
+                    style: "text-2xl font-semibold text-gray-800 mb-4"
+                }
+
+                List {
+                    style: "space-y-2 text-gray-600"
+
+                    ListItem {
+                        content: "Edit components in the components/ directory"
+                    }
+
+                    ListItem {
+                        content: "Create pages in the pages/ directory"
+                    }
+
+                    ListItem {
+                        content: "Add TypeScript functionality in scripts/"
+                    }
+
+                    ListItem {
+                        content: "Run 'jawt run' to start the development server"
+                    }
+                }
+            }
+        }
+    }
+
+    onClick: () => main.handlePageLoad()
+}

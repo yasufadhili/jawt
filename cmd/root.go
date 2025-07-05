@@ -28,8 +28,8 @@ func init() {
 	rootCmd.PersistentFlags().BoolP("help", "h", false, "Display help information for the command")
 	rootCmd.Flags().BoolP("version", "v", false, "Display Jawt version information")
 
-	// rootCmd.AddCommand(initCmd)
-	// rootCmd.AddCommand(runCmd)
+	rootCmd.AddCommand(initCmd)
+	rootCmd.AddCommand(runCmd)
 	// rootCmd.AddCommand(buildCmd)
 	// rootCmd.AddCommand(versionCmd)
 	// rootCmd.AddCommand(tscCmd)
