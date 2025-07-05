@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/fsnotify/fsnotify"
 	"github.com/yasufadhili/jawt/internal/core"
 	"github.com/yasufadhili/jawt/internal/runtime"
 )
@@ -34,21 +33,17 @@ func RunProject(ctx *core.JawtContext) error {
 		".DS_Store", "*.tmp", "*.swp", "*.swo",
 	})
 
-	// Register event handler
-	fileWatcher.OnEvent(func(event fsnotify.Event) {
-		ctx.Logger.Info("Detected file event",
-			core.StringField("operation", event.Op.String()),
-			core.StringField("file", event.Name))
-		// TODO: Implement build/reload logic based on event type
-		// - For .ts/.tsx files: Recompile TypeScript to ctx.Paths.TypeScriptOutputDir
-		// - For .jml files: Reprocess JML to ctx.Paths.ComponentsOutputDir or ctx.Paths.DistDir
-		// - For .css files: Reprocess Tailwind CSS to ctx.Paths.TailwindOutputDir
-		// - Trigger browser reload if ctx.ProjectConfig.EnableHMR is true
-		ctx.Logger.Debug("Placeholder: Would trigger build/reload for event",
-			core.StringField("operation", event.Op.String()),
-			core.StringField("file", event.Name))
-	})
+	// Create a dummy compiler for now (will be replaced with real compiler later)
+	compiler := &dummyCompiler{ctx: ctx}
 
+	buildSystem := NewBuildSystem(ctx, compiler, fileWatcher)
+
+	// Initialise the build system (discover and compile)
+	if err := buildSystem.Initialise(); err != nil {
+		return fmt.Errorf("failed to initialise build system: %w", err)
+	}
+
+	// Start file watcher
 	if err := fileWatcher.Start(); err != nil {
 		return fmt.Errorf("failed to start file watcher: %w", err)
 	}
@@ -87,5 +82,31 @@ func RunProject(ctx *core.JawtContext) error {
 	}
 
 	ctx.Logger.Info("JAWT development server stopped")
+	return nil
+}
+
+// dummyCompiler is a placeholder implementation of the Compiler interface
+type dummyCompiler struct {
+	ctx *core.JawtContext
+}
+
+func (c *dummyCompiler) CompileDocument(doc *DocumentInfo) error {
+	c.ctx.Logger.Debug("Dummy compiler: Would compile document",
+		core.StringField("name", doc.Name),
+		core.StringField("path", doc.AbsPath))
+	return nil
+}
+
+func (c *dummyCompiler) CompilePage(page *PageInfo) error {
+	c.ctx.Logger.Debug("Dummy compiler: Would compile page",
+		core.StringField("name", page.Name),
+		core.StringField("path", page.AbsPath))
+	return nil
+}
+
+func (c *dummyCompiler) CompileComponent(comp *ComponentInfo) error {
+	c.ctx.Logger.Debug("Dummy compiler: Would compile component",
+		core.StringField("name", comp.Name),
+		core.StringField("path", comp.AbsPath))
 	return nil
 }
