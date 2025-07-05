@@ -36,7 +36,7 @@ type ProjectPaths struct {
 }
 
 // NewProjectPaths creates a new ProjectPaths instance
-func NewProjectPaths(projectRoot string, projectConfig *ProjectConfig, toolConfig *ToolConfig) (*ProjectPaths, error) {
+func NewProjectPaths(projectRoot string, projectConfig *ProjectConfig, jawtConfig *JawtConfig) (*ProjectPaths, error) {
 	absProjectRoot, err := filepath.Abs(projectRoot)
 	if err != nil {
 		return nil, err
@@ -62,8 +62,8 @@ func NewProjectPaths(projectRoot string, projectConfig *ProjectConfig, toolConfi
 	paths.JawtDir = filepath.Join(absProjectRoot, ".jawt")
 	paths.BuildDir = filepath.Join(absProjectRoot, projectConfig.OutputDir)
 	paths.DistDir = filepath.Join(absProjectRoot, projectConfig.DistDir)
-	paths.TempDir = filepath.Join(absProjectRoot, toolConfig.TempDir)
-	paths.CacheDir = filepath.Join(absProjectRoot, toolConfig.CacheDir)
+	paths.TempDir = filepath.Join(absProjectRoot, jawtConfig.TempDir)
+	paths.CacheDir = filepath.Join(absProjectRoot, jawtConfig.CacheDir)
 
 	// Set up generated output directories
 	paths.TypeScriptOutputDir = filepath.Join(paths.BuildDir, "typescript")
