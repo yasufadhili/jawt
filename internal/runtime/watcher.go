@@ -3,7 +3,6 @@ package runtime
 import (
 	"context"
 	"github.com/yasufadhili/jawt/internal/core"
-	"github.com/yasufadhili/jawt/internal/events"
 	"os"
 	"path/filepath"
 	"strings"
@@ -15,10 +14,9 @@ import (
 
 // FileWatcher manages file system watching
 type FileWatcher struct {
-	ctx      context.Context
-	cancel   context.CancelFunc
-	logger   core.Logger
-	eventBus events.EventBus
+	ctx    context.Context
+	cancel context.CancelFunc
+	logger core.Logger
 
 	watcher *fsnotify.Watcher
 	paths   []string
@@ -34,7 +32,7 @@ type FileWatcher struct {
 	wg sync.WaitGroup
 }
 
-func NewFileWatcher(ctx context.Context, logger core.Logger, eventBus events.EventBus) (*FileWatcher, error) {
+func NewFileWatcher(ctx context.Context, logger core.Logger) (*FileWatcher, error) {
 	watcherCtx, cancel := context.WithCancel(ctx)
 
 	fsWatcher, err := fsnotify.NewWatcher()
@@ -47,7 +45,6 @@ func NewFileWatcher(ctx context.Context, logger core.Logger, eventBus events.Eve
 		ctx:           watcherCtx,
 		cancel:        cancel,
 		logger:        logger,
-		eventBus:      eventBus,
 		watcher:       fsWatcher,
 		debounceMap:   make(map[string]time.Time),
 		debounceDelay: 100 * time.Millisecond,
@@ -231,27 +228,8 @@ func (fw *FileWatcher) handleEvent(event fsnotify.Event) {
 		core.StringField("file", event.Name),
 		core.StringField("operation", event.Op.String()))
 
-	// Determine event type and publish
-	var eventType events.EventType
-	switch {
-	case event.Op&fsnotify.Create == fsnotify.Create:
-		eventType = events.FileCreatedEvent
-	case event.Op&fsnotify.Write == fsnotify.Write:
-		eventType = events.FileChangedEvent
-	case event.Op&fsnotify.Remove == fsnotify.Remove:
-		eventType = events.FileDeletedEvent
-	case event.Op&fsnotify.Rename == fsnotify.Rename:
-		eventType = events.FileDeletedEvent // Treat rename as delete
-	default:
-		eventType = events.FileChangedEvent
-	}
+	// TODO: Actually do something
 
-	// Create and publish event
-	runtimeEvent := events.NewEvent(eventType, "file_watcher").
-		WithData("file_path", event.Name).
-		WithData("operation", event.Op.String())
-
-	fw.eventBus.Publish(runtimeEvent)
 }
 
 // shouldIgnoreFile checks if a file should be ignored
