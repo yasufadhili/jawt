@@ -240,7 +240,7 @@ func (fw *FileWatcher) handleEvent(event fsnotify.Event) {
 		return
 	}
 
-	fw.logger.Debug("File event",
+	fw.logger.Info("File event",
 		core.StringField("file", event.Name),
 		core.StringField("operation", event.Op.String()))
 

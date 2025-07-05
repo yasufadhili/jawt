@@ -12,7 +12,7 @@ import (
 
 // RunProject starts the JAWT project in development mode
 func RunProject(ctx *core.JawtContext) error {
-	ctx.Logger.Info("Starting JAWT development server",
+	ctx.Logger.Info("Starting Jawt development server",
 		core.StringField("host", ctx.ProjectConfig.Server.Host),
 		core.IntField("port", ctx.ProjectConfig.Server.Port))
 

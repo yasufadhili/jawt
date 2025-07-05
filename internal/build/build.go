@@ -22,8 +22,8 @@ type DocumentInfo struct {
 	RelPath      string
 	AbsPath      string
 	Type         DocumentType
-	Dependencies []string // List of document paths this document depends on
-	DependedBy   []string // List of document paths that depend on this document
+	Dependencies []string
+	DependedBy   []string
 	IsCompiled   bool
 	LastModified time.Time
 	Hash         string // Content hash for detecting changes
@@ -32,24 +32,24 @@ type DocumentInfo struct {
 // ComponentInfo represents information about a component
 type ComponentInfo struct {
 	DocumentInfo
-	Props map[string]string // Component properties
+	Props map[string]string
 }
 
 // PageInfo represents information about a page
 type PageInfo struct {
 	DocumentInfo
-	Route string // URL route for the page
+	Route string
 }
 
 // BuildSystem manages the build process for a JAWT project
 type BuildSystem struct {
 	ctx      *core.JawtContext
 	mu       sync.RWMutex
-	docs     map[string]*DocumentInfo  // Map of document path to DocumentInfo
+	docs     map[string]*DocumentInfo  // Map of a document path to DocumentInfo
 	pages    map[string]*PageInfo      // Map of page path to PageInfo
-	comps    map[string]*ComponentInfo // Map of component path to ComponentInfo
-	compiler Compiler                  // Compiler interface for compiling documents
-	watcher  FileWatcher               // File watcher for detecting changes
+	comps    map[string]*ComponentInfo // Map of a component path to ComponentInfo
+	compiler Compiler
+	watcher  FileWatcher
 }
 
 // Compiler is an interface for compiling documents
@@ -82,17 +82,14 @@ func NewBuildSystem(ctx *core.JawtContext, compiler Compiler, watcher FileWatche
 func (bs *BuildSystem) Initialise() error {
 	bs.ctx.Logger.Info("Initialising build system")
 
-	// Discover all documents in the project
 	if err := bs.DiscoverProject(); err != nil {
 		return err
 	}
 
-	// Compile all documents
 	if err := bs.CompileAll(); err != nil {
 		return err
 	}
 
-	// Set up file watcher to handle changes
 	bs.SetupWatcher()
 
 	return nil
@@ -108,9 +105,7 @@ func (bs *BuildSystem) DiscoverProject() error {
 		return fmt.Errorf("failed to discover project files: %w", err)
 	}
 
-	// Process each file
 	for _, path := range jmlFiles {
-		// Create document info
 		docInfo, err := CreateDocumentInfo(path, bs.ctx.Paths.ProjectRoot)
 		if err != nil {
 			bs.ctx.Logger.Warn("Failed to process document",
@@ -119,11 +114,9 @@ func (bs *BuildSystem) DiscoverProject() error {
 			continue
 		}
 
-		// Add to build system
 		bs.AddDocument(docInfo)
 	}
 
-	// Analyse dependencies between documents
 	if err := AnalyseDependencies(bs.docs); err != nil {
 		return fmt.Errorf("failed to analyse dependencies: %w", err)
 	}
@@ -219,7 +212,7 @@ func (bs *BuildSystem) HandleFileRenamed(path string) {
 	bs.ctx.Logger.Info("File renamed", core.StringField("path", path))
 
 	// TODO: Implement file rename handling
-	// 1. This is typically handled as a delete followed by a create
+	// 1. This is handled as a delete followed by a create
 	// 2. May need special handling for updating dependencies
 }
 
@@ -277,12 +270,10 @@ func (bs *BuildSystem) CompileDocument(path string) error {
 		return nil // Document doesn't exist, nothing to compile
 	}
 
-	// Compile the document
 	if err := bs.compiler.CompileDocument(doc); err != nil {
 		return err
 	}
 
-	// Update compilation status
 	bs.mu.Lock()
 	doc.IsCompiled = true
 	bs.mu.Unlock()
