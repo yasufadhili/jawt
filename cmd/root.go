@@ -29,7 +29,7 @@ func init() {
 	rootCmd.Flags().BoolP("version", "v", false, "Display Jawt version information")
 
 	// rootCmd.AddCommand(initCmd)
-	// rootCmd.AddCommand(runCmd)
+	rootCmd.AddCommand(runCmd)
 	// rootCmd.AddCommand(buildCmd)
 	// rootCmd.AddCommand(versionCmd)
 	// rootCmd.AddCommand(tscCmd)
