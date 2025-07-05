@@ -118,10 +118,10 @@ func createInitialFiles(projectDir, projectName string) error {
 		return fmt.Errorf("failed to create .gitignore: %w", err)
 	}
 
-	if err := writeTemplateFile("templates/README.md.tmpl",
-		filepath.Join(projectDir, "README.md"), data); err != nil {
-		return fmt.Errorf("failed to create README.md: %w", err)
-	}
+	// if err := writeTemplateFile("templates/README.md.tmpl",
+	// filepath.Join(projectDir, "README.md"), data); err != nil {
+	//	return fmt.Errorf("failed to create README.md: %w", err)
+	//}
 
 	return nil
 }
