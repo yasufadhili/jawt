@@ -2,7 +2,6 @@ package core
 
 import (
 	"context"
-	"github.com/yasufadhili/jawt/internal/events"
 	"sync"
 )
 
@@ -16,7 +15,6 @@ type JawtContext struct {
 	ProjectConfig *ProjectConfig
 	Paths         *ProjectPaths
 	Logger        Logger
-	EventBus      EventBus
 
 	// Runtime state
 	mu       sync.RWMutex
@@ -24,7 +22,7 @@ type JawtContext struct {
 }
 
 // NewJawtContext creates a new jawt context with the given configurations
-func NewJawtContext(jawtConfig *JawtConfig, projectConfig *ProjectConfig, paths *ProjectPaths, logger Logger, eventBus EventBus) *JawtContext {
+func NewJawtContext(jawtConfig *JawtConfig, projectConfig *ProjectConfig, paths *ProjectPaths, logger Logger) *JawtContext {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	return &JawtContext{
@@ -34,7 +32,6 @@ func NewJawtContext(jawtConfig *JawtConfig, projectConfig *ProjectConfig, paths 
 		ProjectConfig: projectConfig,
 		Paths:         paths,
 		Logger:        logger,
-		EventBus:      eventBus,
 		metadata:      make(map[string]interface{}),
 	}
 }
@@ -63,18 +60,6 @@ func (tc *JawtContext) GetMetadata(key string) (interface{}, bool) {
 	value, exists := tc.metadata[key]
 	return value, exists
 }
-
-// EventBus interface for pub-sub communication
-type EventBus interface {
-	Publish(event events.Event)
-	Subscribe(eventType string, handler EventHandler) error
-	Unsubscribe(eventType string, handler EventHandler) error
-	Start() error
-	Stop() error
-}
-
-// EventHandler handles events from the event bus
-type EventHandler func(event events.Event)
 
 // Logger interface for structured logging
 type Logger interface {
