@@ -86,7 +86,7 @@ Program
           ComponentElement <Button>
 `
 
-	// Normalize whitespace for comparison
+	// Normalise whitespace for comparison
 	normalize := func(s string) string {
 		return strings.Join(strings.Fields(s), " ")
 	}
