@@ -225,7 +225,25 @@ func (fw *FileWatcher) watchLoop() {
 
 // handleEvent handles a file system event
 func (fw *FileWatcher) handleEvent(event fsnotify.Event) {
-	// Check if file should be ignored
+	// Handle directory creation first - we need to watch new directories
+	if event.Op&fsnotify.Create == fsnotify.Create {
+		if info, err := os.Stat(event.Name); err == nil && info.IsDir() {
+			// New directory created, add it to watcher if it's not ignored
+			if !fw.shouldIgnoreDirectory(event.Name) {
+				fw.logger.Info("New directory created, adding to watcher",
+					core.StringField("path", event.Name))
+
+				// Add the new directory recursively
+				if err := fw.addPathRecursive(event.Name); err != nil {
+					fw.logger.Error("Failed to add new directory to watcher",
+						core.StringField("path", event.Name),
+						core.ErrorField(err))
+				}
+			}
+		}
+	}
+
+	// For file events, check if file should be ignored
 	if fw.shouldIgnoreFile(event.Name) {
 		return
 	}

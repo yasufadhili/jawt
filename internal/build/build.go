@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/fsnotify/fsnotify"
 	"github.com/yasufadhili/jawt/internal/core"
+	"os"
+	"strings"
 	"sync"
 	"time"
 )
@@ -155,65 +157,135 @@ func (bs *BuildSystem) HandleFileEvent(event fsnotify.Event) {
 		core.StringField("operation", event.Op.String()),
 		core.StringField("file", event.Name))
 
-	// TODO: Implement event handling
-	// 1. Determine if the file is a JML document
-	// 2. Determine the type of event (create, modify, delete)
-	// 3. Call the appropriate handler method
+	// Check if this is a JML file we care about
+	if !bs.isJMLFile(event.Name) {
+		bs.ctx.Logger.Debug("Ignoring non-JML file event",
+			core.StringField("file", event.Name))
+		return
+	}
 
-	switch event.Op {
-	case fsnotify.Create:
+	// Handle different event types
+	switch {
+	case event.Op&fsnotify.Create == fsnotify.Create:
 		bs.HandleFileCreated(event.Name)
-	case fsnotify.Write:
+	case event.Op&fsnotify.Write == fsnotify.Write:
 		bs.HandleFileModified(event.Name)
-	case fsnotify.Remove:
+	case event.Op&fsnotify.Remove == fsnotify.Remove:
 		bs.HandleFileDeleted(event.Name)
-	case fsnotify.Rename:
+	case event.Op&fsnotify.Rename == fsnotify.Rename:
 		bs.HandleFileRenamed(event.Name)
 	}
 }
 
 // HandleFileCreated handles a new file being created
 func (bs *BuildSystem) HandleFileCreated(path string) {
-	bs.ctx.Logger.Info("File created", core.StringField("path", path))
+	bs.ctx.Logger.Info("JML file created", core.StringField("path", path))
 
-	// TODO: Implement file creation handling
-	// 1. Parse the file to determine if it's a page or component
-	// 2. Create DocumentInfo, PageInfo, or ComponentInfo
-	// 3. Add to the appropriate maps
-	// 4. Analyze dependencies
-	// 5. Compile the document
-	// 6. Recompile dependent documents if necessary
+	// Create DocumentInfo for the new file
+	docInfo, err := CreateDocumentInfo(path, bs.ctx.Paths.ProjectRoot)
+	if err != nil {
+		bs.ctx.Logger.Error("Failed to create document info for new file",
+			core.StringField("path", path),
+			core.ErrorField(err))
+		return
+	}
+
+	bs.AddDocument(docInfo)
+
+	// Analyse dependencies for the new document
+	docs := map[string]*DocumentInfo{path: docInfo}
+	if err := AnalyseDependencies(docs); err != nil {
+		bs.ctx.Logger.Error("Failed to analyse dependencies for new file",
+			core.StringField("path", path),
+			core.ErrorField(err))
+	}
+
+	if err := bs.CompileDocument(path); err != nil {
+		bs.ctx.Logger.Error("Failed to compile new file",
+			core.StringField("path", path),
+			core.ErrorField(err))
+	}
+
+	bs.ctx.Logger.Info("Successfully processed new JML file",
+		core.StringField("path", path),
+		core.StringField("type", bs.getDocumentTypeString(docInfo.Type)))
 }
 
 // HandleFileModified handles a file being modified
 func (bs *BuildSystem) HandleFileModified(path string) {
-	bs.ctx.Logger.Info("File modified", core.StringField("path", path))
+	bs.ctx.Logger.Info("JML file modified", core.StringField("path", path))
 
-	// TODO: Implement file modification handling
-	// 1. Check if the file is in our document maps
-	// 2. Reparse the file to update DocumentInfo
-	// 3. Recompile the document
-	// 4. Recompile dependent documents if necessary
+	// Check if we know about this file
+	if _, exists := bs.GetDocumentInfo(path); !exists {
+		bs.ctx.Logger.Info("Modified file not in build system, treating as new file",
+			core.StringField("path", path))
+		bs.HandleFileCreated(path)
+		return
+	}
+
+	// Re-parse and update document info
+	docInfo, err := CreateDocumentInfo(path, bs.ctx.Paths.ProjectRoot)
+	if err != nil {
+		bs.ctx.Logger.Error("Failed to update document info for modified file",
+			core.StringField("path", path),
+			core.ErrorField(err))
+		return
+	}
+
+	// Update in build system
+	bs.AddDocument(docInfo) // This will overwrite the existing entry
+
+	// Recompile the document
+	if err := bs.CompileDocument(path); err != nil {
+		bs.ctx.Logger.Error("Failed to recompile modified file",
+			core.StringField("path", path),
+			core.ErrorField(err))
+	}
+
+	// Recompile dependent documents
+	if err := bs.RecompileDependents(path); err != nil {
+		bs.ctx.Logger.Error("Failed to recompile dependents",
+			core.StringField("path", path),
+			core.ErrorField(err))
+	}
 }
 
 // HandleFileDeleted handles a file being deleted
 func (bs *BuildSystem) HandleFileDeleted(path string) {
-	bs.ctx.Logger.Info("File deleted", core.StringField("path", path))
+	bs.ctx.Logger.Info("JML file deleted", core.StringField("path", path))
 
-	// TODO: Implement file deletion handling
-	// 1. Check if the file is in our document maps
-	// 2. Remove from the appropriate maps
-	// 3. Update dependencies in other documents
-	// 4. Recompile dependent documents if necessary
+	// Check if we know about this file
+	if _, exists := bs.GetDocumentInfo(path); !exists {
+		bs.ctx.Logger.Debug("Deleted file not in build system, ignoring",
+			core.StringField("path", path))
+		return
+	}
+
+	// Remove from build system
+	bs.RemoveDocument(path)
+
+	// TODO: Update dependencies in other documents that might reference this file
+	// TODO: Recompile dependent documents if necessary
+
+	bs.ctx.Logger.Info("Successfully removed deleted file from build system",
+		core.StringField("path", path))
 }
 
 // HandleFileRenamed handles a file being renamed
 func (bs *BuildSystem) HandleFileRenamed(path string) {
-	bs.ctx.Logger.Info("File renamed", core.StringField("path", path))
+	bs.ctx.Logger.Info("JML file renamed", core.StringField("path", path))
 
-	// TODO: Implement file rename handling
-	// 1. This is handled as a delete followed by a create
-	// 2. May need special handling for updating dependencies
+	// For fsnotify, rename events are a bit tricky
+	// We'll handle this as a potential delete followed by a create
+	// The actual implementation depends on whether the file still exists
+
+	if _, err := os.Stat(path); err == nil {
+		// File exists, treat as created/modified
+		bs.HandleFileModified(path)
+	} else {
+		// File doesn't exist, treat as deleted
+		bs.HandleFileDeleted(path)
+	}
 }
 
 // GetDocumentInfo retrieves document info by path
@@ -299,4 +371,31 @@ func (bs *BuildSystem) RecompileDependents(path string) error {
 	}
 
 	return nil
+}
+
+// isJMLFile checks if a file is a JML file we should process
+func (bs *BuildSystem) isJMLFile(filePath string) bool {
+	// Check if file has .jml extension
+	if !strings.HasSuffix(strings.ToLower(filePath), ".jml") {
+		return false
+	}
+
+	// Check if file exists and is not a directory
+	if info, err := os.Stat(filePath); err != nil || info.IsDir() {
+		return false
+	}
+
+	return true
+}
+
+// getDocumentTypeString returns a string representation of the document type
+func (bs *BuildSystem) getDocumentTypeString(docType DocumentType) string {
+	switch docType {
+	case DocumentTypePage:
+		return "page"
+	case DocumentTypeComponent:
+		return "component"
+	default:
+		return "unknown"
+	}
 }
