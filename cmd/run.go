@@ -85,7 +85,7 @@ Monitors your JML files for changes and automatically reloads the browser.`,
 			logger.Error("Failed to stop orchestrator", core.ErrorField(err))
 		}
 
-		logger.Info("Jawt project stopped",
+		logger.Info("JAWT project stopped",
 			core.StringField("name", projectConfig.App.Name))
 	},
 }

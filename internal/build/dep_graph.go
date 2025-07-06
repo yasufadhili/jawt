@@ -3,7 +3,23 @@ package build
 import (
 	"fmt"
 	"github.com/yasufadhili/jawt/internal/core"
+	"regexp"
 )
+
+// ExtractDependencies extracts component and script dependencies from a JML file.
+func ExtractDependencies(content string) []string {
+	re := regexp.MustCompile(`import\s+(component|script)\s+\w+\s+from\s+"([^"]+)"`)
+	matches := re.FindAllStringSubmatch(content, -1)
+
+	var dependencies []string
+	for _, match := range matches {
+		if len(match) == 3 {
+			dependencies = append(dependencies, match[2])
+		}
+	}
+
+	return dependencies
+}
 
 type DependencyGraph interface {
 	// Core graph operations

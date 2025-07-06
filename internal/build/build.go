@@ -175,19 +175,12 @@ func (bs *BuildSystem) buildDependencyGraph() error {
 }
 
 func (bs *BuildSystem) extractDependencies(doc *DocumentInfo) ([]string, error) {
-	reporter := diagnostic.NewReporter()
-	_, err := compiler.ParseFile(doc.AbsPath, reporter)
-
-	if reporter.HasErrors() {
-		return nil, fmt.Errorf("failed to parse %s due to errors", doc.AbsPath)
-	}
-
+	content, err := os.ReadFile(doc.AbsPath)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse %s: %w", doc.AbsPath, err)
+		return nil, fmt.Errorf("failed to read file %s: %w", doc.AbsPath, err)
 	}
 
-	// TODO: Extract actual dependencies from the AST
-	return []string{}, nil
+	return ExtractDependencies(string(content)), nil
 }
 
 // CompileAll compiles all documents in the project
