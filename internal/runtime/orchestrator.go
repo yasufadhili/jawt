@@ -28,7 +28,7 @@ type Orchestrator struct {
 func NewOrchestrator(ctx context.Context, logger core.Logger, jawtCtx *core.JawtContext) (*Orchestrator, error) {
 	orchCtx, cancel := context.WithCancel(ctx)
 
-	pm := process.NewProcessManager(orchCtx, logger)
+	pm := process.NewProcessManager(orchCtx, logger, jawtCtx)
 
 	fw, err := NewFileWatcher(orchCtx, logger)
 	if err != nil {
@@ -114,19 +114,18 @@ func (o *Orchestrator) RestartProcess(name string) error {
 
 // startTSServer starts the TypeScript server
 func (o *Orchestrator) startTSServer() error {
-	options := process.ProcessOptions{
-		Command:    "npx",
-		Args:       []string{"tsserver"},
-		WorkingDir: o.jawtContext.Paths.ProjectRoot,
-		OutputHandler: func(output string) {
+	return o.processManager.StartNodeProcess(
+		"tsserver",
+		[]string{"node_modules/typescript/bin/tsserver"},
+		o.jawtContext.Paths.ProjectRoot,
+		func(output string) {
 			// Handle tsserver output (JSON protocol)
 			o.logger.Debug("TSServer output", core.StringField("output", output))
 		},
-		ErrorHandler: func(err error) {
+		func(err error) {
 			o.logger.Error("TSServer error", core.ErrorField(err))
 		},
-	}
-	return o.processManager.StartProcess("tsserver", options)
+	)
 }
 
 // handleJmlFileEvent handles file events for JML files

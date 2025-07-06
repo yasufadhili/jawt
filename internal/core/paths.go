@@ -1,8 +1,11 @@
 package core
 
 import (
+	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 )
 
 // ProjectPaths manages all file paths for the project
@@ -76,6 +79,41 @@ func NewProjectPaths(projectRoot string, projectConfig *ProjectConfig, jawtConfi
 	paths.ProjectConfigPath = filepath.Join(absProjectRoot, "jawt.project.json")
 
 	return paths, nil
+}
+
+// ResolveExecutablePath resolves the absolute path to an executable.
+// It checks:
+// 1. If the provided path is already an absolute executable path.
+// 2. If the command exists in the system's PATH.
+// 3. If the command exists relative to the current JAWT executable.
+func ResolveExecutablePath(cmd string) (string, error) {
+	// 1. Check if the provided path is already an absolute executable path
+	if filepath.IsAbs(cmd) {
+		if _, err := os.Stat(cmd); err == nil {
+			return cmd, nil
+		}
+	}
+
+	// 2. Check if the command exists in the system's PATH
+	if path, err := exec.LookPath(cmd); err == nil {
+		return path, nil
+	}
+
+	// 3. Check if the command exists relative to the current JAWT executable
+	jawtExec, err := os.Executable()
+	if err != nil {
+		return "", fmt.Errorf("failed to get current executable path: %w", err)
+	}
+	jawtDir := filepath.Dir(jawtExec)
+	localPath := filepath.Join(jawtDir, cmd)
+	if runtime.GOOS == "windows" {
+		localPath += ".exe"
+	}
+	if _, err := os.Stat(localPath); err == nil {
+		return localPath, nil
+	}
+
+	return "", fmt.Errorf("executable '%s' not found in PATH or relative to JAWT executable", cmd)
 }
 
 // EnsureDirectories creates all necessary directories
