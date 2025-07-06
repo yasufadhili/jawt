@@ -5,6 +5,7 @@ import (
 	"github.com/fsnotify/fsnotify"
 	"github.com/yasufadhili/jawt/internal/compiler"
 	"github.com/yasufadhili/jawt/internal/core"
+	"github.com/yasufadhili/jawt/internal/diagnostic"
 	"os"
 	"strings"
 	"sync"

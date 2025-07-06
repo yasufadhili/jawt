@@ -160,6 +160,10 @@ const (
 	ImportKindModule    ImportKind = "module"
 )
 
+func (k ImportKind) String() string {
+	return string(k)
+}
+
 func (n *Document) Pos() Position    { return n.Position }
 func (n *Document) Accept(v Visitor) { v.VisitDocument(n) }
 func (n *Document) String() string   { return fmt.Sprintf("Document(%s)", n.Name) }

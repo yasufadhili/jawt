@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/yasufadhili/jawt/internal/build"
 	"github.com/yasufadhili/jawt/internal/core"
+	"github.com/yasufadhili/jawt/internal/runtime"
 	"os"
 )
 
@@ -65,16 +65,28 @@ Monitors your JML files for changes and automatically reloads the browser.`,
 			core.StringField("directory", projectDir),
 			core.StringField("server", projectConfig.GetServerAddress()))
 
-		err = build.RunProject(ctx)
+		// Create and start the orchestrator
+		orchestrator, err := runtime.NewOrchestrator(cmd.Context(), logger, ctx)
 		if err != nil {
-			logger.Error("Failed to run project", core.ErrorField(err))
+			logger.Error("Failed to create orchestrator", core.ErrorField(err))
 			os.Exit(1)
 		}
 
-		logger.Info("JAWT project running successfully",
-			core.StringField("name", projectConfig.App.Name),
-			core.StringField("server", projectConfig.GetServerAddress()))
+		if err := orchestrator.StartAll(); err != nil {
+			logger.Error("Failed to start orchestrator", core.ErrorField(err))
+			os.Exit(1)
+		}
 
+		// Wait for interruption
+		<-cmd.Context().Done()
+
+		// Stop the orchestrator
+		if err := orchestrator.StopAll(); err != nil {
+			logger.Error("Failed to stop orchestrator", core.ErrorField(err))
+		}
+
+		logger.Info("Jawt project stopped",
+			core.StringField("name", projectConfig.App.Name))
 	},
 }
 
