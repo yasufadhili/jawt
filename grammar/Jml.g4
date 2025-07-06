@@ -151,7 +151,7 @@ declaration
     ;
 
 propertyDeclaration
-    : 'property' typeAnnotation? Identifier (':' expression)? ';'?
+    : 'property' Identifier (':' typeAnnotation)? ('=' expression)? ';'?
     ;
 
 stateDeclaration
@@ -442,7 +442,7 @@ finallyClause
     : 'finally' block
     ;
 
-// Expressions - Fixed left recursion issues
+// Expressions
 expression
     : conditionalExpression
     ;
