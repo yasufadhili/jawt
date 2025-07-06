@@ -9,6 +9,7 @@ import (
 
 var port int
 var clearCache bool
+var verbose bool
 
 var runCmd = &cobra.Command{
 	Use:   "run",
@@ -17,7 +18,13 @@ var runCmd = &cobra.Command{
 Monitors your JML files for changes and automatically reloads the browser.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		logger := core.NewDefaultLogger(core.InfoLevel)
+		var logLevel core.LogLevel
+		if verbose {
+			logLevel = core.DebugLevel
+		} else {
+			logLevel = core.WarnLevel
+		}
+		logger := core.NewDefaultLogger(logLevel)
 
 		projectDir, err := os.Getwd()
 		if err != nil {
@@ -103,4 +110,5 @@ Monitors your JML files for changes and automatically reloads the browser.`,
 func init() {
 	runCmd.Flags().IntVarP(&port, "port", "p", 6500, "Specify custom port")
 	runCmd.Flags().BoolVarP(&clearCache, "clear-cache", "c", false, "Run with cleared cache")
+	runCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Enable verbose logging")
 }
