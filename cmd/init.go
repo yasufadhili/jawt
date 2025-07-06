@@ -47,7 +47,7 @@ This includes app/, components/, assets/ directories and essential configuration
 			os.Exit(1)
 		}
 
-		ctx := core.NewJawtContext(cfg, projectConfig, paths, logger)
+		ctx := core.NewJawtContext(cfg, projectConfig, paths, logger, nil)
 
 		err = build.InitProject(ctx, projectName, projectDir)
 		if err != nil {

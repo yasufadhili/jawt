@@ -16,13 +16,16 @@ type JawtContext struct {
 	Paths         *ProjectPaths
 	Logger        Logger
 
+	// Build options
+	BuildOptions *BuildOptions
+
 	// Runtime state
 	mu       sync.RWMutex
 	metadata map[string]interface{}
 }
 
 // NewJawtContext creates a new jawt context with the given configurations
-func NewJawtContext(jawtConfig *JawtConfig, projectConfig *ProjectConfig, paths *ProjectPaths, logger Logger) *JawtContext {
+func NewJawtContext(jawtConfig *JawtConfig, projectConfig *ProjectConfig, paths *ProjectPaths, logger Logger, buildOptions *BuildOptions) *JawtContext {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	return &JawtContext{
@@ -32,6 +35,7 @@ func NewJawtContext(jawtConfig *JawtConfig, projectConfig *ProjectConfig, paths 
 		ProjectConfig: projectConfig,
 		Paths:         paths,
 		Logger:        logger,
+		BuildOptions:  buildOptions,
 		metadata:      make(map[string]interface{}),
 	}
 }

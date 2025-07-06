@@ -14,11 +14,8 @@ type Checker struct {
 func NewChecker(reporter *diagnostic.Reporter) *Checker {
 	t := NewSymbolTable()
 	return &Checker{
-		reporter: reporter,
-		table:    t,
+		BaseVisitor: &ast.BaseVisitor{},
+		reporter:    reporter,
+		table:       t,
 	}
-}
-
-func (c *Checker) Check(program *ast.Program) {
-	program.Accept(c)
 }

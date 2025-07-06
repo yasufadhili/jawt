@@ -18,17 +18,19 @@ type ProcessManager struct {
 	mu        sync.RWMutex
 	processes map[string]*ManagedProcess
 
-	wg sync.WaitGroup
+	wg          sync.WaitGroup
+	jawtContext *core.JawtContext
 }
 
-func NewProcessManager(ctx context.Context, logger core.Logger) *ProcessManager {
+func NewProcessManager(ctx context.Context, logger core.Logger, jawtContext *core.JawtContext) *ProcessManager {
 	managerCtx, cancel := context.WithCancel(ctx)
 
 	return &ProcessManager{
-		ctx:       managerCtx,
-		cancel:    cancel,
-		logger:    logger,
-		processes: make(map[string]*ManagedProcess),
+		ctx:         managerCtx,
+		cancel:      cancel,
+		logger:      logger,
+		processes:   make(map[string]*ManagedProcess),
+		jawtContext: jawtContext,
 	}
 }
 
@@ -173,14 +175,19 @@ func (pm *ProcessManager) GetProcessStats() map[string]ProcessStats {
 
 // StartTypeScriptWatch starts TypeScript compiler in watch mode
 func (pm *ProcessManager) StartTypeScriptWatch(ctx *core.JawtContext) error {
+	tsPath, err := core.ResolveExecutablePath(ctx.JawtConfig.TypeScriptPath)
+	if err != nil {
+		return fmt.Errorf("failed to resolve TypeScript executable: %w", err)
+	}
+
 	options := ProcessOptions{
-		Command:          ctx.JawtConfig.TypeScriptPath,
+		Command:          tsPath,
 		Args:             []string{"--watch", "--project", ctx.Paths.TSConfigPath},
 		WorkingDir:       ctx.Paths.ProjectRoot,
 		Env:              nil,
 		RestartOnFailure: true,
 		RestartDelay:     2 * time.Second,
-		MaxRestarts:      10,
+		MaxRestarts:      3,
 		OutputHandler: func(output string) {
 			// pm.eventBus.Publish(events.CreateProcessOutputEvent("process_manager", "typescript", output))
 		},
@@ -194,8 +201,13 @@ func (pm *ProcessManager) StartTypeScriptWatch(ctx *core.JawtContext) error {
 
 // StartTailwindWatch starts Tailwind CSS compiler in watch mode
 func (pm *ProcessManager) StartTailwindWatch(ctx *core.JawtContext) error {
+	tailwindPath, err := core.ResolveExecutablePath(ctx.JawtConfig.TailwindPath)
+	if err != nil {
+		return fmt.Errorf("failed to resolve Tailwind CSS executable: %w", err)
+	}
+
 	options := ProcessOptions{
-		Command:          ctx.JawtConfig.TailwindPath,
+		Command:          tailwindPath,
 		Args:             []string{"--watch", "--config", ctx.Paths.TailwindConfigPath},
 		WorkingDir:       ctx.Paths.ProjectRoot,
 		Env:              nil,
@@ -213,11 +225,33 @@ func (pm *ProcessManager) StartTailwindWatch(ctx *core.JawtContext) error {
 	return pm.StartProcess("tailwind", options)
 }
 
+// StartNodeProcess starts a Node.js process
+func (pm *ProcessManager) StartNodeProcess(name string, args []string, workingDir string, outputHandler func(string), errorHandler func(error)) error {
+	nodePath, err := core.ResolveExecutablePath(pm.jawtContext.JawtConfig.NodePath)
+	if err != nil {
+		return fmt.Errorf("failed to resolve Node.js executable: %w", err)
+	}
+
+	options := ProcessOptions{
+		Command:          nodePath,
+		Args:             args,
+		WorkingDir:       workingDir,
+		Env:              nil,
+		RestartOnFailure: true,
+		RestartDelay:     5 * time.Second,
+		MaxRestarts:      5,
+		OutputHandler:    outputHandler,
+		ErrorHandler:     errorHandler,
+	}
+
+	return pm.StartProcess(name, options)
+}
+
 // StartDevServer starts the development server
 func (pm *ProcessManager) StartDevServer(ctx *core.JawtContext, serverBinary string) error {
 	options := ProcessOptions{
 		Command:          serverBinary,
-		Args:             []string{"--port", fmt.Sprintf("%d", ctx.ProjectConfig.DevPort)},
+		Args:             []string{"--port", fmt.Sprintf("%d", ctx.ProjectConfig.Server.Port)},
 		WorkingDir:       ctx.Paths.ProjectRoot,
 		Env:              nil,
 		RestartOnFailure: true,

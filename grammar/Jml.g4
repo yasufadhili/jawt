@@ -151,7 +151,7 @@ declaration
     ;
 
 propertyDeclaration
-    : 'property' typeAnnotation? Identifier (':' expression)? ';'?
+    : 'property' Identifier (':' typeAnnotation)? ('=' expression)? ';'?
     ;
 
 stateDeclaration
@@ -485,27 +485,19 @@ postfixExpression
     ;
 
 leftHandSideExpression
-    : newExpression
-    | callExpression
-    ;
-
-newExpression
     : memberExpression
-    | 'new' newExpression
-    ;
-
-callExpression
-    : memberExpression arguments
-    | callExpression arguments
-    | callExpression '[' expression ']'
-    | callExpression '.' Identifier
+    | memberExpression arguments                          // call expression
+    | leftHandSideExpression arguments                    // chained calls
+    | leftHandSideExpression '[' expression ']'          // member access
+    | leftHandSideExpression '.' Identifier               // property access
+    | 'new' leftHandSideExpression                        // new expression
+    | 'new' leftHandSideExpression arguments              // new with arguments
     ;
 
 memberExpression
     : primaryExpression
     | memberExpression '[' expression ']'
     | memberExpression '.' Identifier
-    | 'new' memberExpression arguments
     ;
 
 arguments

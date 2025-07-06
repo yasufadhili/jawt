@@ -3,6 +3,7 @@ package build
 import (
 	"context"
 	"fmt"
+	"github.com/yasufadhili/jawt/internal/compiler"
 	"net/http"
 	"time"
 
@@ -33,10 +34,9 @@ func RunProject(ctx *core.JawtContext) error {
 		".DS_Store", "*.tmp", "*.swp", "*.swo",
 	})
 
-	// Create a dummy compiler for now (will be replaced with real compiler later)
-	compiler := &dummyCompiler{ctx: ctx}
+	c := compiler.NewCompiler(ctx)
 
-	buildSystem := NewBuildSystem(ctx, compiler, fileWatcher)
+	buildSystem := NewBuildSystem(ctx, c, fileWatcher)
 
 	// Initialise the build system (discover and compile)
 	if err := buildSystem.Initialise(); err != nil {
@@ -82,31 +82,5 @@ func RunProject(ctx *core.JawtContext) error {
 	}
 
 	ctx.Logger.Info("JAWT development server stopped")
-	return nil
-}
-
-// dummyCompiler is a placeholder implementation of the Compiler interface
-type dummyCompiler struct {
-	ctx *core.JawtContext
-}
-
-func (c *dummyCompiler) CompileDocument(doc *DocumentInfo) error {
-	c.ctx.Logger.Debug("Dummy compiler: Would compile document",
-		core.StringField("name", doc.Name),
-		core.StringField("path", doc.AbsPath))
-	return nil
-}
-
-func (c *dummyCompiler) CompilePage(page *PageInfo) error {
-	c.ctx.Logger.Debug("Dummy compiler: Would compile page",
-		core.StringField("name", page.Name),
-		core.StringField("path", page.AbsPath))
-	return nil
-}
-
-func (c *dummyCompiler) CompileComponent(comp *ComponentInfo) error {
-	c.ctx.Logger.Debug("Dummy compiler: Would compile component",
-		core.StringField("name", comp.Name),
-		core.StringField("path", comp.AbsPath))
 	return nil
 }

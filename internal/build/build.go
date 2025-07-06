@@ -5,6 +5,7 @@ import (
 	"github.com/fsnotify/fsnotify"
 	"github.com/yasufadhili/jawt/internal/compiler"
 	"github.com/yasufadhili/jawt/internal/core"
+	"github.com/yasufadhili/jawt/internal/diagnostic"
 	"os"
 	"strings"
 	"sync"
@@ -174,14 +175,12 @@ func (bs *BuildSystem) buildDependencyGraph() error {
 }
 
 func (bs *BuildSystem) extractDependencies(doc *DocumentInfo) ([]string, error) {
-	// This method will parse the JML file and extract:
-	// - Component imports
-	// - Page references
-	// - Asset references
-	// - Any other dependencies
+	content, err := os.ReadFile(doc.AbsPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read file %s: %w", doc.AbsPath, err)
+	}
 
-	// Placeholder implementation
-	return []string{}, nil
+	return ExtractDependencies(string(content)), nil
 }
 
 // CompileAll compiles all documents in the project
@@ -428,19 +427,28 @@ func (bs *BuildSystem) RemoveDocument(path string) {
 // CompileDocument compiles a single document
 func (bs *BuildSystem) CompileDocument(path string) error {
 	bs.mu.RLock()
-	// doc, exists := bs.docs[path]
+	doc, exists := bs.docs[path]
 	bs.mu.RUnlock()
 
-	// if !exists {
-	// 	return nil // Document doesn't exist, nothing to compile
-	// }
+	if !exists {
+		return nil // Document doesn't exist, nothing to compile
+	}
 
-	// if _, err := bs.compiler.Compile(doc.AbsPath); err != nil {
-	// 	return err
-	// }
+	reporter := diagnostic.NewReporter()
+	_, err := bs.compiler.Compile(doc.AbsPath, reporter)
+
+	if reporter.HasErrors() {
+		printer := diagnostic.NewPrinter()
+		printer.Print(reporter)
+		return fmt.Errorf("failed to compile %s due to errors", doc.AbsPath)
+	}
+
+	if err != nil {
+		return fmt.Errorf("failed to compile %s: %w", doc.AbsPath, err)
+	}
 
 	bs.mu.Lock()
-	// doc.IsCompiled = true
+	doc.IsCompiled = true
 	bs.mu.Unlock()
 
 	return nil

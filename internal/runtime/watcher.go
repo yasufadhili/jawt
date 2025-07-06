@@ -35,13 +35,19 @@ type FileWatcher struct {
 }
 
 // NewFileWatcher creates a new FileWatcher instance
-func NewFileWatcher(ctx context.Context, logger core.Logger) (*FileWatcher, error) {
+func NewFileWatcher(ctx context.Context, logger core.Logger, jawtCtx *core.JawtContext) (*FileWatcher, error) {
 	watcherCtx, cancel := context.WithCancel(ctx)
 
 	fsWatcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		cancel()
 		return nil, err
+	}
+
+	// Use watch paths from project config, or default if not specified
+	watchPatterns := jawtCtx.ProjectConfig.Dev.WatchPaths
+	if len(watchPatterns) == 0 {
+		watchPatterns = []string{".jml", ".ts", ".tsx", ".js", ".jsx", ".json", ".css"}
 	}
 
 	return &FileWatcher{
@@ -51,7 +57,7 @@ func NewFileWatcher(ctx context.Context, logger core.Logger) (*FileWatcher, erro
 		watcher:       fsWatcher,
 		debounceMap:   make(map[string]time.Time),
 		debounceDelay: 100 * time.Millisecond,
-		watchPatterns: []string{".jml", ".ts", ".tsx", ".js", ".jsx", ".json", ".css"},
+		watchPatterns: watchPatterns,
 		ignorePatterns: []string{
 			".git/", "node_modules/", ".jawt/", "dist/", "build/",
 			".DS_Store", "*.tmp", "*.swp", "*.swo",

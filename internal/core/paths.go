@@ -1,8 +1,11 @@
 package core
 
 import (
+	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 )
 
 // ProjectPaths manages all file paths for the project
@@ -10,6 +13,10 @@ type ProjectPaths struct {
 	// Base directories
 	ProjectRoot string
 	WorkingDir  string
+
+	// Configuration references
+	ProjectConfig *ProjectConfig
+	JawtConfig    *JawtConfig
 
 	// Input directories
 	AppDir        string
@@ -52,18 +59,18 @@ func NewProjectPaths(projectRoot string, projectConfig *ProjectConfig, jawtConfi
 		WorkingDir:  workingDir,
 	}
 
-	// Set up input directories
-	paths.AppDir = filepath.Join(absProjectRoot, "app")
-	paths.ComponentsDir = filepath.Join(absProjectRoot, "components")
-	paths.ScriptsDir = filepath.Join(absProjectRoot, "scripts")
-	paths.AssetsDir = filepath.Join(absProjectRoot, "assets")
+	// Set up input directories from project config
+	paths.AppDir = filepath.Join(absProjectRoot, projectConfig.Paths.Pages)
+	paths.ComponentsDir = filepath.Join(absProjectRoot, projectConfig.Paths.Components)
+	paths.ScriptsDir = filepath.Join(absProjectRoot, projectConfig.Paths.Scripts)
+	paths.AssetsDir = filepath.Join(absProjectRoot, projectConfig.Paths.Assets)
 
 	// Set up output directories based on config
-	paths.JawtDir = filepath.Join(absProjectRoot, ".jawt")
-	paths.BuildDir = filepath.Join(paths.JawtDir, "build")
-	paths.DistDir = filepath.Join(paths.JawtDir, "dist")
-	paths.TempDir = filepath.Join(paths.JawtDir, "temp")
-	paths.CacheDir = filepath.Join(paths.JawtDir, "cache")
+	paths.JawtDir = filepath.Join(absProjectRoot, ".jawt") // Fixed internal directory
+	paths.BuildDir = projectConfig.GetBuildOutputDir(absProjectRoot)
+	paths.DistDir = projectConfig.GetDistDir(absProjectRoot)
+	paths.TempDir = filepath.Join(paths.JawtDir, "tmp")    // Use fixed internal tmp
+	paths.CacheDir = filepath.Join(paths.JawtDir, "cache") // Use fixed internal cache
 
 	// Set up generated output directories
 	paths.TypeScriptOutputDir = filepath.Join(paths.BuildDir, "ts")
@@ -71,11 +78,46 @@ func NewProjectPaths(projectRoot string, projectConfig *ProjectConfig, jawtConfi
 	paths.ComponentsOutputDir = filepath.Join(paths.BuildDir, "components")
 
 	// Set up config file paths
-	paths.TSConfigPath = filepath.Join(absProjectRoot, projectConfig.TSConfigPath)
-	paths.TailwindConfigPath = filepath.Join(absProjectRoot, projectConfig.TailwindConfigPath)
+	paths.TSConfigPath = projectConfig.GetTSConfigPath(absProjectRoot)
+	paths.TailwindConfigPath = projectConfig.GetTailwindConfigPath(absProjectRoot)
 	paths.ProjectConfigPath = filepath.Join(absProjectRoot, "jawt.project.json")
 
 	return paths, nil
+}
+
+// ResolveExecutablePath resolves the absolute path to an executable.
+// It checks:
+// 1. If the provided path is already an absolute executable path.
+// 2. If the command exists in the system's PATH.
+// 3. If the command exists relative to the current JAWT executable.
+func ResolveExecutablePath(cmd string) (string, error) {
+	// 1. Check if the provided path is already an absolute executable path
+	if filepath.IsAbs(cmd) {
+		if _, err := os.Stat(cmd); err == nil {
+			return cmd, nil
+		}
+	}
+
+	// 2. Check if the command exists in the system's PATH
+	if path, err := exec.LookPath(cmd); err == nil {
+		return path, nil
+	}
+
+	// 3. Check if the command exists relative to the current JAWT executable
+	jawtExec, err := os.Executable()
+	if err != nil {
+		return "", fmt.Errorf("failed to get current executable path: %w", err)
+	}
+	jawtDir := filepath.Dir(jawtExec)
+	localPath := filepath.Join(jawtDir, cmd)
+	if runtime.GOOS == "windows" {
+		localPath += ".exe"
+	}
+	if _, err := os.Stat(localPath); err == nil {
+		return localPath, nil
+	}
+
+	return "", fmt.Errorf("executable '%s' not found in PATH or relative to JAWT executable", cmd)
 }
 
 // EnsureDirectories creates all necessary directories
@@ -157,15 +199,19 @@ func (p *ProjectPaths) GetTypeScriptFiles() ([]string, error) {
 
 // GetWatchPaths returns all paths that should be watched for changes
 func (p *ProjectPaths) GetWatchPaths() []string {
-	return []string{
-		p.AppDir,
-		p.ComponentsDir,
-		p.ScriptsDir,
-		p.AssetsDir,
+	watchPaths := make([]string, len(p.ProjectConfig.Dev.WatchPaths))
+	for i, path := range p.ProjectConfig.Dev.WatchPaths {
+		watchPaths[i] = p.GetAbsolutePath(path)
+	}
+
+	// Always watch config files
+	watchPaths = append(watchPaths,
 		p.ProjectConfigPath,
 		p.TSConfigPath,
 		p.TailwindConfigPath,
-	}
+	)
+
+	return watchPaths
 }
 
 // GetTempFile returns a temporary file path

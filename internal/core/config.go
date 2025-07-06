@@ -33,46 +33,47 @@ type ProjectConfig struct {
 		Version     string `json:"version"`
 		Description string `json:"description"`
 	} `json:"app"`
-	Components struct {
-		Path  string `json:"path"`
-		Alias string `json:"alias"`
-	} `json:"components"`
-	Pages struct {
-		Path  string `json:"path"`
-		Alias string `json:"alias"`
-	} `json:"pages"`
-	Scripts struct {
-		Path  string `json:"path"`
-		Alias string `json:"alias"`
-	} `json:"scripts"`
+	Paths struct {
+		Components string `json:"components"`
+		Pages      string `json:"pages"`
+		Scripts    string `json:"scripts"`
+		Assets     string `json:"assets"`
+	} `json:"paths"`
 	Server struct {
 		Host string `json:"host"`
 		Port int    `json:"port"`
 	} `json:"server"`
 	Build struct {
 		OutputDir string `json:"outputDir"`
+		DistDir   string `json:"distDir"`
 		Minify    bool   `json:"minify"`
+		ShadowDOM bool   `json:"shadowDOM"`
 	} `json:"build"`
+	Dev struct {
+		Port       int      `json:"port"`
+		EnableHMR  bool     `json:"enableHMR"`
+		WatchPaths []string `json:"watchPaths"`
+	} `json:"dev"`
+	Tooling struct {
+		TSConfigPath       string `json:"tsConfigPath"`
+		TailwindConfigPath string `json:"tailwindConfigPath"`
+	} `json:"tooling"`
+	Scripts struct {
+		PreBuild  []string `json:"preBuild"`
+		PostBuild []string `json:"postBuild"`
+	} `json:"scripts"`
+}
 
-	// Build configuration
-	OutputDir string `json:"output_dir"`
-	DistDir   string `json:"dist_dir"`
-	ShadowDOM bool   `json:"shadow_dom"`
+// BuildOptions represents build-time options and detected features
+type BuildOptions struct {
+	UsesTailwindCSS bool
+}
 
-	// Development settings
-	DevPort    int      `json:"dev_port"`
-	EnableHMR  bool     `json:"enable_hmr"`
-	WatchPaths []string `json:"watch_paths"`
-
-	// TypeScript configuration
-	TSConfigPath string `json:"ts_config_path"`
-
-	// Tailwind configuration
-	TailwindConfigPath string `json:"tailwind_config_path"`
-
-	// Custom build scripts
-	PreBuildScripts  []string `json:"pre_build_scripts"`
-	PostBuildScripts []string `json:"post_build_scripts"`
+// NewBuildOptions creates a new BuildOptions instance
+func NewBuildOptions() *BuildOptions {
+	return &BuildOptions{
+		UsesTailwindCSS: false,
+	}
 }
 
 // DefaultJawtConfig returns a default jawt configuration
@@ -99,29 +100,21 @@ func DefaultProjectConfig() *ProjectConfig {
 			Version     string `json:"version"`
 			Description string `json:"description"`
 		}{
-			Name:   "jawt-project",
-			Author: "",
+			Name:        "jawt-project",
+			Author:      "",
+			Version:     "0.1.0",
+			Description: "A Jawt application",
 		},
-		Components: struct {
-			Path  string `json:"path"`
-			Alias string `json:"alias"`
+		Paths: struct {
+			Components string `json:"components"`
+			Pages      string `json:"pages"`
+			Scripts    string `json:"scripts"`
+			Assets     string `json:"assets"`
 		}{
-			Path:  "components",
-			Alias: "",
-		},
-		Pages: struct {
-			Path  string `json:"path"`
-			Alias string `json:"alias"`
-		}{
-			Path:  "app",
-			Alias: "",
-		},
-		Scripts: struct {
-			Path  string `json:"path"`
-			Alias string `json:"alias"`
-		}{
-			Path:  "scripts",
-			Alias: "",
+			Components: "components",
+			Pages:      "app",
+			Scripts:    "scripts",
+			Assets:     "assets",
 		},
 		Server: struct {
 			Host string `json:"host"`
@@ -132,10 +125,37 @@ func DefaultProjectConfig() *ProjectConfig {
 		},
 		Build: struct {
 			OutputDir string `json:"outputDir"`
+			DistDir   string `json:"distDir"`
 			Minify    bool   `json:"minify"`
+			ShadowDOM bool   `json:"shadowDOM"`
 		}{
-			OutputDir: "build",
+			OutputDir: ".jawt/build",
+			DistDir:   ".jawt/dist",
 			Minify:    true,
+			ShadowDOM: false,
+		},
+		Dev: struct {
+			Port       int      `json:"port"`
+			EnableHMR  bool     `json:"enableHMR"`
+			WatchPaths []string `json:"watchPaths"`
+		}{
+			Port:       6500,
+			EnableHMR:  true,
+			WatchPaths: []string{"app", "components", "scripts", "assets"},
+		},
+		Tooling: struct {
+			TSConfigPath       string `json:"tsConfigPath"`
+			TailwindConfigPath string `json:"tailwindConfigPath"`
+		}{
+			TSConfigPath:       "tsconfig.json",
+			TailwindConfigPath: "tailwind.config.js",
+		},
+		Scripts: struct {
+			PreBuild  []string `json:"preBuild"`
+			PostBuild []string `json:"postBuild"`
+		}{
+			PreBuild:  []string{},
+			PostBuild: []string{},
 		},
 	}
 }
@@ -229,19 +249,23 @@ func (jc *JawtConfig) Validate() error {
 // Validate validates the project configuration
 func (pc *ProjectConfig) Validate() error {
 	if pc.App.Name == "" {
-		return fmt.Errorf("project name cannot be empty")
+		return fmt.Errorf("app name cannot be empty")
 	}
 
-	if pc.Components.Path == "" {
+	if pc.Paths.Components == "" {
 		return fmt.Errorf("components path cannot be empty")
 	}
 
-	if pc.Pages.Path == "" {
+	if pc.Paths.Pages == "" {
 		return fmt.Errorf("pages path cannot be empty")
 	}
 
-	if pc.Scripts.Path == "" {
+	if pc.Paths.Scripts == "" {
 		return fmt.Errorf("scripts path cannot be empty")
+	}
+
+	if pc.Paths.Assets == "" {
+		return fmt.Errorf("assets path cannot be empty")
 	}
 
 	if pc.Build.OutputDir == "" {
@@ -256,27 +280,41 @@ func (pc *ProjectConfig) Validate() error {
 		return fmt.Errorf("server host cannot be empty")
 	}
 
+	if pc.Dev.Port <= 0 || pc.Dev.Port > 65535 {
+		return fmt.Errorf("invalid dev server port: %d", pc.Dev.Port)
+	}
+
 	return nil
 }
 
 // GetComponentsPath returns the full path to the components directory
 func (pc *ProjectConfig) GetComponentsPath(projectRoot string) string {
-	return filepath.Join(projectRoot, pc.Components.Path)
+	return filepath.Join(projectRoot, pc.Paths.Components)
 }
 
 // GetPagesPath returns the full path to the pages directory
 func (pc *ProjectConfig) GetPagesPath(projectRoot string) string {
-	return filepath.Join(projectRoot, pc.Pages.Path)
+	return filepath.Join(projectRoot, pc.Paths.Pages)
 }
 
 // GetScriptsPath returns the full path to the scripts directory
 func (pc *ProjectConfig) GetScriptsPath(projectRoot string) string {
-	return filepath.Join(projectRoot, pc.Scripts.Path)
+	return filepath.Join(projectRoot, pc.Paths.Scripts)
 }
 
-// GetBuildPath returns the full path to the build output directory
-func (pc *ProjectConfig) GetBuildPath(projectRoot string) string {
+// GetAssetsPath returns the full path to the assets directory
+func (pc *ProjectConfig) GetAssetsPath(projectRoot string) string {
+	return filepath.Join(projectRoot, pc.Paths.Assets)
+}
+
+// GetBuildOutputDir returns the full path to the build output directory
+func (pc *ProjectConfig) GetBuildOutputDir(projectRoot string) string {
 	return filepath.Join(projectRoot, pc.Build.OutputDir)
+}
+
+// GetDistDir returns the full path to the distribution directory
+func (pc *ProjectConfig) GetDistDir(projectRoot string) string {
+	return filepath.Join(projectRoot, pc.Build.DistDir)
 }
 
 // GetServerAddress returns the full server address
@@ -284,9 +322,49 @@ func (pc *ProjectConfig) GetServerAddress() string {
 	return fmt.Sprintf("%s:%d", pc.Server.Host, pc.Server.Port)
 }
 
+// GetDevServerAddress returns the full dev server address
+func (pc *ProjectConfig) GetDevServerAddress() string {
+	return fmt.Sprintf("%s:%d", pc.Server.Host, pc.Dev.Port)
+}
+
 // IsMinificationEnabled returns whether minification is enabled
 func (pc *ProjectConfig) IsMinificationEnabled() bool {
 	return pc.Build.Minify
+}
+
+// IsShadowDOMEnabled returns whether Shadow DOM is enabled
+func (pc *ProjectConfig) IsShadowDOMEnabled() bool {
+	return pc.Build.ShadowDOM
+}
+
+// IsHMR enabled returns whether HMR is enabled
+func (pc *ProjectConfig) IsHMRenabled() bool {
+	return pc.Dev.EnableHMR
+}
+
+// GetWatchPaths returns the paths to watch for changes
+func (pc *ProjectConfig) GetWatchPaths() []string {
+	return pc.Dev.WatchPaths
+}
+
+// GetTSConfigPath returns the path to the TypeScript config file
+func (pc *ProjectConfig) GetTSConfigPath(projectRoot string) string {
+	return filepath.Join(projectRoot, pc.Tooling.TSConfigPath)
+}
+
+// GetTailwindConfigPath returns the path to the Tailwind CSS config file
+func (pc *ProjectConfig) GetTailwindConfigPath(projectRoot string) string {
+	return filepath.Join(projectRoot, pc.Tooling.TailwindConfigPath)
+}
+
+// GetPreBuildScripts returns the pre-build scripts
+func (pc *ProjectConfig) GetPreBuildScripts() []string {
+	return pc.Scripts.PreBuild
+}
+
+// GetPostBuildScripts returns the post-build scripts
+func (pc *ProjectConfig) GetPostBuildScripts() []string {
+	return pc.Scripts.PostBuild
 }
 
 // SetProjectName sets the project name
@@ -304,7 +382,22 @@ func (pc *ProjectConfig) SetServerPort(port int) {
 	pc.Server.Port = port
 }
 
+// SetDevServerPort sets the dev server port
+func (pc *ProjectConfig) SetDevServerPort(port int) {
+	pc.Dev.Port = port
+}
+
 // SetMinification enables or disables minification
 func (pc *ProjectConfig) SetMinification(enabled bool) {
 	pc.Build.Minify = enabled
+}
+
+// SetShadowDOM enables or disables Shadow DOM
+func (pc *ProjectConfig) SetShadowDOM(enabled bool) {
+	pc.Build.ShadowDOM = enabled
+}
+
+// SetHMR enables or disables HMR
+func (pc *ProjectConfig) SetHMR(enabled bool) {
+	pc.Dev.EnableHMR = enabled
 }

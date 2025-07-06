@@ -7,6 +7,30 @@ import (
 	"testing"
 )
 
+func TestExtractDependencies(t *testing.T) {
+	content := `
+		_doctype page home
+
+		import component Layout from "components/layout"
+		import script analytics from "scripts/analytics"
+		import browser
+
+		Page {
+			title: "Welcome"
+		}
+	`
+
+	dependencies := ExtractDependencies(content)
+	sort.Strings(dependencies)
+
+	expected := []string{"components/layout", "scripts/analytics"}
+	sort.Strings(expected)
+
+	if !reflect.DeepEqual(dependencies, expected) {
+		t.Errorf("Expected dependencies %v, got %v", expected, dependencies)
+	}
+}
+
 func TestDependencyGraph_BasicOperations(t *testing.T) {
 	dg := NewDependencyGraph()
 
