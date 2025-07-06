@@ -19,21 +19,42 @@ This package bridges the gap between the JML AST and the final browser-executabl
 4.  **TypeScript Compiler Integration**: The generated TypeScript code (for Lit components and any inline scripts) is then passed to the TypeScript compiler (managed by the `process` package) for transpilation into browser-compatible JavaScript.
 5.  **Output Placement**: The final HTML, JavaScript, and CSS files are saved to the appropriate output directories as configured in `jawt.project.json` (e.g., `build/`, `dist/`).
 
+## Styling in JML Components
+
+JML components support two primary ways of applying styles:
+
+*   **Shadow DOM Styles**: Style blocks defined directly within a JML component's definition are pure CSS and are encapsulated within the component's Shadow DOM. These styles are isolated and do not leak outside the component, ensuring predictable styling.
+*   **Light DOM Styles (via `style` prop)**: Styles passed to a component via its `style` property (typically from TypeScript or another JML component) are applied to the component's Light DOM. These are standard HTML `style` attributes or CSS classes that affect the component's outer element and its unencapsulated content.
+
+JAWT integrates with the Tailwind CSS CLI to process and optimize styles, ensuring that only necessary CSS is included in the final build.
+
 ## Key Responsibilities
 
 *   Transforming JML syntax into standard web technologies.
 *   Generating efficient and performant code.
 *   Ensuring proper integration with the TypeScript compilation pipeline.
 *   Handling asset references and paths within the generated output.
+*   Managing Shadow DOM and Light DOM styling for components.
 
-## Future Implementation Details
+## Implementation Details
 
-When fully implemented, the `emitter` package will contain:
+The `emitter` package will be structured into specialized files for clarity and maintainability:
 
-*   An `Emitter` struct with methods like `EmitPage(doc *ast.Document)` and `EmitComponent(doc *ast.Document)`.
-*   Specialized visitor implementations (e.g., `HtmlEmitterVisitor`, `LitComponentEmitterVisitor`) to walk the AST and generate code for each node type based on the target format.
-*   Logic to manage imports and dependencies within the generated code, ensuring all required modules are correctly bundled or referenced.
-*   Configuration options to control output format, minification, and other build optimizations during the emission process.
+*   `emitter/page.go`: Contains the logic for `EmitPage`, responsible for generating HTML files for JML pages.
+*   `emitter/component.go`: Contains the logic for `EmitComponent`, responsible for generating TypeScript code for Lit Components from JML components.
+
+### Inbuilt Components
+
+JAWT includes a set of inbuilt components written directly in TypeScript. These components are bundled with the JAWT executable. During the initial build run, these inbuilt components are also passed to the TypeScript compiler to ensure they are available and optimized alongside user-defined components.
+
+### Helper Methods
+
+The emitter will utilize several helper methods to streamline code generation and ensure correctness, including (but not limited to):
+
+*   `write(content string)`: A utility for writing generated code to the output stream.
+*   `sanitiseComponentName(name string)`: Ensures component names adhere to valid naming conventions for web components.
+*   `addInbuiltComponents(ctx *core.JawtContext)`: Manages the inclusion and compilation of JAWT's predefined TypeScript components.
+*   Other utilities for handling imports, property serialization, and template generation.
 
 **Example (Conceptual - Lit Component Emission):**
 
@@ -105,4 +126,3 @@ When fully implemented, the `emitter` package will contain:
 // 	// Write generatedHTML to a .html file in the build directory
 // 	return e.ctx.Paths.WriteBuildFile(doc.Name.Name + '.html', generatedHTML)
 // }
-```
