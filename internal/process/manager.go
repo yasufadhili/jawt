@@ -180,7 +180,7 @@ func (pm *ProcessManager) StartTypeScriptWatch(ctx *core.JawtContext) error {
 		Env:              nil,
 		RestartOnFailure: true,
 		RestartDelay:     2 * time.Second,
-		MaxRestarts:      10,
+		MaxRestarts:      3,
 		OutputHandler: func(output string) {
 			// pm.eventBus.Publish(events.CreateProcessOutputEvent("process_manager", "typescript", output))
 		},
