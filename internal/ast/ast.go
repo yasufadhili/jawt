@@ -177,7 +177,7 @@ type ImportDeclaration struct {
 	Position
 	Specifiers []Node // Can be *ImportSpecifier, *ImportDefaultSpecifier, *ImportNamespaceSpecifier
 	Source     *Literal
-	IsBrowser  bool // for `import browser`
+	IsBrowser  bool // for browser APIs
 }
 
 func (n *ImportDeclaration) Pos() Position         { return n.Position }
