@@ -1352,4 +1352,85 @@ func TestProjectPathsWithSymlinks2(t *testing.T) {
 	if !filepath.IsAbs(paths.ProjectRoot) {
 		t.Errorf("expected absolute project root, got %s", paths.ProjectRoot)
 	}
+
+	// Test that the absolute path is resolved correctly
+	expectedAbsPath, _ := filepath.Abs(targetPath)
+
+	if paths.ProjectRoot != expectedAbsPath {
+		t.Errorf("expected ProjectRoot %s, got %s", expectedAbsPath, paths.ProjectRoot)
+	}
+
+	// Test input directories
+	expectedAppDir := filepath.Join(expectedAbsPath, projectConfig.Paths.Pages)
+	if paths.AppDir != expectedAppDir {
+		t.Errorf("expected AppDir %s, got %s", expectedAppDir, paths.AppDir)
+	}
+
+	expectedComponentsDir := filepath.Join(expectedAbsPath, projectConfig.Paths.Components)
+	if paths.ComponentsDir != expectedComponentsDir {
+		t.Errorf("expected ComponentsDir %s, got %s", expectedComponentsDir, paths.ComponentsDir)
+	}
+
+	expectedScriptsDir := filepath.Join(expectedAbsPath, projectConfig.Paths.Scripts)
+	if paths.ScriptsDir != expectedScriptsDir {
+		t.Errorf("expected ScriptsDir %s, got %s", expectedScriptsDir, paths.ScriptsDir)
+	}
+
+	expectedAssetsDir := filepath.Join(expectedAbsPath, projectConfig.Paths.Assets)
+	if paths.AssetsDir != expectedAssetsDir {
+		t.Errorf("expected AssetsDir %s, got %s", expectedAssetsDir, paths.AssetsDir)
+	}
+
+	// Test output directories
+	expectedBuildDir := filepath.Join(expectedAbsPath, projectConfig.Build.OutputDir)
+	if paths.BuildDir != expectedBuildDir {
+		t.Errorf("expected BuildDir %s, got %s", expectedBuildDir, paths.BuildDir)
+	}
+
+	expectedDistDir := filepath.Join(expectedAbsPath, projectConfig.Build.DistDir)
+	if paths.DistDir != expectedDistDir {
+		t.Errorf("expected DistDir %s, got %s", expectedDistDir, paths.DistDir)
+	}
+
+	expectedTempDir := filepath.Join(expectedAbsPath, ".jawt", "tmp")
+	if paths.TempDir != expectedTempDir {
+		t.Errorf("expected TempDir %s, got %s", expectedTempDir, paths.TempDir)
+	}
+
+	expectedCacheDir := filepath.Join(expectedAbsPath, ".jawt", "cache")
+	if paths.CacheDir != expectedCacheDir {
+		t.Errorf("expected CacheDir %s, got %s", expectedCacheDir, paths.CacheDir)
+	}
+
+	// Test generated output directories
+	expectedTSOutputDir := filepath.Join(paths.BuildDir, "ts")
+	if paths.TypeScriptOutputDir != expectedTSOutputDir {
+		t.Errorf("expected TypeScriptOutputDir %s, got %s", expectedTSOutputDir, paths.TypeScriptOutputDir)
+	}
+
+	expectedTailwindOutputDir := filepath.Join(paths.BuildDir, "styles")
+	if paths.TailwindOutputDir != expectedTailwindOutputDir {
+		t.Errorf("expected TailwindOutputDir %s, got %s", expectedTailwindOutputDir, paths.TailwindOutputDir)
+	}
+
+	expectedComponentsOutputDir := filepath.Join(paths.BuildDir, "components")
+	if paths.ComponentsOutputDir != expectedComponentsOutputDir {
+		t.Errorf("expected ComponentsOutputDir %s, got %s", expectedComponentsOutputDir, paths.ComponentsOutputDir)
+	}
+
+	// Test config file paths
+	expectedTSConfigPath := filepath.Join(expectedAbsPath, projectConfig.Tooling.TSConfigPath)
+	if paths.TSConfigPath != expectedTSConfigPath {
+		t.Errorf("expected TSConfigPath %s, got %s", expectedTSConfigPath, paths.TSConfigPath)
+	}
+
+	expectedTailwindConfigPath := filepath.Join(expectedAbsPath, projectConfig.Tooling.TailwindConfigPath)
+	if paths.TailwindConfigPath != expectedTailwindConfigPath {
+		t.Errorf("expected TailwindConfigPath %s, got %s", expectedTailwindConfigPath, paths.TailwindConfigPath)
+	}
+
+	expectedProjectConfigPath := filepath.Join(expectedAbsPath, "jawt.project.json")
+	if paths.ProjectConfigPath != expectedProjectConfigPath {
+		t.Errorf("expected ProjectConfigPath %s, got %s", expectedProjectConfigPath, paths.ProjectConfigPath)
+	}
 }

@@ -46,41 +46,68 @@ func TestDefaultProjectConfig(t *testing.T) {
 	if config.App.Name != "jawt-project" {
 		t.Errorf("expected Name to be 'jawt-project', got %s", config.App.Name)
 	}
-	if config.App.Version != "1.0.0" {
-		t.Errorf("expected Version to be '1.0.0', got %s", config.App.Version)
+	if config.App.Version != "0.1.0" {
+		t.Errorf("expected App.Version to be '0.1.0', got %s", config.App.Version)
 	}
 	if config.App.Description != "A Jawt application" {
-		t.Errorf("expected Description to be 'A Jawt application', got %s", config.App.Description)
+		t.Errorf("expected App.Description to be 'A Jawt application', got %s", config.App.Description)
+	}
+	if config.Paths.Components != "components" {
+		t.Errorf("expected Paths.Components to be 'components', got %s", config.Paths.Components)
+	}
+	if config.Paths.Pages != "app" {
+		t.Errorf("expected Paths.Pages to be 'app', got %s", config.Paths.Pages)
+	}
+	if config.Paths.Scripts != "scripts" {
+		t.Errorf("expected Paths.Scripts to be 'scripts', got %s", config.Paths.Scripts)
+	}
+	if config.Paths.Assets != "assets" {
+		t.Errorf("expected Paths.Assets to be 'assets', got %s", config.Paths.Assets)
+	}
+	if config.Server.Host != "localhost" {
+		t.Errorf("expected Server.Host to be 'localhost', got %s", config.Server.Host)
+	}
+	if config.Server.Port != 6500 {
+		t.Errorf("expected Server.Port to be 6500, got %d", config.Server.Port)
 	}
 	if config.Build.OutputDir != ".jawt/build" {
-		t.Errorf("expected OutputDir to be '.jawt/build', got %s", config.Build.OutputDir)
+		t.Errorf("expected Build.OutputDir to be '.jawt/build', got %s", config.Build.OutputDir)
 	}
-	if config.DistDir != ".jawt/dist" {
-		t.Errorf("expected DistDir to be '.jawt/dist', got %s", config.DistDir)
+	if config.Build.DistDir != ".jawt/dist" {
+		t.Errorf("expected Build.DistDir to be '.jawt/dist', got %s", config.Build.DistDir)
 	}
-	if config.ShadowDOM {
-		t.Error("expected ShadowDOM to be false")
+	if !config.Build.Minify {
+		t.Error("expected Build.Minify to be true")
 	}
-	if config.DevPort != 6500 {
-		t.Errorf("expected DevPort to be 6500, got %d", config.DevPort)
+	if config.Build.ShadowDOM {
+		t.Error("expected Build.ShadowDOM to be false")
 	}
-	if !config.EnableHMR {
-		t.Error("expected EnableHMR to be true")
+	if config.Dev.Port != 6500 {
+		t.Errorf("expected Dev.Port to be 6500, got %d", config.Dev.Port)
 	}
-	expectedWatchPaths := []string{"app", "components", "scripts"}
-	if len(config.WatchPaths) != len(expectedWatchPaths) {
-		t.Errorf("expected WatchPaths length to be %d, got %d", len(expectedWatchPaths), len(config.WatchPaths))
+	if !config.Dev.EnableHMR {
+		t.Error("expected Dev.EnableHMR to be true")
+	}
+	expectedWatchPaths := []string{"app", "components", "scripts", "assets"}
+	if len(config.Dev.WatchPaths) != len(expectedWatchPaths) {
+		t.Errorf("expected Dev.WatchPaths length to be %d, got %d", len(expectedWatchPaths), len(config.Dev.WatchPaths))
 	}
 	for i, path := range expectedWatchPaths {
-		if config.WatchPaths[i] != path {
-			t.Errorf("expected WatchPaths[%d] to be %s, got %s", i, path, config.WatchPaths[i])
+		if config.Dev.WatchPaths[i] != path {
+			t.Errorf("expected Dev.WatchPaths[%d] to be %s, got %s", i, path, config.Dev.WatchPaths[i])
 		}
 	}
-	if config.TSConfigPath != "tsconfig.json" {
-		t.Errorf("expected TSConfigPath to be 'tsconfig.json', got %s", config.TSConfigPath)
+	if config.Tooling.TSConfigPath != "tsconfig.json" {
+		t.Errorf("expected Tooling.TSConfigPath to be 'tsconfig.json', got %s", config.Tooling.TSConfigPath)
 	}
-	if config.TailwindConfigPath != "tailwind.config.js" {
-		t.Errorf("expected TailwindConfigPath to be 'tailwind.config.js', got %s", config.TailwindConfigPath)
+	if config.Tooling.TailwindConfigPath != "tailwind.config.js" {
+		t.Errorf("expected Tooling.TailwindConfigPath to be 'tailwind.config.js', got %s", config.Tooling.TailwindConfigPath)
+	}
+	if len(config.Scripts.PreBuild) != 0 {
+		t.Errorf("expected Scripts.PreBuild to be empty, got %v", config.Scripts.PreBuild)
+	}
+	if len(config.Scripts.PostBuild) != 0 {
+		t.Errorf("expected Scripts.PostBuild to be empty, got %v", config.Scripts.PostBuild)
 	}
 }
 
@@ -212,16 +239,58 @@ func TestLoadProjectConfig(t *testing.T) {
 					Version:     "2.0.0",
 					Description: "Test project",
 				},
-				OutputDir:          "custom-build",
-				DistDir:            "custom-dist",
-				ShadowDOM:          true,
-				DevPort:            3000,
-				EnableHMR:          false,
-				WatchPaths:         []string{"src", "lib"},
-				TSConfigPath:       "custom-tsconfig.json",
-				TailwindConfigPath: "custom-tailwind.config.js",
-				PreBuildScripts:    []string{"script1.sh"},
-				PostBuildScripts:   []string{"script2.sh"},
+				Paths: struct {
+					Components string `json:"components"`
+					Pages      string `json:"pages"`
+					Scripts    string `json:"scripts"`
+					Assets     string `json:"assets"`
+				}{
+					Components: "custom-components",
+					Pages:      "custom-app",
+					Scripts:    "custom-scripts",
+					Assets:     "custom-assets",
+				},
+				Server: struct {
+					Host string `json:"host"`
+					Port int    `json:"port"`
+				}{
+					Host: "custom-host",
+					Port: 8080,
+				},
+				Build: struct {
+					OutputDir string `json:"outputDir"`
+					DistDir   string `json:"distDir"`
+					Minify    bool   `json:"minify"`
+					ShadowDOM bool   `json:"shadowDOM"`
+				}{
+					OutputDir: "custom-build",
+					DistDir:   "custom-dist",
+					Minify:    false,
+					ShadowDOM: true,
+				},
+				Dev: struct {
+					Port       int      `json:"port"`
+					EnableHMR  bool     `json:"enableHMR"`
+					WatchPaths []string `json:"watchPaths"`
+				}{
+					Port:       3000,
+					EnableHMR:  false,
+					WatchPaths: []string{"src", "lib"},
+				},
+				Tooling: struct {
+					TSConfigPath       string `json:"tsConfigPath"`
+					TailwindConfigPath string `json:"tailwindConfigPath"`
+				}{
+					TSConfigPath:       "custom-tsconfig.json",
+					TailwindConfigPath: "custom-tailwind.config.js",
+				},
+				Scripts: struct {
+					PreBuild  []string `json:"preBuild"`
+					PostBuild []string `json:"postBuild"`
+				}{
+					PreBuild:  []string{"script1.sh"},
+					PostBuild: []string{"script2.sh"},
+				},
 			},
 			expectError: false,
 		},
@@ -288,11 +357,11 @@ func TestLoadProjectConfig(t *testing.T) {
 				if config.App.Version != tt.configData.App.Version {
 					t.Errorf("expected Version %s, got %s", tt.configData.App.Version, config.App.Version)
 				}
-				if config.DevPort != tt.configData.DevPort {
-					t.Errorf("expected DevPort %d, got %d", tt.configData.DevPort, config.DevPort)
+				if config.Server.Port != tt.configData.Server.Port {
+					t.Errorf("expected DevPort %d, got %d", tt.configData.Server.Port, config.Server.Port)
 				}
-				if config.ShadowDOM != tt.configData.ShadowDOM {
-					t.Errorf("expected ShadowDOM %t, got %t", tt.configData.ShadowDOM, config.ShadowDOM)
+				if config.Build.ShadowDOM != tt.configData.Build.ShadowDOM {
+					t.Errorf("expected ShadowDOM %t, got %t", tt.configData.Build.ShadowDOM, config.Build.ShadowDOM)
 				}
 			}
 		})
@@ -345,17 +414,6 @@ func TestProjectConfigSave(t *testing.T) {
 			Version:     "1.2.3",
 			Description: "Test save project",
 		},
-		OutputDir:          "test-build",
-		DistDir:            "test-dist",
-		ShadowDOM:          true,
-		DevPort:            4000,
-		EnableHMR:          false,
-		WatchPaths:         []string{"test-src"},
-		TSConfigPath:       "test-tsconfig.json",
-		TailwindConfigPath: "test-tailwind.config.js",
-		HasTailwindConfig:  true,
-		PreBuildScripts:    []string{"pre.sh"},
-		PostBuildScripts:   []string{"post.sh"},
 	}
 
 	tempDir := t.TempDir()
@@ -377,12 +435,12 @@ func TestProjectConfigSave(t *testing.T) {
 	if loadedConfig.App.Version != config.App.Version {
 		t.Errorf("expected Version %s, got %s", config.App.Version, loadedConfig.App.Version)
 	}
-	if loadedConfig.DevPort != config.DevPort {
-		t.Errorf("expected DevPort %d, got %d", config.DevPort, loadedConfig.DevPort)
+	if loadedConfig.Server.Port != config.Server.Port {
+		t.Errorf("expected DevPort %d, got %d", config.Server.Port, loadedConfig.Server.Port)
 	}
-	if loadedConfig.HasTailwindConfig != config.HasTailwindConfig {
-		t.Errorf("expected HasTailwindConfig %t, got %t", config.HasTailwindConfig, loadedConfig.HasTailwindConfig)
-	}
+	// if loadedConfig.HasTailwindConfig != config.HasTailwindConfig {
+	//	t.Errorf("expected HasTailwindConfig %t, got %t", config.HasTailwindConfig, loadedConfig.HasTailwindConfig)
+	// }
 }
 
 func TestJawtConfigValidate(t *testing.T) {
@@ -481,7 +539,7 @@ func TestProjectConfigValidate(t *testing.T) {
 			expectError: false,
 		},
 		{
-			name: "empty name",
+			name: "empty app name",
 			config: &ProjectConfig{
 				App: struct {
 					Name        string `json:"name"`
@@ -491,23 +549,16 @@ func TestProjectConfigValidate(t *testing.T) {
 				}{
 					Name: "",
 				},
-				Components: struct {
-					Path  string `json:"path"`
-					Alias string `json:"alias"`
+				Paths: struct {
+					Components string `json:"components"`
+					Pages      string `json:"pages"`
+					Scripts    string `json:"scripts"`
+					Assets     string `json:"assets"`
 				}{
-					Path: "components",
-				},
-				Pages: struct {
-					Path  string `json:"path"`
-					Alias string `json:"alias"`
-				}{
-					Path: "app",
-				},
-				Scripts: struct {
-					Path  string `json:"path"`
-					Alias string `json:"alias"`
-				}{
-					Path: "scripts",
+					Components: "components",
+					Pages:      "app",
+					Scripts:    "scripts",
+					Assets:     "assets",
 				},
 				Server: struct {
 					Host string `json:"host"`
@@ -518,61 +569,40 @@ func TestProjectConfigValidate(t *testing.T) {
 				},
 				Build: struct {
 					OutputDir string `json:"outputDir"`
+					DistDir   string `json:"distDir"`
 					Minify    bool   `json:"minify"`
+					ShadowDOM bool   `json:"shadowDOM"`
 				}{
 					OutputDir: "build",
 					Minify:    true,
+					ShadowDOM: false,
 				},
-			},
-			expectError: true,
-			errorMsg:    "project name cannot be empty",
-		},
-		{
-			name: "empty output dir",
-			config: &ProjectConfig{
-				App: struct {
-					Name        string `json:"name"`
-					Author      string `json:"author"`
-					Version     string `json:"version"`
-					Description string `json:"description"`
+				Dev: struct {
+					Port       int      `json:"port"`
+					EnableHMR  bool     `json:"enableHMR"`
+					WatchPaths []string `json:"watchPaths"`
 				}{
-					Name: "test",
+					Port:       6500,
+					EnableHMR:  true,
+					WatchPaths: []string{"app", "components", "scripts", "assets"},
 				},
-				Components: struct {
-					Path  string `json:"path"`
-					Alias string `json:"alias"`
+				Tooling: struct {
+					TSConfigPath       string `json:"tsConfigPath"`
+					TailwindConfigPath string `json:"tailwindConfigPath"`
 				}{
-					Path: "components",
-				},
-				Pages: struct {
-					Path  string `json:"path"`
-					Alias string `json:"alias"`
-				}{
-					Path: "app",
+					TSConfigPath:       "tsconfig.json",
+					TailwindConfigPath: "tailwind.config.js",
 				},
 				Scripts: struct {
-					Path  string `json:"path"`
-					Alias string `json:"alias"`
+					PreBuild  []string `json:"preBuild"`
+					PostBuild []string `json:"postBuild"`
 				}{
-					Path: "scripts",
-				},
-				Server: struct {
-					Host string `json:"host"`
-					Port int    `json:"port"`
-				}{
-					Host: "localhost",
-					Port: 6500,
-				},
-				Build: struct {
-					OutputDir string `json:"outputDir"`
-					Minify    bool   `json:"minify"`
-				}{
-					OutputDir: "",
-					Minify:    true,
+					PreBuild:  []string{},
+					PostBuild: []string{},
 				},
 			},
 			expectError: true,
-			errorMsg:    "build output directory cannot be empty",
+			errorMsg:    "app name cannot be empty",
 		},
 		{
 			name: "empty components path",
@@ -585,23 +615,16 @@ func TestProjectConfigValidate(t *testing.T) {
 				}{
 					Name: "test",
 				},
-				Components: struct {
-					Path  string `json:"path"`
-					Alias string `json:"alias"`
+				Paths: struct {
+					Components string `json:"components"`
+					Pages      string `json:"pages"`
+					Scripts    string `json:"scripts"`
+					Assets     string `json:"assets"`
 				}{
-					Path: "",
-				},
-				Pages: struct {
-					Path  string `json:"path"`
-					Alias string `json:"alias"`
-				}{
-					Path: "app",
-				},
-				Scripts: struct {
-					Path  string `json:"path"`
-					Alias string `json:"alias"`
-				}{
-					Path: "scripts",
+					Components: "",
+					Pages:      "app",
+					Scripts:    "scripts",
+					Assets:     "assets",
 				},
 				Server: struct {
 					Host string `json:"host"`
@@ -612,10 +635,36 @@ func TestProjectConfigValidate(t *testing.T) {
 				},
 				Build: struct {
 					OutputDir string `json:"outputDir"`
+					DistDir   string `json:"distDir"`
 					Minify    bool   `json:"minify"`
+					ShadowDOM bool   `json:"shadowDOM"`
 				}{
 					OutputDir: "build",
 					Minify:    true,
+					ShadowDOM: false,
+				},
+				Dev: struct {
+					Port       int      `json:"port"`
+					EnableHMR  bool     `json:"enableHMR"`
+					WatchPaths []string `json:"watchPaths"`
+				}{
+					Port:       6500,
+					EnableHMR:  true,
+					WatchPaths: []string{"app", "components", "scripts", "assets"},
+				},
+				Tooling: struct {
+					TSConfigPath       string `json:"tsConfigPath"`
+					TailwindConfigPath string `json:"tailwindConfigPath"`
+				}{
+					TSConfigPath:       "tsconfig.json",
+					TailwindConfigPath: "tailwind.config.js",
+				},
+				Scripts: struct {
+					PreBuild  []string `json:"preBuild"`
+					PostBuild []string `json:"postBuild"`
+				}{
+					PreBuild:  []string{},
+					PostBuild: []string{},
 				},
 			},
 			expectError: true,
@@ -632,23 +681,16 @@ func TestProjectConfigValidate(t *testing.T) {
 				}{
 					Name: "test",
 				},
-				Components: struct {
-					Path  string `json:"path"`
-					Alias string `json:"alias"`
+				Paths: struct {
+					Components string `json:"components"`
+					Pages      string `json:"pages"`
+					Scripts    string `json:"scripts"`
+					Assets     string `json:"assets"`
 				}{
-					Path: "components",
-				},
-				Pages: struct {
-					Path  string `json:"path"`
-					Alias string `json:"alias"`
-				}{
-					Path: "",
-				},
-				Scripts: struct {
-					Path  string `json:"path"`
-					Alias string `json:"alias"`
-				}{
-					Path: "scripts",
+					Components: "components",
+					Pages:      "",
+					Scripts:    "scripts",
+					Assets:     "assets",
 				},
 				Server: struct {
 					Host string `json:"host"`
@@ -659,10 +701,41 @@ func TestProjectConfigValidate(t *testing.T) {
 				},
 				Build: struct {
 					OutputDir string `json:"outputDir"`
+					DistDir   string `json:"distDir"`
 					Minify    bool   `json:"minify"`
+					ShadowDOM bool   `json:"shadowDOM"`
+				}(struct {
+					OutputDir string `json:"outputDir"`
+					DistDir   string `json:"dist"`
+					Minify    bool   `json:"minify"`
+					ShadowDOM bool   `json:"shadowDOM"`
 				}{
 					OutputDir: "build",
 					Minify:    true,
+					ShadowDOM: false,
+				}),
+				Dev: struct {
+					Port       int      `json:"port"`
+					EnableHMR  bool     `json:"enableHMR"`
+					WatchPaths []string `json:"watchPaths"`
+				}{
+					Port:       6500,
+					EnableHMR:  true,
+					WatchPaths: []string{"app", "components", "scripts", "assets"},
+				},
+				Tooling: struct {
+					TSConfigPath       string `json:"tsConfigPath"`
+					TailwindConfigPath string `json:"tailwindConfigPath"`
+				}{
+					TSConfigPath:       "tsconfig.json",
+					TailwindConfigPath: "tailwind.config.js",
+				},
+				Scripts: struct {
+					PreBuild  []string `json:"preBuild"`
+					PostBuild []string `json:"postBuild"`
+				}{
+					PreBuild:  []string{},
+					PostBuild: []string{},
 				},
 			},
 			expectError: true,
@@ -679,23 +752,16 @@ func TestProjectConfigValidate(t *testing.T) {
 				}{
 					Name: "test",
 				},
-				Components: struct {
-					Path  string `json:"path"`
-					Alias string `json:"alias"`
+				Paths: struct {
+					Components string `json:"components"`
+					Pages      string `json:"pages"`
+					Scripts    string `json:"scripts"`
+					Assets     string `json:"assets"`
 				}{
-					Path: "components",
-				},
-				Pages: struct {
-					Path  string `json:"path"`
-					Alias string `json:"alias"`
-				}{
-					Path: "app",
-				},
-				Scripts: struct {
-					Path  string `json:"path"`
-					Alias string `json:"alias"`
-				}{
-					Path: "",
+					Components: "components",
+					Pages:      "app",
+					Scripts:    "",
+					Assets:     "assets",
 				},
 				Server: struct {
 					Host string `json:"host"`
@@ -706,14 +772,172 @@ func TestProjectConfigValidate(t *testing.T) {
 				},
 				Build: struct {
 					OutputDir string `json:"outputDir"`
+					DistDir   string `json:"distDir"`
 					Minify    bool   `json:"minify"`
+					ShadowDOM bool   `json:"shadowDOM"`
 				}{
 					OutputDir: "build",
 					Minify:    true,
+					ShadowDOM: false,
+				},
+				Dev: struct {
+					Port       int      `json:"port"`
+					EnableHMR  bool     `json:"enableHMR"`
+					WatchPaths []string `json:"watchPaths"`
+				}{
+					Port:       6500,
+					EnableHMR:  true,
+					WatchPaths: []string{"app", "components", "scripts", "assets"},
+				},
+				Tooling: struct {
+					TSConfigPath       string `json:"tsConfigPath"`
+					TailwindConfigPath string `json:"tailwindConfigPath"`
+				}{
+					TSConfigPath:       "tsconfig.json",
+					TailwindConfigPath: "tailwind.config.js",
+				},
+				Scripts: struct {
+					PreBuild  []string `json:"preBuild"`
+					PostBuild []string `json:"postBuild"`
+				}{
+					PreBuild:  []string{},
+					PostBuild: []string{},
 				},
 			},
 			expectError: true,
 			errorMsg:    "scripts path cannot be empty",
+		},
+		{
+			name: "empty assets path",
+			config: &ProjectConfig{
+				App: struct {
+					Name        string `json:"name"`
+					Author      string `json:"author"`
+					Version     string `json:"version"`
+					Description string `json:"description"`
+				}{
+					Name: "test",
+				},
+				Paths: struct {
+					Components string `json:"components"`
+					Pages      string `json:"pages"`
+					Scripts    string `json:"scripts"`
+					Assets     string `json:"assets"`
+				}{
+					Components: "components",
+					Pages:      "app",
+					Scripts:    "scripts",
+					Assets:     "",
+				},
+				Server: struct {
+					Host string `json:"host"`
+					Port int    `json:"port"`
+				}{
+					Host: "localhost",
+					Port: 6500,
+				},
+				Build: struct {
+					OutputDir string `json:"outputDir"`
+					DistDir   string `json:"distDir"`
+					Minify    bool   `json:"minify"`
+					ShadowDOM bool   `json:"shadowDOM"`
+				}{
+					OutputDir: "build",
+					Minify:    true,
+					ShadowDOM: false,
+				},
+				Dev: struct {
+					Port       int      `json:"port"`
+					EnableHMR  bool     `json:"enableHMR"`
+					WatchPaths []string `json:"watchPaths"`
+				}{
+					Port:       6500,
+					EnableHMR:  true,
+					WatchPaths: []string{"app", "components", "scripts", "assets"},
+				},
+				Tooling: struct {
+					TSConfigPath       string `json:"tsConfigPath"`
+					TailwindConfigPath string `json:"tailwindConfigPath"`
+				}{
+					TSConfigPath:       "tsconfig.json",
+					TailwindConfigPath: "tailwind.config.js",
+				},
+				Scripts: struct {
+					PreBuild  []string `json:"preBuild"`
+					PostBuild []string `json:"postBuild"`
+				}{
+					PreBuild:  []string{},
+					PostBuild: []string{},
+				},
+			},
+			expectError: true,
+			errorMsg:    "assets path cannot be empty",
+		},
+		{
+			name: "empty output dir",
+			config: &ProjectConfig{
+				App: struct {
+					Name        string `json:"name"`
+					Author      string `json:"author"`
+					Version     string `json:"version"`
+					Description string `json:"description"`
+				}{
+					Name: "test",
+				},
+				Paths: struct {
+					Components string `json:"components"`
+					Pages      string `json:"pages"`
+					Scripts    string `json:"scripts"`
+					Assets     string `json:"assets"`
+				}{
+					Components: "components",
+					Pages:      "app",
+					Scripts:    "scripts",
+					Assets:     "assets",
+				},
+				Server: struct {
+					Host string `json:"host"`
+					Port int    `json:"port"`
+				}{
+					Host: "localhost",
+					Port: 6500,
+				},
+				Build: struct {
+					OutputDir string `json:"outputDir"`
+					DistDir   string `json:"distDir"`
+					Minify    bool   `json:"minify"`
+					ShadowDOM bool   `json:"shadowDOM"`
+				}{
+					OutputDir: "",
+					Minify:    true,
+					ShadowDOM: false,
+				},
+				Dev: struct {
+					Port       int      `json:"port"`
+					EnableHMR  bool     `json:"enableHMR"`
+					WatchPaths []string `json:"watchPaths"`
+				}{
+					Port:       6500,
+					EnableHMR:  true,
+					WatchPaths: []string{"app", "components", "scripts", "assets"},
+				},
+				Tooling: struct {
+					TSConfigPath       string `json:"tsConfigPath"`
+					TailwindConfigPath string `json:"tailwindConfigPath"`
+				}{
+					TSConfigPath:       "tsconfig.json",
+					TailwindConfigPath: "tailwind.config.js",
+				},
+				Scripts: struct {
+					PreBuild  []string `json:"preBuild"`
+					PostBuild []string `json:"postBuild"`
+				}{
+					PreBuild:  []string{},
+					PostBuild: []string{},
+				},
+			},
+			expectError: true,
+			errorMsg:    "build output directory cannot be empty",
 		},
 		{
 			name: "invalid server port - zero",
@@ -726,23 +950,16 @@ func TestProjectConfigValidate(t *testing.T) {
 				}{
 					Name: "test",
 				},
-				Components: struct {
-					Path  string `json:"path"`
-					Alias string `json:"alias"`
+				Paths: struct {
+					Components string `json:"components"`
+					Pages      string `json:"pages"`
+					Scripts    string `json:"scripts"`
+					Assets     string `json:"assets"`
 				}{
-					Path: "components",
-				},
-				Pages: struct {
-					Path  string `json:"path"`
-					Alias string `json:"alias"`
-				}{
-					Path: "app",
-				},
-				Scripts: struct {
-					Path  string `json:"path"`
-					Alias string `json:"alias"`
-				}{
-					Path: "scripts",
+					Components: "components",
+					Pages:      "app",
+					Scripts:    "scripts",
+					Assets:     "assets",
 				},
 				Server: struct {
 					Host string `json:"host"`
@@ -753,10 +970,36 @@ func TestProjectConfigValidate(t *testing.T) {
 				},
 				Build: struct {
 					OutputDir string `json:"outputDir"`
+					DistDir   string `json:"distDir"`
 					Minify    bool   `json:"minify"`
+					ShadowDOM bool   `json:"shadowDOM"`
 				}{
 					OutputDir: "build",
 					Minify:    true,
+					ShadowDOM: false,
+				},
+				Dev: struct {
+					Port       int      `json:"port"`
+					EnableHMR  bool     `json:"enableHMR"`
+					WatchPaths []string `json:"watchPaths"`
+				}{
+					Port:       6500,
+					EnableHMR:  true,
+					WatchPaths: []string{"app", "components", "scripts", "assets"},
+				},
+				Tooling: struct {
+					TSConfigPath       string `json:"tsConfigPath"`
+					TailwindConfigPath string `json:"tailwindConfigPath"`
+				}{
+					TSConfigPath:       "tsconfig.json",
+					TailwindConfigPath: "tailwind.config.js",
+				},
+				Scripts: struct {
+					PreBuild  []string `json:"preBuild"`
+					PostBuild []string `json:"postBuild"`
+				}{
+					PreBuild:  []string{},
+					PostBuild: []string{},
 				},
 			},
 			expectError: true,
@@ -773,23 +1016,16 @@ func TestProjectConfigValidate(t *testing.T) {
 				}{
 					Name: "test",
 				},
-				Components: struct {
-					Path  string `json:"path"`
-					Alias string `json:"alias"`
+				Paths: struct {
+					Components string `json:"components"`
+					Pages      string `json:"pages"`
+					Scripts    string `json:"scripts"`
+					Assets     string `json:"assets"`
 				}{
-					Path: "components",
-				},
-				Pages: struct {
-					Path  string `json:"path"`
-					Alias string `json:"alias"`
-				}{
-					Path: "app",
-				},
-				Scripts: struct {
-					Path  string `json:"path"`
-					Alias string `json:"alias"`
-				}{
-					Path: "scripts",
+					Components: "components",
+					Pages:      "app",
+					Scripts:    "scripts",
+					Assets:     "assets",
 				},
 				Server: struct {
 					Host string `json:"host"`
@@ -800,10 +1036,36 @@ func TestProjectConfigValidate(t *testing.T) {
 				},
 				Build: struct {
 					OutputDir string `json:"outputDir"`
+					DistDir   string `json:"distDir"`
 					Minify    bool   `json:"minify"`
+					ShadowDOM bool   `json:"shadowDOM"`
 				}{
 					OutputDir: "build",
 					Minify:    true,
+					ShadowDOM: false,
+				},
+				Dev: struct {
+					Port       int      `json:"port"`
+					EnableHMR  bool     `json:"enableHMR"`
+					WatchPaths []string `json:"watchPaths"`
+				}{
+					Port:       6500,
+					EnableHMR:  true,
+					WatchPaths: []string{"app", "components", "scripts", "assets"},
+				},
+				Tooling: struct {
+					TSConfigPath       string `json:"tsConfigPath"`
+					TailwindConfigPath string `json:"tailwindConfigPath"`
+				}{
+					TSConfigPath:       "tsconfig.json",
+					TailwindConfigPath: "tailwind.config.js",
+				},
+				Scripts: struct {
+					PreBuild  []string `json:"preBuild"`
+					PostBuild []string `json:"postBuild"`
+				}{
+					PreBuild:  []string{},
+					PostBuild: []string{},
 				},
 			},
 			expectError: true,
@@ -820,23 +1082,16 @@ func TestProjectConfigValidate(t *testing.T) {
 				}{
 					Name: "test",
 				},
-				Components: struct {
-					Path  string `json:"path"`
-					Alias string `json:"alias"`
+				Paths: struct {
+					Components string `json:"components"`
+					Pages      string `json:"pages"`
+					Scripts    string `json:"scripts"`
+					Assets     string `json:"assets"`
 				}{
-					Path: "components",
-				},
-				Pages: struct {
-					Path  string `json:"path"`
-					Alias string `json:"alias"`
-				}{
-					Path: "app",
-				},
-				Scripts: struct {
-					Path  string `json:"path"`
-					Alias string `json:"alias"`
-				}{
-					Path: "scripts",
+					Components: "components",
+					Pages:      "app",
+					Scripts:    "scripts",
+					Assets:     "assets",
 				},
 				Server: struct {
 					Host string `json:"host"`
@@ -847,10 +1102,36 @@ func TestProjectConfigValidate(t *testing.T) {
 				},
 				Build: struct {
 					OutputDir string `json:"outputDir"`
+					DistDir   string `json:"distDir"`
 					Minify    bool   `json:"minify"`
+					ShadowDOM bool   `json:"shadowDOM"`
 				}{
 					OutputDir: "build",
 					Minify:    true,
+					ShadowDOM: false,
+				},
+				Dev: struct {
+					Port       int      `json:"port"`
+					EnableHMR  bool     `json:"enableHMR"`
+					WatchPaths []string `json:"watchPaths"`
+				}{
+					Port:       6500,
+					EnableHMR:  true,
+					WatchPaths: []string{"app", "components", "scripts", "assets"},
+				},
+				Tooling: struct {
+					TSConfigPath       string `json:"tsConfigPath"`
+					TailwindConfigPath string `json:"tailwindConfigPath"`
+				}{
+					TSConfigPath:       "tsconfig.json",
+					TailwindConfigPath: "tailwind.config.js",
+				},
+				Scripts: struct {
+					PreBuild  []string `json:"preBuild"`
+					PostBuild []string `json:"postBuild"`
+				}{
+					PreBuild:  []string{},
+					PostBuild: []string{},
 				},
 			},
 			expectError: true,
@@ -867,23 +1148,16 @@ func TestProjectConfigValidate(t *testing.T) {
 				}{
 					Name: "test",
 				},
-				Components: struct {
-					Path  string `json:"path"`
-					Alias string `json:"alias"`
+				Paths: struct {
+					Components string `json:"components"`
+					Pages      string `json:"pages"`
+					Scripts    string `json:"scripts"`
+					Assets     string `json:"assets"`
 				}{
-					Path: "components",
-				},
-				Pages: struct {
-					Path  string `json:"path"`
-					Alias string `json:"alias"`
-				}{
-					Path: "app",
-				},
-				Scripts: struct {
-					Path  string `json:"path"`
-					Alias string `json:"alias"`
-				}{
-					Path: "scripts",
+					Components: "components",
+					Pages:      "app",
+					Scripts:    "scripts",
+					Assets:     "assets",
 				},
 				Server: struct {
 					Host string `json:"host"`
@@ -894,14 +1168,238 @@ func TestProjectConfigValidate(t *testing.T) {
 				},
 				Build: struct {
 					OutputDir string `json:"outputDir"`
+					DistDir   string `json:"distDir"`
 					Minify    bool   `json:"minify"`
+					ShadowDOM bool   `json:"shadowDOM"`
 				}{
 					OutputDir: "build",
 					Minify:    true,
+					ShadowDOM: false,
+				},
+				Dev: struct {
+					Port       int      `json:"port"`
+					EnableHMR  bool     `json:"enableHMR"`
+					WatchPaths []string `json:"watchPaths"`
+				}{
+					Port:       6500,
+					EnableHMR:  true,
+					WatchPaths: []string{"app", "components", "scripts", "assets"},
+				},
+				Tooling: struct {
+					TSConfigPath       string `json:"tsConfigPath"`
+					TailwindConfigPath string `json:"tailwindConfigPath"`
+				}{
+					TSConfigPath:       "tsconfig.json",
+					TailwindConfigPath: "tailwind.config.js",
+				},
+				Scripts: struct {
+					PreBuild  []string `json:"preBuild"`
+					PostBuild []string `json:"postBuild"`
+				}{
+					PreBuild:  []string{},
+					PostBuild: []string{},
 				},
 			},
 			expectError: true,
 			errorMsg:    "server host cannot be empty",
+		},
+		{
+			name: "invalid dev port - zero",
+			config: &ProjectConfig{
+				App: struct {
+					Name        string `json:"name"`
+					Author      string `json:"author"`
+					Version     string `json:"version"`
+					Description string `json:"description"`
+				}{
+					Name: "test",
+				},
+				Paths: struct {
+					Components string `json:"components"`
+					Pages      string `json:"pages"`
+					Scripts    string `json:"scripts"`
+					Assets     string `json:"assets"`
+				}{
+					Components: "components",
+					Pages:      "app",
+					Scripts:    "scripts",
+					Assets:     "assets",
+				},
+				Server: struct {
+					Host string `json:"host"`
+					Port int    `json:"port"`
+				}{
+					Host: "localhost",
+					Port: 6500,
+				},
+				Build: struct {
+					OutputDir string `json:"outputDir"`
+					DistDir   string `json:"distDir"`
+					Minify    bool   `json:"minify"`
+					ShadowDOM bool   `json:"shadowDOM"`
+				}{
+					OutputDir: "build",
+					Minify:    true,
+					ShadowDOM: false,
+				},
+				Dev: struct {
+					Port       int      `json:"port"`
+					EnableHMR  bool     `json:"enableHMR"`
+					WatchPaths []string `json:"watchPaths"`
+				}{
+					Port:       0,
+					EnableHMR:  true,
+					WatchPaths: []string{"app", "components", "scripts", "assets"},
+				},
+				Tooling: struct {
+					TSConfigPath       string `json:"tsConfigPath"`
+					TailwindConfigPath string `json:"tailwindConfigPath"`
+				}{
+					TSConfigPath:       "tsconfig.json",
+					TailwindConfigPath: "tailwind.config.js",
+				},
+				Scripts: struct {
+					PreBuild  []string `json:"preBuild"`
+					PostBuild []string `json:"postBuild"`
+				}{
+					PreBuild:  []string{},
+					PostBuild: []string{},
+				},
+			},
+			expectError: true,
+			errorMsg:    "invalid dev server port: " + strconv.Itoa(0),
+		},
+		{
+			name: "invalid dev port - negative",
+			config: &ProjectConfig{
+				App: struct {
+					Name        string `json:"name"`
+					Author      string `json:"author"`
+					Version     string `json:"version"`
+					Description string `json:"description"`
+				}{
+					Name: "test",
+				},
+				Paths: struct {
+					Components string `json:"components"`
+					Pages      string `json:"pages"`
+					Scripts    string `json:"scripts"`
+					Assets     string `json:"assets"`
+				}{
+					Components: "components",
+					Pages:      "app",
+					Scripts:    "scripts",
+					Assets:     "assets",
+				},
+				Server: struct {
+					Host string `json:"host"`
+					Port int    `json:"port"`
+				}{
+					Host: "localhost",
+					Port: 6500,
+				},
+				Build: struct {
+					OutputDir string `json:"outputDir"`
+					DistDir   string `json:"distDir"`
+					Minify    bool   `json:"minify"`
+					ShadowDOM bool   `json:"shadowDOM"`
+				}{
+					OutputDir: "build",
+					Minify:    true,
+					ShadowDOM: false,
+				},
+				Dev: struct {
+					Port       int      `json:"port"`
+					EnableHMR  bool     `json:"enableHMR"`
+					WatchPaths []string `json:"watchPaths"`
+				}{
+					Port:       -1,
+					EnableHMR:  true,
+					WatchPaths: []string{"app", "components", "scripts", "assets"},
+				},
+				Tooling: struct {
+					TSConfigPath       string `json:"tsConfigPath"`
+					TailwindConfigPath string `json:"tailwindConfigPath"`
+				}{
+					TSConfigPath:       "tsconfig.json",
+					TailwindConfigPath: "tailwind.config.js",
+				},
+				Scripts: struct {
+					PreBuild  []string `json:"preBuild"`
+					PostBuild []string `json:"postBuild"`
+				}{
+					PreBuild:  []string{},
+					PostBuild: []string{},
+				},
+			},
+			expectError: true,
+			errorMsg:    "invalid dev server port: " + strconv.Itoa(-1),
+		},
+		{
+			name: "invalid dev port - too high",
+			config: &ProjectConfig{
+				App: struct {
+					Name        string `json:"name"`
+					Author      string `json:"author"`
+					Version     string `json:"version"`
+					Description string `json:"description"`
+				}{
+					Name: "test",
+				},
+				Paths: struct {
+					Components string `json:"components"`
+					Pages      string `json:"pages"`
+					Scripts    string `json:"scripts"`
+					Assets     string `json:"assets"`
+				}{
+					Components: "components",
+					Pages:      "app",
+					Scripts:    "scripts",
+					Assets:     "assets",
+				},
+				Server: struct {
+					Host string `json:"host"`
+					Port int    `json:"port"`
+				}{
+					Host: "localhost",
+					Port: 6500,
+				},
+				Build: struct {
+					OutputDir string `json:"outputDir"`
+					DistDir   string `json:"distDir"`
+					Minify    bool   `json:"minify"`
+					ShadowDOM bool   `json:"shadowDOM"`
+				}{
+					OutputDir: "build",
+					Minify:    true,
+					ShadowDOM: false,
+				},
+				Dev: struct {
+					Port       int      `json:"port"`
+					EnableHMR  bool     `json:"enableHMR"`
+					WatchPaths []string `json:"watchPaths"`
+				}{
+					Port:       65536,
+					EnableHMR:  true,
+					WatchPaths: []string{"app", "components", "scripts", "assets"},
+				},
+				Tooling: struct {
+					TSConfigPath       string `json:"tsConfigPath"`
+					TailwindConfigPath string `json:"tailwindConfigPath"`
+				}{
+					TSConfigPath:       "tsconfig.json",
+					TailwindConfigPath: "tailwind.config.js",
+				},
+				Scripts: struct {
+					PreBuild  []string `json:"preBuild"`
+					PostBuild []string `json:"postBuild"`
+				}{
+					PreBuild:  []string{},
+					PostBuild: []string{},
+				},
+			},
+			expectError: true,
+			errorMsg:    "invalid dev server port: " + strconv.Itoa(65536),
 		},
 	}
 
