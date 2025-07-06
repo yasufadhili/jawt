@@ -82,6 +82,9 @@ func TestDefaultProjectConfig(t *testing.T) {
 	if config.TailwindConfigPath != "tailwind.config.js" {
 		t.Errorf("expected TailwindConfigPath to be 'tailwind.config.js', got %s", config.TailwindConfigPath)
 	}
+	if config.HasTailwindConfig != false {
+		t.Errorf("expected HasTailwindConfig to be false, got %t", config.HasTailwindConfig)
+	}
 }
 
 func TestLoadJawtConfig(t *testing.T) {
@@ -188,23 +191,70 @@ func TestLoadProjectConfig(t *testing.T) {
 	tempDir := t.TempDir()
 
 	tests := []struct {
-		name         string
-		createConfig bool
-		configData   *ProjectConfig
-		expectError  bool
+		name               string
+		createConfig       bool
+		configData         *ProjectConfig
+		createTailwindFile bool
+		expectError        bool
+		expectedTailwind   bool
 	}{
 		{
-			name:         "no config file returns default",
-			createConfig: false,
-			expectError:  false,
+			name:               "no config file returns default",
+			createConfig:       false,
+			createTailwindFile: false,
+			expectError:        false,
+			expectedTailwind:   false,
 		},
 		{
-			name:         "valid config file",
-			createConfig: true,
+			name:               "valid config file without tailwind",
+			createConfig:       true,
+			createTailwindFile: false,
 			configData: &ProjectConfig{
-				Name:               "test-project",
-				Version:            "2.0.0",
-				Description:        "Test project",
+				App: struct {
+					Name        string `json:"name"`
+					Author      string `json:"author"`
+					Version     string `json:"version"`
+					Description string `json:"description"`
+				}{
+					Name:        "test-project",
+					Version:     "2.0.0",
+					Description: "Test project",
+				},
+				Build: struct {
+					OutputDir string `json:"outputDir"`
+					Minify    bool   `json:"minify"`
+				}{
+					OutputDir: "build",
+					Minify:    true,
+				},
+				Server: struct {
+					Host string `json:"host"`
+					Port int    `json:"port"`
+				}{
+					Host: "localhost",
+					Port: 6500,
+				},
+				Components: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path:  "components",
+					Alias: "",
+				},
+				Pages: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path:  "app",
+					Alias: "",
+				},
+				Scripts: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path:  "scripts",
+					Alias: "",
+				},
 				OutputDir:          "custom-build",
 				DistDir:            "custom-dist",
 				ShadowDOM:          true,
@@ -216,13 +266,80 @@ func TestLoadProjectConfig(t *testing.T) {
 				PreBuildScripts:    []string{"script1.sh"},
 				PostBuildScripts:   []string{"script2.sh"},
 			},
-			expectError: false,
+			expectError:      false,
+			expectedTailwind: false,
 		},
 		{
-			name:         "invalid json",
-			createConfig: true,
-			configData:   nil, // Will create invalid JSON
-			expectError:  true,
+			name:               "valid config file with tailwind",
+			createConfig:       true,
+			createTailwindFile: true,
+			configData: &ProjectConfig{
+				App: struct {
+					Name        string `json:"name"`
+					Author      string `json:"author"`
+					Version     string `json:"version"`
+					Description string `json:"description"`
+				}{
+					Name:        "test-project-tailwind",
+					Version:     "2.0.0",
+					Description: "Test project with tailwind",
+				},
+				Build: struct {
+					OutputDir string `json:"outputDir"`
+					Minify    bool   `json:"minify"`
+				}{
+					OutputDir: "build",
+					Minify:    true,
+				},
+				Server: struct {
+					Host string `json:"host"`
+					Port int    `json:"port"`
+				}{
+					Host: "localhost",
+					Port: 6500,
+				},
+				Components: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path:  "components",
+					Alias: "",
+				},
+				Pages: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path:  "app",
+					Alias: "",
+				},
+				Scripts: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path:  "scripts",
+					Alias: "",
+				},
+				OutputDir:          "custom-build",
+				DistDir:            "custom-dist",
+				ShadowDOM:          true,
+				DevPort:            3000,
+				EnableHMR:          false,
+				WatchPaths:         []string{"src", "lib"},
+				TSConfigPath:       "custom-tsconfig.json",
+				TailwindConfigPath: "tailwind.config.js", // Use default name for test
+				PreBuildScripts:    []string{"script1.sh"},
+				PostBuildScripts:   []string{"script2.sh"},
+			},
+			expectError:      false,
+			expectedTailwind: true,
+		},
+		{
+			name:               "invalid json",
+			createConfig:       true,
+			createTailwindFile: false,
+			configData:         nil, // Will create invalid JSON
+			expectError:        true,
+			expectedTailwind:   false,
 		},
 	}
 
@@ -255,6 +372,14 @@ func TestLoadProjectConfig(t *testing.T) {
 				}
 			}
 
+			if tt.createTailwindFile {
+				tailwindPath := filepath.Join(projectDir, "tailwind.config.js")
+				err := os.WriteFile(tailwindPath, []byte("// tailwind config"), 0644)
+				if err != nil {
+					t.Fatalf("failed to create tailwind config file: %v", err)
+				}
+			}
+
 			config, err := LoadProjectConfig(projectDir)
 
 			if tt.expectError {
@@ -275,11 +400,11 @@ func TestLoadProjectConfig(t *testing.T) {
 			}
 
 			if tt.configData != nil {
-				if config.App.Name != tt.configData.Name {
-					t.Errorf("expected Name %s, got %s", tt.configData.Name, config.App.Name)
+				if config.App.Name != tt.configData.App.Name {
+					t.Errorf("expected Name %s, got %s", tt.configData.App.Name, config.App.Name)
 				}
-				if config.Version != tt.configData.Version {
-					t.Errorf("expected Version %s, got %s", tt.configData.Version, config.Version)
+				if config.App.Version != tt.configData.App.Version {
+					t.Errorf("expected Version %s, got %s", tt.configData.App.Version, config.App.Version)
 				}
 				if config.DevPort != tt.configData.DevPort {
 					t.Errorf("expected DevPort %d, got %d", tt.configData.DevPort, config.DevPort)
@@ -287,6 +412,10 @@ func TestLoadProjectConfig(t *testing.T) {
 				if config.ShadowDOM != tt.configData.ShadowDOM {
 					t.Errorf("expected ShadowDOM %t, got %t", tt.configData.ShadowDOM, config.ShadowDOM)
 				}
+			}
+
+			if config.HasTailwindConfig != tt.expectedTailwind {
+				t.Errorf("expected HasTailwindConfig to be %t, got %t", tt.expectedTailwind, config.HasTailwindConfig)
 			}
 		})
 	}
@@ -328,9 +457,16 @@ func TestJawtConfigSave(t *testing.T) {
 
 func TestProjectConfigSave(t *testing.T) {
 	config := &ProjectConfig{
-		Name:               "test-save-project",
-		Version:            "1.2.3",
-		Description:        "Test save project",
+		App: struct {
+			Name        string `json:"name"`
+			Author      string `json:"author"`
+			Version     string `json:"version"`
+			Description string `json:"description"`
+		}{
+			Name:        "test-save-project",
+			Version:     "1.2.3",
+			Description: "Test save project",
+		},
 		OutputDir:          "test-build",
 		DistDir:            "test-dist",
 		ShadowDOM:          true,
@@ -339,6 +475,7 @@ func TestProjectConfigSave(t *testing.T) {
 		WatchPaths:         []string{"test-src"},
 		TSConfigPath:       "test-tsconfig.json",
 		TailwindConfigPath: "test-tailwind.config.js",
+		HasTailwindConfig:  true,
 		PreBuildScripts:    []string{"pre.sh"},
 		PostBuildScripts:   []string{"post.sh"},
 	}
@@ -356,14 +493,17 @@ func TestProjectConfigSave(t *testing.T) {
 		t.Fatalf("failed to load saved config: %v", err)
 	}
 
-	if loadedConfig.Name != config.App.Name {
-		t.Errorf("expected Name %s, got %s", config.App.Name, loadedConfig.Name)
+	if loadedConfig.App.Name != config.App.Name {
+		t.Errorf("expected Name %s, got %s", config.App.Name, loadedConfig.App.Name)
 	}
-	if loadedConfig.Version != config.Version {
-		t.Errorf("expected Version %s, got %s", config.Version, loadedConfig.Version)
+	if loadedConfig.App.Version != config.App.Version {
+		t.Errorf("expected Version %s, got %s", config.App.Version, loadedConfig.App.Version)
 	}
 	if loadedConfig.DevPort != config.DevPort {
 		t.Errorf("expected DevPort %d, got %d", config.DevPort, loadedConfig.DevPort)
+	}
+	if loadedConfig.HasTailwindConfig != config.HasTailwindConfig {
+		t.Errorf("expected HasTailwindConfig %t, got %t", config.HasTailwindConfig, loadedConfig.HasTailwindConfig)
 	}
 }
 
@@ -465,10 +605,46 @@ func TestProjectConfigValidate(t *testing.T) {
 		{
 			name: "empty name",
 			config: &ProjectConfig{
-				Name:      "",
-				OutputDir: "build",
-				DistDir:   "dist",
-				DevPort:   8080,
+				App: struct {
+					Name        string `json:"name"`
+					Author      string `json:"author"`
+					Version     string `json:"version"`
+					Description string `json:"description"`
+				}{
+					Name: "",
+				},
+				Components: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path: "components",
+				},
+				Pages: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path: "app",
+				},
+				Scripts: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path: "scripts",
+				},
+				Server: struct {
+					Host string `json:"host"`
+					Port int    `json:"port"`
+				}{
+					Host: "localhost",
+					Port: 6500,
+				},
+				Build: struct {
+					OutputDir string `json:"outputDir"`
+					Minify    bool   `json:"minify"`
+				}{
+					OutputDir: "build",
+					Minify:    true,
+				},
 			},
 			expectError: true,
 			errorMsg:    "project name cannot be empty",
@@ -476,57 +652,378 @@ func TestProjectConfigValidate(t *testing.T) {
 		{
 			name: "empty output dir",
 			config: &ProjectConfig{
-				Name:      "test",
-				OutputDir: "",
-				DistDir:   "dist",
-				DevPort:   8080,
+				App: struct {
+					Name        string `json:"name"`
+					Author      string `json:"author"`
+					Version     string `json:"version"`
+					Description string `json:"description"`
+				}{
+					Name: "test",
+				},
+				Components: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path: "components",
+				},
+				Pages: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path: "app",
+				},
+				Scripts: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path: "scripts",
+				},
+				Server: struct {
+					Host string `json:"host"`
+					Port int    `json:"port"`
+				}{
+					Host: "localhost",
+					Port: 6500,
+				},
+				Build: struct {
+					OutputDir string `json:"outputDir"`
+					Minify    bool   `json:"minify"`
+				}{
+					OutputDir: "",
+					Minify:    true,
+				},
 			},
 			expectError: true,
-			errorMsg:    "output directory cannot be empty",
+			errorMsg:    "build output directory cannot be empty",
 		},
 		{
-			name: "empty dist dir",
+			name: "empty components path",
 			config: &ProjectConfig{
-				Name:      "test",
-				OutputDir: "build",
-				DistDir:   "",
-				DevPort:   8080,
+				App: struct {
+					Name        string `json:"name"`
+					Author      string `json:"author"`
+					Version     string `json:"version"`
+					Description string `json:"description"`
+				}{
+					Name: "test",
+				},
+				Components: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path: "",
+				},
+				Pages: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path: "app",
+				},
+				Scripts: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path: "scripts",
+				},
+				Server: struct {
+					Host string `json:"host"`
+					Port int    `json:"port"`
+				}{
+					Host: "localhost",
+					Port: 6500,
+				},
+				Build: struct {
+					OutputDir string `json:"outputDir"`
+					Minify    bool   `json:"minify"`
+				}{
+					OutputDir: "build",
+					Minify:    true,
+				},
 			},
 			expectError: true,
-			errorMsg:    "dist directory cannot be empty",
+			errorMsg:    "components path cannot be empty",
 		},
 		{
-			name: "invalid dev port - zero",
+			name: "empty pages path",
 			config: &ProjectConfig{
-				Name:      "test",
-				OutputDir: "build",
-				DistDir:   "dist",
-				DevPort:   0,
+				App: struct {
+					Name        string `json:"name"`
+					Author      string `json:"author"`
+					Version     string `json:"version"`
+					Description string `json:"description"`
+				}{
+					Name: "test",
+				},
+				Components: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path: "components",
+				},
+				Pages: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path: "",
+				},
+				Scripts: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path: "scripts",
+				},
+				Server: struct {
+					Host string `json:"host"`
+					Port int    `json:"port"`
+				}{
+					Host: "localhost",
+					Port: 6500,
+				},
+				Build: struct {
+					OutputDir string `json:"outputDir"`
+					Minify    bool   `json:"minify"`
+				}{
+					OutputDir: "build",
+					Minify:    true,
+				},
 			},
 			expectError: true,
-			errorMsg:    "invalid dev port: " + strconv.Itoa(0),
+			errorMsg:    "pages path cannot be empty",
 		},
 		{
-			name: "invalid dev port - negative",
+			name: "empty scripts path",
 			config: &ProjectConfig{
-				Name:      "test",
-				OutputDir: "build",
-				DistDir:   "dist",
-				DevPort:   -1,
+				App: struct {
+					Name        string `json:"name"`
+					Author      string `json:"author"`
+					Version     string `json:"version"`
+					Description string `json:"description"`
+				}{
+					Name: "test",
+				},
+				Components: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path: "components",
+				},
+				Pages: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path: "app",
+				},
+				Scripts: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path: "",
+				},
+				Server: struct {
+					Host string `json:"host"`
+					Port int    `json:"port"`
+				}{
+					Host: "localhost",
+					Port: 6500,
+				},
+				Build: struct {
+					OutputDir string `json:"outputDir"`
+					Minify    bool   `json:"minify"`
+				}{
+					OutputDir: "build",
+					Minify:    true,
+				},
 			},
 			expectError: true,
-			errorMsg:    "invalid dev port: " + strconv.Itoa(-1),
+			errorMsg:    "scripts path cannot be empty",
 		},
 		{
-			name: "invalid dev port - too high",
+			name: "invalid server port - zero",
 			config: &ProjectConfig{
-				Name:      "test",
-				OutputDir: "build",
-				DistDir:   "dist",
-				DevPort:   65536,
+				App: struct {
+					Name        string `json:"name"`
+					Author      string `json:"author"`
+					Version     string `json:"version"`
+					Description string `json:"description"`
+				}{
+					Name: "test",
+				},
+				Components: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path: "components",
+				},
+				Pages: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path: "app",
+				},
+				Scripts: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path: "scripts",
+				},
+				Server: struct {
+					Host string `json:"host"`
+					Port int    `json:"port"`
+				}{
+					Host: "localhost",
+					Port: 0,
+				},
+				Build: struct {
+					OutputDir string `json:"outputDir"`
+					Minify    bool   `json:"minify"`
+				}{
+					OutputDir: "build",
+					Minify:    true,
+				},
 			},
 			expectError: true,
-			errorMsg:    "invalid dev port: " + strconv.Itoa(65536),
+			errorMsg:    "invalid server port: " + strconv.Itoa(0),
+		},
+		{
+			name: "invalid server port - negative",
+			config: &ProjectConfig{
+				App: struct {
+					Name        string `json:"name"`
+					Author      string `json:"author"`
+					Version     string `json:"version"`
+					Description string `json:"description"`
+				}{
+					Name: "test",
+				},
+				Components: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path: "components",
+				},
+				Pages: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path: "app",
+				},
+				Scripts: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path: "scripts",
+				},
+				Server: struct {
+					Host string `json:"host"`
+					Port int    `json:"port"`
+				}{
+					Host: "localhost",
+					Port: -1,
+				},
+				Build: struct {
+					OutputDir string `json:"outputDir"`
+					Minify    bool   `json:"minify"`
+				}{
+					OutputDir: "build",
+					Minify:    true,
+				},
+			},
+			expectError: true,
+			errorMsg:    "invalid server port: " + strconv.Itoa(-1),
+		},
+		{
+			name: "invalid server port - too high",
+			config: &ProjectConfig{
+				App: struct {
+					Name        string `json:"name"`
+					Author      string `json:"author"`
+					Version     string `json:"version"`
+					Description string `json:"description"`
+				}{
+					Name: "test",
+				},
+				Components: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path: "components",
+				},
+				Pages: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path: "app",
+				},
+				Scripts: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path: "scripts",
+				},
+				Server: struct {
+					Host string `json:"host"`
+					Port int    `json:"port"`
+				}{
+					Host: "localhost",
+					Port: 65536,
+				},
+				Build: struct {
+					OutputDir string `json:"outputDir"`
+					Minify    bool   `json:"minify"`
+				}{
+					OutputDir: "build",
+					Minify:    true,
+				},
+			},
+			expectError: true,
+			errorMsg:    "invalid server port: " + strconv.Itoa(65536),
+		},
+		{
+			name: "empty server host",
+			config: &ProjectConfig{
+				App: struct {
+					Name        string `json:"name"`
+					Author      string `json:"author"`
+					Version     string `json:"version"`
+					Description string `json:"description"`
+				}{
+					Name: "test",
+				},
+				Components: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path: "components",
+				},
+				Pages: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path: "app",
+				},
+				Scripts: struct {
+					Path  string `json:"path"`
+					Alias string `json:"alias"`
+				}{
+					Path: "scripts",
+				},
+				Server: struct {
+					Host string `json:"host"`
+					Port int    `json:"port"`
+				}{
+					Host: "",
+					Port: 6500,
+				},
+				Build: struct {
+					OutputDir string `json:"outputDir"`
+					Minify    bool   `json:"minify"`
+				}{
+					OutputDir: "build",
+					Minify:    true,
+				},
+			},
+			expectError: true,
+			errorMsg:    "server host cannot be empty",
 		},
 	}
 

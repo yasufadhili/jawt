@@ -267,12 +267,51 @@ func TestProjectPathsEdgeCases(t *testing.T) {
 	tempDir := t.TempDir()
 
 	customProjectConfig := &ProjectConfig{
-		Name:               "custom-project",
-		Version:            "2.0.0",
-		Description:        "Custom project for testing",
-		OutputDir:          "custom-build",
-		DistDir:            "custom-dist",
-		ShadowDOM:          true,
+		App: struct {
+			Name        string `json:"name"`
+			Author      string `json:"author"`
+			Version     string `json:"version"`
+			Description string `json:"description"`
+		}{
+			Name:        "custom-project",
+			Version:     "2.0.0",
+			Description: "Custom project for testing",
+		},
+		Components: struct {
+			Path  string `json:"path"`
+			Alias string `json:"alias"`
+		}{
+			Path:  "components",
+			Alias: "",
+		},
+		Pages: struct {
+			Path  string `json:"path"`
+			Alias string `json:"alias"`
+		}{
+			Path:  "app",
+			Alias: "",
+		},
+		Scripts: struct {
+			Path  string `json:"path"`
+			Alias string `json:"alias"`
+		}{
+			Path:  "scripts",
+			Alias: "",
+		},
+		Server: struct {
+			Host string `json:"host"`
+			Port int    `json:"port"`
+		}{
+			Host: "localhost",
+			Port: 6500,
+		},
+		Build: struct {
+			OutputDir string `json:"outputDir"`
+			Minify    bool   `json:"minify"`
+		}{
+			OutputDir: "custom-build",
+			Minify:    true,
+		},
 		DevPort:            9000,
 		EnableHMR:          false,
 		WatchPaths:         []string{"src", "lib", "assets"},
@@ -1064,12 +1103,51 @@ func TestProjectPathsEdgeCases2(t *testing.T) {
 	tempDir := t.TempDir()
 
 	customProjectConfig := &ProjectConfig{
-		Name:               "custom-project",
-		Version:            "2.0.0",
-		Description:        "Custom project for testing",
-		OutputDir:          "custom-build",
-		DistDir:            "custom-dist",
-		ShadowDOM:          true,
+		App: struct {
+			Name        string `json:"name"`
+			Author      string `json:"author"`
+			Version     string `json:"version"`
+			Description string `json:"description"`
+		}{
+			Name:        "custom-project",
+			Version:     "2.0.0",
+			Description: "Custom project for testing",
+		},
+		Components: struct {
+			Path  string `json:"path"`
+			Alias string `json:"alias"`
+		}{
+			Path:  "components",
+			Alias: "",
+		},
+		Pages: struct {
+			Path  string `json:"path"`
+			Alias string `json:"alias"`
+		}{
+			Path:  "app",
+			Alias: "",
+		},
+		Scripts: struct {
+			Path  string `json:"path"`
+			Alias string `json:"alias"`
+		}{
+			Path:  "scripts",
+			Alias: "",
+		},
+		Server: struct {
+			Host string `json:"host"`
+			Port int    `json:"port"`
+		}{
+			Host: "localhost",
+			Port: 6500,
+		},
+		Build: struct {
+			OutputDir string `json:"outputDir"`
+			Minify    bool   `json:"minify"`
+		}{
+			OutputDir: "custom-build",
+			Minify:    true,
+		},
 		DevPort:            9000,
 		EnableHMR:          false,
 		WatchPaths:         []string{"src", "lib", "assets"},

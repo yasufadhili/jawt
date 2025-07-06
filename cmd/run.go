@@ -58,7 +58,7 @@ Monitors your JML files for changes and automatically reloads the browser.`,
 			os.Exit(1)
 		}
 
-		ctx := core.NewJawtContext(cfg, projectConfig, paths, logger)
+		ctx := core.NewJawtContext(cfg, projectConfig, paths, logger, projectConfig.HasTailwindConfig)
 
 		logger.Info("Starting project",
 			core.StringField("name", projectConfig.App.Name),
