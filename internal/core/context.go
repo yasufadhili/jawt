@@ -16,8 +16,8 @@ type JawtContext struct {
 	Paths         *ProjectPaths
 	Logger        Logger
 
-	// Build configuration
-	UsesTailwindCSS bool
+	// Build options
+	BuildOptions *BuildOptions
 
 	// Runtime state
 	mu       sync.RWMutex
@@ -25,18 +25,18 @@ type JawtContext struct {
 }
 
 // NewJawtContext creates a new jawt context with the given configurations
-func NewJawtContext(jawtConfig *JawtConfig, projectConfig *ProjectConfig, paths *ProjectPaths, logger Logger, usesTailwindCSS bool) *JawtContext {
+func NewJawtContext(jawtConfig *JawtConfig, projectConfig *ProjectConfig, paths *ProjectPaths, logger Logger, buildOptions *BuildOptions) *JawtContext {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	return &JawtContext{
-		ctx:             ctx,
-		cancel:          cancel,
-		JawtConfig:      jawtConfig,
-		ProjectConfig:   projectConfig,
-		Paths:           paths,
-		Logger:          logger,
-		UsesTailwindCSS: usesTailwindCSS,
-		metadata:        make(map[string]interface{}),
+		ctx:           ctx,
+		cancel:        cancel,
+		JawtConfig:    jawtConfig,
+		ProjectConfig: projectConfig,
+		Paths:         paths,
+		Logger:        logger,
+		BuildOptions:  buildOptions,
+		metadata:      make(map[string]interface{}),
 	}
 }
 

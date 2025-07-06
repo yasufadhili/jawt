@@ -58,7 +58,17 @@ Monitors your JML files for changes and automatically reloads the browser.`,
 			os.Exit(1)
 		}
 
-		ctx := core.NewJawtContext(cfg, projectConfig, paths, logger, projectConfig.HasTailwindConfig)
+		buildOptions := core.NewBuildOptions()
+		// Check for tailwind.config.js
+		tailwindConfigPath := paths.GetAbsolutePath(projectConfig.TailwindConfigPath)
+		if _, err := os.Stat(tailwindConfigPath); err == nil {
+			buildOptions.UsesTailwindCSS = true
+		} else if !os.IsNotExist(err) {
+			logger.Error("Failed to check for tailwind config file", core.ErrorField(err))
+			os.Exit(1)
+		}
+
+		ctx := core.NewJawtContext(cfg, projectConfig, paths, logger, buildOptions)
 
 		logger.Info("Starting project",
 			core.StringField("name", projectConfig.App.Name),

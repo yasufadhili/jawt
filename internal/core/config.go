@@ -69,11 +69,22 @@ type ProjectConfig struct {
 
 	// Tailwind configuration
 	TailwindConfigPath string `json:"tailwind_config_path"`
-	HasTailwindConfig  bool   `json:"has_tailwind_config"`
 
 	// Custom build scripts
 	PreBuildScripts  []string `json:"pre_build_scripts"`
 	PostBuildScripts []string `json:"post_build_scripts"`
+}
+
+// BuildOptions represents build-time options and detected features
+type BuildOptions struct {
+	UsesTailwindCSS bool
+}
+
+// NewBuildOptions creates a new BuildOptions instance
+func NewBuildOptions() *BuildOptions {
+	return &BuildOptions{
+		UsesTailwindCSS: false,
+	}
 }
 
 // DefaultJawtConfig returns a default jawt configuration
@@ -138,15 +149,6 @@ func DefaultProjectConfig() *ProjectConfig {
 			OutputDir: "build",
 			Minify:    true,
 		},
-		OutputDir:          ".jawt/build",
-		DistDir:            ".jawt/dist",
-		ShadowDOM:          false,
-		DevPort:            6500,
-		EnableHMR:          true,
-		WatchPaths:         []string{"app", "components", "scripts"},
-		TSConfigPath:       "tsconfig.json",
-		TailwindConfigPath: "tailwind.config.js",
-		HasTailwindConfig:  false,
 	}
 }
 
@@ -179,28 +181,19 @@ func LoadJawtConfig(configPath string) (*JawtConfig, error) {
 func LoadProjectConfig(projectDir string) (*ProjectConfig, error) {
 	configPath := filepath.Join(projectDir, "jawt.project.json")
 
-	config := DefaultProjectConfig()
-
 	// Check if a config file exists
-	if _, err := os.Stat(configPath); !os.IsNotExist(err) {
-		data, err := os.ReadFile(configPath)
-		if err != nil {
-			return nil, fmt.Errorf("failed to read project config: %w", err)
-		}
-
-		if err := json.Unmarshal(data, config); err != nil {
-			return nil, fmt.Errorf("failed to parse project config: %w", err)
-		}
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		return DefaultProjectConfig(), nil
 	}
 
-	// Check for tailwind.config.js
-	tailwindConfigPath := filepath.Join(projectDir, config.TailwindConfigPath)
-	if _, err := os.Stat(tailwindConfigPath); err == nil {
-		config.HasTailwindConfig = true
-	} else if os.IsNotExist(err) {
-		config.HasTailwindConfig = false
-	} else {
-		return nil, fmt.Errorf("failed to check for tailwind config file: %w", err)
+	data, err := os.ReadFile(configPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read project config: %w", err)
+	}
+
+	config := DefaultProjectConfig()
+	if err := json.Unmarshal(data, config); err != nil {
+		return nil, fmt.Errorf("failed to parse project config: %w", err)
 	}
 
 	return config, nil
