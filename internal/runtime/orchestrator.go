@@ -30,7 +30,7 @@ func NewOrchestrator(ctx context.Context, logger core.Logger, jawtCtx *core.Jawt
 
 	pm := process.NewProcessManager(orchCtx, logger, jawtCtx)
 
-	fw, err := NewFileWatcher(orchCtx, logger)
+	fw, err := NewFileWatcher(orchCtx, logger, jawtCtx)
 	if err != nil {
 		cancel()
 		return nil, fmt.Errorf("failed to create file watcher: %w", err)
@@ -74,7 +74,7 @@ func (o *Orchestrator) StartAll() error {
 	// Configure and start JML watcher
 	o.fileWatcher.SetWatchPatterns([]string{".jml"})
 	o.fileWatcher.OnEvent(o.handleJmlFileEvent)
-	if err := o.fileWatcher.AddPathsRecursive([]string{o.jawtContext.Paths.ProjectRoot}); err != nil {
+	if err := o.fileWatcher.AddPathsRecursive(o.jawtContext.Paths.GetWatchPaths()); err != nil {
 		return fmt.Errorf("failed to add paths to JML watcher: %w", err)
 	}
 
