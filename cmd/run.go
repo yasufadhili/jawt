@@ -67,7 +67,7 @@ Monitors your JML files for changes and automatically reloads the browser.`,
 
 		buildOptions := core.NewBuildOptions()
 		// Check for tailwind.config.js
-		tailwindConfigPath := paths.GetAbsolutePath(projectConfig.TailwindConfigPath)
+		tailwindConfigPath := projectConfig.GetTailwindConfigPath(projectDir)
 		if _, err := os.Stat(tailwindConfigPath); err == nil {
 			buildOptions.UsesTailwindCSS = true
 		} else if !os.IsNotExist(err) {
@@ -75,12 +75,17 @@ Monitors your JML files for changes and automatically reloads the browser.`,
 			os.Exit(1)
 		}
 
+		// Override port if specified by flag
+		if port != 6500 { // 6500 is the default value for the flag
+			projectConfig.SetDevServerPort(port)
+		}
+
 		ctx := core.NewJawtContext(cfg, projectConfig, paths, logger, buildOptions)
 
 		logger.Info("Starting project",
 			core.StringField("name", projectConfig.App.Name),
 			core.StringField("directory", projectDir),
-			core.StringField("server", projectConfig.GetServerAddress()))
+			core.StringField("server", projectConfig.GetDevServerAddress()))
 
 		// Create and start the orchestrator
 		orchestrator, err := runtime.NewOrchestrator(cmd.Context(), logger, ctx)
@@ -108,7 +113,7 @@ Monitors your JML files for changes and automatically reloads the browser.`,
 }
 
 func init() {
-	runCmd.Flags().IntVarP(&port, "port", "p", 6500, "Specify custom port")
-	runCmd.Flags().BoolVarP(&clearCache, "clear-cache", "c", false, "Run with cleared cache")
+	runCmd.Flags().IntVarP(&port, "port", "p", 6500, "Specify custom port for the development server")
+	runCmd.Flags().BoolVarP(&clearCache, "clear-cache", "c", false, "Run with cleared cache (not yet implemented)")
 	runCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Enable verbose logging")
 }

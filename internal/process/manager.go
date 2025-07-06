@@ -251,7 +251,7 @@ func (pm *ProcessManager) StartNodeProcess(name string, args []string, workingDi
 func (pm *ProcessManager) StartDevServer(ctx *core.JawtContext, serverBinary string) error {
 	options := ProcessOptions{
 		Command:          serverBinary,
-		Args:             []string{"--port", fmt.Sprintf("%d", ctx.ProjectConfig.DevPort)},
+		Args:             []string{"--port", fmt.Sprintf("%d", ctx.ProjectConfig.Server.Port)},
 		WorkingDir:       ctx.Paths.ProjectRoot,
 		Env:              nil,
 		RestartOnFailure: true,
