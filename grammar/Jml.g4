@@ -442,7 +442,7 @@ finallyClause
     : 'finally' block
     ;
 
-// Expressions
+// Expressions - Fixed left recursion issues
 expression
     : conditionalExpression
     ;
@@ -485,27 +485,19 @@ postfixExpression
     ;
 
 leftHandSideExpression
-    : newExpression
-    | callExpression
-    ;
-
-newExpression
-    : memberExpression      # MemberNewExpression
-    | 'new' newExpression   # NewNewExpression
-    ;
-
-callExpression
-    : memberExpression arguments
-    | callExpression arguments
-    | callExpression '[' expression ']'
-    | callExpression '.' Identifier
+    : memberExpression
+    | memberExpression arguments                          // call expression
+    | leftHandSideExpression arguments                    // chained calls
+    | leftHandSideExpression '[' expression ']'          // member access
+    | leftHandSideExpression '.' Identifier               // property access
+    | 'new' leftHandSideExpression                        // new expression
+    | 'new' leftHandSideExpression arguments              // new with arguments
     ;
 
 memberExpression
     : primaryExpression
     | memberExpression '[' expression ']'
     | memberExpression '.' Identifier
-    | 'new' memberExpression arguments
     ;
 
 arguments
