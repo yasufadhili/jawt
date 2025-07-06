@@ -847,10 +847,10 @@ func TestProjectPathsGetWatchPaths2(t *testing.T) {
 	watchPaths := paths.GetWatchPaths()
 
 	expectedPaths := []string{
-		paths.AppDir,
-		paths.ComponentsDir,
-		paths.ScriptsDir,
-		paths.AssetsDir,
+		paths.GetAbsolutePath(projectConfig.Paths.Pages),
+		paths.GetAbsolutePath(projectConfig.Paths.Components),
+		paths.GetAbsolutePath(projectConfig.Paths.Scripts),
+		paths.GetAbsolutePath(projectConfig.Paths.Assets),
 		paths.ProjectConfigPath,
 		paths.TSConfigPath,
 		paths.TailwindConfigPath,
@@ -880,9 +880,9 @@ func TestProjectPathsGetTempFile2(t *testing.T) {
 	filename := "test-temp-file.txt"
 	tempFile := paths.GetTempFile(filename)
 
-	expectedPath := filepath.Join(paths.TempDir, filename)
+	expectedPath := filepath.Join(paths.ProjectRoot, ".jawt", "tmp", filename)
 	if tempFile != expectedPath {
-		t.Errorf("expected temp file path %s, got %s", expectedPath, tempFile)
+		t.Errorf("expected cache file path %s, got %s", expectedPath, tempFile)
 	}
 }
 
@@ -899,7 +899,7 @@ func TestProjectPathsGetCacheFile2(t *testing.T) {
 	filename := "test-cache-file.json"
 	cacheFile := paths.GetCacheFile(filename)
 
-	expectedPath := filepath.Join(paths.CacheDir, filename)
+	expectedPath := filepath.Join(paths.ProjectRoot, ".jawt", "cache", filename)
 	if cacheFile != expectedPath {
 		t.Errorf("expected cache file path %s, got %s", expectedPath, cacheFile)
 	}
