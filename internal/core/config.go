@@ -284,6 +284,11 @@ func (pc *ProjectConfig) GetServerAddress() string {
 	return fmt.Sprintf("%s:%d", pc.Server.Host, pc.Server.Port)
 }
 
+// GetDevServerAddress returns the full dev server address
+func (pc *ProjectConfig) GetDevServerAddress() string {
+	return fmt.Sprintf("%s:%d", pc.Server.Host, pc.DevPort)
+}
+
 // IsMinificationEnabled returns whether minification is enabled
 func (pc *ProjectConfig) IsMinificationEnabled() bool {
 	return pc.Build.Minify
