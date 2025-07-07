@@ -1,140 +1,130 @@
-# Installation & Setup
+# Getting Set Up
 
-Getting JAWT up and running is straightforward. Choose your platform below and follow the simple installation steps.
+Alright, let's get JAWT installed. It's pretty painless.
 
-## Quick Installation
+## The Quick Way
 
 ### Linux (Debian/Ubuntu)
 
-Install JAWT with a single command that automatically downloads and configures everything:
+I made a script that handles everything. Just pop this in your terminal:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/yasufadhili/jawt/main/install.sh | sudo bash
 ```
 
+This little command will:
 
-This script will:
+-   Figure out your system's architecture.
+-   Grab the latest JAWT release.
+-   Stick it in the right place.
+-   Set up your PATH.
+-   Handle all the permissions.
 
-- Detect your system architecture automatically
-- Download the latest JAWT release for your platform
-- Install JAWT to the appropriate system directory
-- Configure your PATH environment variable
-- Set up all necessary permissions
+### Windows (Coming Soon)
 
-### Windows (Soon)
+I'll have an MSI installer for Windows soon. It'll be a simple download-and-click affair.
 
-Download and run the MSI installer:
+## Did it Work?
 
-**[Download JAWT for Windows](#)**
-
-The installer will:
-
-- Install JAWT to `Program Files`
-- Add JAWT to your system PATH
-- Create Start Menu shortcuts
-- Set up file associations for `.jml` files
-
-## Verify Installation
-
-Once installed, verify JAWT is working correctly by checking the version:
+To make sure everything is installed correctly, just ask JAWT for its version:
 
 ```bash
 jawt --version
 ```
 
-You should see output similar to:
+You should see something like this:
+
 ```
 JAWT v0.1.0
 Platform: linux/amd64
 ```
 
-## System Requirements
+## What You'll Need
 
-JAWT has minimal system requirements and works on:
+JAWT is pretty low-maintenance.
 
-### Supported Platforms
-- **Linux**: x64, ARM64 (Ubuntu 18.04+, CentOS 7+, Debian 9+)
-- **macOS**: x64, Apple Silicon (macOS 10.15+)
-- **Windows**: x64, ARM64 (Windows 10+, Windows Server 2019+)
+### Supported Systems
+-   **Linux**: x64, ARM64 (Ubuntu 18.04+, CentOS 7+, Debian 9+)
+-   **macOS**: x64, Apple Silicon (macOS 10.15+)
+-   **Windows**: x64, ARM64 (Windows 10+, Windows Server 2019+)
 
 ### Dependencies
-- **No external dependencies required** - JAWT is a single binary
-- **Modern browser** for development server (Firefox, Edge, Chrome, Safari)
-- **Text editor** of your choice (VS Code, Vim, Emacs, etc.)
+-   **None.** JAWT is a single binary. No need to install anything else.
+-   A modern browser (like Firefox, Edge, Chrome, or Safari).
+-   Your favourite text editor.
 
-## Troubleshooting
+## If Something Went Wrong
 
-### Permission Issues (Linux/macOS)
+### Permission Problems (Linux/macOS)
 
-If you encounter permission errors, ensure you're running the install script with `sudo`:
+If you get permission errors, you probably forgot to run the install script with `sudo`.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/yasufadhili/jawt/main/install.sh | sudo bash
 ```
 
-### Command Not Found
+### "Command Not Found"
 
-If `jawt --version` returns "command not found":
+If your terminal says `jawt: command not found`:
 
-**Linux/macOS**: Restart your terminal or run:
+**Linux/macOS**: Try restarting your terminal or running:
 ```bash
-source ~/.bashrc  # or ~/.zshrc if using zsh
+source ~/.bashrc  # or ~/.zshrc if you're a zsh person
 ```
 
-**Windows**: Restart Command Prompt or PowerShell
+**Windows**: Restart your Command Prompt or PowerShell.
 
 ### Firewall/Antivirus Warnings
 
-Some antivirus software may flag the installer. JAWT is safe to install - you can:
-- Add an exception for the JAWT installer
-- Download directly from GitHub releases if needed
-- Build from source if you prefer (see Contributing guide)
+Some antivirus programs can be a bit jumpy. JAWT is safe, I promise. You can add an exception for it or, if you're feeling adventurous, build it from the source yourself.
 
-## Manual Installation
+## The Manual Way
 
-If you prefer manual installation or need a specific version:
+If you'd rather do it yourself:
 
-1. Visit the [JAWT releases page](https://github.com/yasufadhili/jawt/releases)
-2. Download the appropriate archive for your platform
-3. Extract the `jawt` binary to a directory in your PATH
-4. Make the binary executable (Linux/macOS): `chmod +x jawt`
+1.  Go to the [JAWT releases page](https://github.com/yasufadhili/jawt/releases).
+2.  Download the right archive for your system.
+3.  Extract the `jawt` binary and put it somewhere in your PATH.
+4.  Make it executable (on Linux/macOS): `chmod +x jawt`
 
-## Development Environment Setup
+## Editor Setup
 
-JAWT currently has no support in any major text editor or IDE. You can still just write JML code in any text editor
+Right now, there's no fancy syntax highlighting or IntelliSense for JML in any major editor. It's on the to-do list! For now, you can just write it as plain text.
+
 ## Configuration
 
-JAWT works with zero configuration, but you can customise behaviour:
+JAWT is designed to work without any configuration. But if you want to customise things:
 
-### Global Configuration
-JAWT looks for configuration in:
+### Global Config
+JAWT looks for a config file here:
 
-- `~/.jawt/config.json` (Linux/macOS)
+-   `~/.jawt/config.json` (Linux/macOS)
+-   `%APPDATA%\jawt\config.json` (Windows)
 
-- `%APPDATA%\jawt\config.json` (Windows)
-
-### Project Configuration
-Each project can have its own `jawt.config.json` file for project-specific settings.
+### Project Config
+Each project can have its own `jawt.config.json` for project-specific settings.
 
 ## Updating JAWT
 
 ### Automatic Updates
-JAWT can update itself:
+
+I've added a command to let JAWT update itself:
 ```bash
 jawt update
 ```
 
 ### Manual Updates
-Re-run the installation script to get the latest version:
+
+Just run the installation script again to get the latest version.
 
 **Linux/macOS**:
 ```bash
 curl -fsSL https://raw.githubusercontent.com/yasufadhili/jawt/main/install.sh | sudo bash
 ```
 
-**Windows**: Download and run the latest MSI installer
+**Windows**: Download and run the new MSI installer when it's ready.
 
-## Uninstalling JAWT
+## Getting Rid of JAWT
 
 ### Linux/macOS
 ```bash
@@ -143,16 +133,17 @@ sudo rm -rf ~/.jawt
 ```
 
 ### Windows
-Use "Add or Remove Programs" in Windows Settings, or run:
+
+Use "Add or Remove Programs" or run:
 ```powershell
 jawt uninstall
 ```
 
-## Next Steps
+## What's Next?
 
-Now that JAWT is installed, you're ready to start building:
+Now that you're all set up, you're ready to build something.
 
-- **[Create Your First Project](../tutorial/first-page.md)** - Build a simple JAWT application from scratch
-- **[Project Structure](../getting-started/project-structure.md)** - Understand how JAWT projects are organised
-- **[JML Quick Start](../jml/index.md)** - Learn the basics of JML syntax
-- **[CLI Reference](../references/cli.md)** - Explore all available JAWT commands
+-   **[Create Your First Project](../tutorial/first-page.md)** - Let's build a simple JAWT app.
+-   **[Project Structure](../getting-started/project-structure.md)** - A look at how JAWT projects are organized.
+-   **[JML Quick Start](../jml/index.md)** - The basics of the JML language.
+-   **[CLI Reference](../references/cli.md)** - All the commands you can use.

@@ -1,108 +1,18 @@
-# Checker (`internal/checker`)
+# The Checker (`internal/checker`)
 
-The `internal/checker` package is responsible for semantic analysis of JML code. It ensures that the code is not only syntactically correct (parsed by the compiler) but also semantically valid. This involves building and managing a symbol table to track declarations and their scopes, and then using this information to identify issues like undefined variables, type mismatches, and incorrect usage of components.
+The `checker` is where we make sure the JML code actually makes sense. The parser ensures the syntax is right, but the checker handles the semantics. It answers questions like, "Is this variable declared?" or "Are you trying to add a string to a number?"
 
-## Core Concepts
+## The Core Ideas
 
-*   **Symbol Table**: A data structure that stores information about identifiers (symbols) in the program, such as their name, type, kind (e.g., variable, function, component), and scope.
-*   **Scope**: A region of the program where a declared name is valid. The checker manages different types of scopes (global, document, function, block, element).
-*   **Symbol**: Represents a declared entity in the code. The checker defines various types of symbols (e.g., `PropertySymbol`, `StateSymbol`, `FunctionSymbol`).
-*   **Semantic Analysis**: The process of checking the meaning and consistency of the code, going beyond just its syntax.
+-   **Symbol Table**: This is the heart of the checker. It's a data structure that keeps track of every identifier (variable, function, component, etc.) in the code. It knows what they are, what their type is, and where they live.
+-   **Scope**: This is all about context. A variable declared inside a function only exists within that function. The checker manages a stack of scopes (global, document, function, block) to keep track of what's visible where.
+-   **Semantic Analysis**: This is the fancy term for what the checker does. It walks the AST, uses the symbol table to understand the code, and reports any issues it finds.
 
-## Key Data Structures
-
-### `SymbolKind`
-
-An enumeration representing the different types of symbols that can be stored in the symbol table.
-
-```go
-type SymbolKind int
-
-const (
-	SymbolProperty SymbolKind = iota
-	SymbolState
-	SymbolComponent
-	SymbolFunction
-	SymbolVariable
-	SymbolParameter
-	SymbolImport
-	SymbolBuiltIn
-)
-```
-
-### `ScopeKind`
-
-An enumeration representing the different types of scopes in the program.
-
-```go
-type ScopeKind int
-
-const (
-	ScopeGlobal ScopeKind = iota
-	ScopeDocument
-	ScopeFunction
-	ScopeBlock
-	ScopeElement
-)
-```
-
-### `Symbol` Interface
-
-The interface that all symbol types must implement.
-
-```go
-type Symbol interface {
-	Name() string
-	Kind() SymbolKind
-	Type() string
-	Position() ast.Position
-	String() string
-}
-```
-
-### `BaseSymbol`
-
-Provides common fields and methods for all concrete symbol implementations.
-
-```go
-type BaseSymbol struct {
-	name     string
-	kind     SymbolKind
-	typeStr  string
-	position ast.Position
-}
-```
-
-### Concrete Symbol Types
-
-The `checker` package defines several concrete implementations of the `Symbol` interface:
-
-*   `PropertySymbol`: Represents a component property.
-*   `StateSymbol`: Represents a component state variable.
-*   `ComponentSymbol`: Represents a JML component (document).
-*   `FunctionSymbol`: Represents a function declaration.
-*   `ParameterSymbol`: Represents a function parameter.
-*   `VariableSymbol`: Represents a general variable declaration (`let`, `const`).
-*   `ImportSymbol`: Represents an import statement.
-*   `BuiltInSymbol`: Represents built-in types and functions (e.g., `string`, `console.log`).
-
-### `Scope`
-
-Represents a lexical scope, holding a collection of symbols and a reference to its parent scope.
-
-```go
-type Scope struct {
-	kind     ScopeKind
-	parent   *Scope
-	children []*Scope
-	symbols  map[string]Symbol
-	name     string // Optional name for debugging
-}
-```
+## The Key Data Structures
 
 ### `SymbolTable`
 
-Manages the entire symbol table, including the global scope and the current active scope. It provides methods for entering and exiting scopes, defining new symbols, and looking up existing symbols.
+This is the main manager for all the symbols and scopes. It has a global scope, and it keeps track of the current scope as it walks the AST.
 
 ```go
 type SymbolTable struct {
@@ -113,9 +23,36 @@ type SymbolTable struct {
 }
 ```
 
+### `Scope`
+
+A `Scope` holds all the symbols declared within it and has a pointer to its parent scope. This is how we get lexical scoping.
+
+```go
+type Scope struct {
+	kind     ScopeKind
+	parent   *Scope
+	children []*Scope
+	symbols  map[string]Symbol
+	name     string // Just for debugging
+}
+```
+
+### `Symbol` Interface
+
+This is the base interface for all symbols. It just defines the common methods that every symbol must have.
+
+```go
+type Symbol interface {
+	Name() string
+	Kind() SymbolKind
+	Type() string
+	Position() ast.Position
+}
+```
+
 ### `Checker`
 
-The main struct for performing semantic checks. It embeds `ast.BaseVisitor` to traverse the AST and uses a `SymbolTable` to manage symbols and scopes, and a `diagnostic.Reporter` to report issues.
+The main struct for the checker. It's an `ast.Visitor`, so it can walk the AST. It has a `SymbolTable` to manage symbols and a `diagnostic.Reporter` to report any errors it finds.
 
 ```go
 type Checker struct {
@@ -125,96 +62,20 @@ type Checker struct {
 }
 ```
 
-## Functions & Methods
+## The Process
 
-### `NewChecker`
+### `EnterScope` and `ExitScope`
 
-```go
-func NewChecker(reporter *diagnostic.Reporter) *Checker
-```
-
-Creates a new `Checker` instance, initializing its internal `SymbolTable`.
-
-### `NewSymbolTable`
-
-```go
-func NewSymbolTable() *SymbolTable
-```
-
-Creates a new `SymbolTable`, pre-populating it with built-in types and functions.
-
-### `EnterScope`, `ExitScope`
-
-```go
-func (st *SymbolTable) EnterScope(kind ScopeKind, name string) *Scope
-func (st *SymbolTable) ExitScope() error
-```
-
-Methods of `SymbolTable` to manage the scope stack. `EnterScope` creates a new child scope and makes it the current scope. `ExitScope` reverts to the parent scope.
+As the checker walks the AST, it calls `EnterScope` whenever it enters a new scope (like a function or a block). When it leaves that scope, it calls `ExitScope`. This keeps the `current` scope in the `SymbolTable` up to date.
 
 ### `Define`
 
-```go
-func (st *SymbolTable) Define(symbol Symbol) error
-func (s *Scope) Define(symbol Symbol) error
-```
+When the checker sees a declaration (like `let x = 10`), it creates a new symbol and calls `Define` to add it to the current scope.
 
-Adds a new symbol to the current scope. Returns an error if a symbol with the same name is already defined in the current scope.
+### `Lookup` and `LookupRecursive`
 
-### `Lookup`, `LookupRecursive`
+When the checker sees an identifier being used (like `y = x + 5`), it calls `LookupRecursive` to find the declaration of that identifier. It starts in the current scope and then walks up the parent scopes until it finds the symbol or reaches the global scope.
 
-```go
-func (st *SymbolTable) Lookup(name string) (Symbol, bool)
-func (s *Scope) Lookup(name string) (Symbol, bool)
-func (s *Scope) LookupRecursive(name string) (Symbol, bool)
-```
+## How It's Used
 
-`Lookup` searches for a symbol only in the current scope. `LookupRecursive` searches in the current scope and then recursively in parent scopes until the symbol is found or the global scope is reached.
-
-### `DefineComponent`, `GetComponent`, `GetAllComponents`
-
-Methods of `SymbolTable` specifically for managing `ComponentSymbol`s, which are stored globally.
-
-### `IsBuiltIn`, `GetBuiltIn`
-
-Methods of `SymbolTable` to check for and retrieve built-in symbols.
-
-### `Debug`
-
-```go
-func (st *SymbolTable) Debug() string
-```
-
-Returns a string representation of the entire symbol table structure, useful for debugging.
-
-## Usage Example
-
-The `Checker` would typically be used after the AST has been built by the compiler. It traverses the AST, populating the symbol table and reporting any semantic errors.
-
-```go
-// Example (conceptual usage within a larger compilation pipeline):
-// import (
-//     "github.com/yasufadhili/jawt/internal/ast"
-//     "github.com/yasufadhili/jawt/internal/checker"
-//     "github.com/yasufadhili/jawt/internal/diagnostic"
-// )
-
-// func performSemanticAnalysis(documentAST *ast.Document) {
-//     reporter := diagnostic.NewReporter()
-//     checker := checker.NewChecker(reporter)
-
-//     // Traverse the AST to perform checks and populate the symbol table
-//     ast.Walk(checker, documentAST)
-
-//     if reporter.HasErrors() {
-//         fmt.Println("Semantic errors found:")
-//         printer := diagnostic.NewPrinter()
-//         printer.Print(reporter)
-//     } else {
-//         fmt.Println("Semantic analysis completed with no errors.")
-//     }
-
-//     // You can also inspect the symbol table for debugging or further analysis
-//     // fmt.Println(checker.table.Debug())
-// }
-```
+The checker runs after the parser has built the AST. It walks the AST, fills up the symbol table, and reports any semantic errors it finds. If the checker passes, we can be pretty confident that the code is valid and ready for the next stage: code generation.

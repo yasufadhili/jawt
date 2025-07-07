@@ -194,7 +194,7 @@ Ready to dive in?
 - **[Project Structure](getting-started/project-structure.md)** - Learn how to organise your Jawt projects.
 
 ### Language Reference
-- **[JML Syntax](jml/syntax.md)** - The full JML language spec.
+- **[JML Syntax](jml/index.md)** - The full JML language spec.
 - **[Pages](jml/pages.md)** - All about creating pages and routes.
 - **[Components](jml/components.md)** - Master building interactive components.
 - **[Scripts](jml/scripts.md)** - Using TypeScript for dynamic functionality.

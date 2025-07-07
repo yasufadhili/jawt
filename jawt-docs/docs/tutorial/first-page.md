@@ -1,68 +1,66 @@
 # Your First JAWT Page
 
-In this tutorial, you'll learn how to create your first web page using JML. Think of this as your "Hello, World!" moment with JAWT—we'll focus purely on page creation using built-in components, without any external dependencies or complex features.
+This is your "Hello, World!" for JAWT. We'll create a simple web page using JML and some of the built-in components. No complex stuff, just the basics to get you started.
 
 ## What You'll Learn
 
-- How to set up a basic JAWT project
-- Understanding JML page syntax and structure
-- Using built-in components like `Container`, `Text`, and `Button`
-- Applying styling with Tailwind CSS classes
-- Creating a complete, functional web page
+-   How to create a new JAWT project.
+-   The basic structure of a JML page.
+-   How to use built-in components like `Container`, `Text`, and `Button`.
+-   How to apply styles with Tailwind CSS.
 
 ## Prerequisites
 
-- JAWT installed on your system
-- Basic understanding of HTML and CSS concepts
-- Familiarity with Tailwind CSS is helpful but not required
+-   You'll need JAWT installed.
+-   A basic understanding of HTML and CSS will be helpful.
 
-## Setting Up Your Project
+## Setting Up the Project
 
-Let's start by creating a new JAWT project:
+First, let's create a new project.
 
 ```bash
 jawt init my-first-page
 cd my-first-page
 ```
 
-This creates a project structure like this:
+This will give you a basic project structure:
 ```
 my-first-page/
 ├── app/
-│   └── index.jml          # Your main page file
-├── components/            # For future components
-├── assets/               # Static assets
-├── app.json             # Project configuration
-└── jawt.config.json     # Build configuration
+│   └── index.jml          # This is where we'll work
+├── components/            # For later
+├── assets/               # For images, etc.
+├── app.json             # Project config
+└── jawt.config.json     # Build config
 ```
 
-## Understanding JML Page Structure
+## The Anatomy of a JML Page
 
-Every JML page follows a specific pattern. Let's examine the basic structure:
+Every JML page has a simple, predictable structure.
 
 ```jml
 _doctype page pageName
 
 Page {
     title: "Page Title"
-    description: "Page description"
+    description: "A description of the page"
     
-    // Single root component goes here
+    // You can only have one component directly inside a Page
     Container {
-        // Page content
+        // The rest of your page content goes here
     }
 }
 ```
 
-### Key Components of a JML Page
+### The Key Parts
 
-1. **Document Type Declaration**: `_doctype page pageName` - This tells JAWT that this file should compile to an HTML page
-2. **Page Component**: The `Page` wrapper that contains metadata and your page content
-3. **Single Root Component**: Pages can only have one direct child component (like React's JSX)
+1.  **`_doctype page pageName`**: This tells JAWT to compile this file into an HTML page.
+2.  **`Page`**: A special component that holds metadata and the content of your page.
+3.  **A Single Root Component**: You can only have one component directly inside `Page`. Usually, this is a `Container`.
 
-## Creating Your First Page
+## Let's Build Something
 
-Let's replace the default content in `app/index.jml` with a simple welcome page:
+Open up `app/index.jml` and replace its content with this:
 
 ```jml
 _doctype page welcome
@@ -80,7 +78,7 @@ Page {
         }
         
         Text {
-            text: "This is my first page built with JML"
+            text: "This is my first page built with JML."
             style: "text-lg text-gray-700 mb-8 text-center"
         }
         
@@ -92,33 +90,36 @@ Page {
 }
 ```
 
-## Understanding Built-in Components
+## The Built-in Components
 
-JAWT provides several built-in components that you can use immediately:
+JAWT gives you a few basic components to start with.
 
-### Container
-The `Container` component is like a `<div>` in HTML—it groups other elements together.
+### `Container`
+
+This is your basic `<div>`. It's for grouping other elements.
 
 ```jml
 Container {
     style: "flex flex-col space-y-4 p-6"
     
-    // Child components go here
+    // Other components go here
 }
 ```
 
-### Text
-The `Text` component displays text content, similar to `<p>`, `<h1>`, etc. in HTML.
+### `Text`
+
+This is for displaying text. Think of it as a `<p>` or `<h1>` tag.
 
 ```jml
 Text {
-    text: "Your text here"
+    text: "Some text here."
     style: "text-xl font-semibold text-gray-800"
 }
 ```
 
-### Button
-The `Button` component creates clickable buttons.
+### `Button`
+
+This creates a clickable button.
 
 ```jml
 Button {
@@ -129,7 +130,7 @@ Button {
 
 ## Styling with Tailwind CSS
 
-JAWT uses Tailwind CSS for styling. You apply styles using the `style` property with Tailwind utility classes:
+JAWT is set up to use Tailwind CSS for styling. You just add a `style` property with Tailwind's utility classes.
 
 ```jml
 Container {
@@ -137,33 +138,9 @@ Container {
 }
 ```
 
-### Common Tailwind Patterns
+## A More Complete Example
 
-Here are some useful Tailwind class combinations:
-
-**Centering content:**
-```jml
-style: "flex items-center justify-center"
-```
-
-**Card-like appearance:**
-```jml
-style: "bg-white shadow-md rounded-lg p-6"
-```
-
-**Responsive spacing:**
-```jml
-style: "p-4 md:p-8 lg:p-12"
-```
-
-**Colour schemes:**
-```jml
-style: "bg-blue-500 text-white hover:bg-blue-600"
-```
-
-## Building a Complete Example
-
-Let's create a more comprehensive page that showcases different components and styling:
+Let's make a slightly more interesting page.
 
 ```jml
 _doctype page portfolio
@@ -207,103 +184,34 @@ Page {
                     style: "bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-colors shadow-md"
                 }
             }
-            
-            Container {
-                style: "bg-white rounded-xl shadow-lg p-8"
-                
-                Text {
-                    text: "Skills"
-                    style: "text-2xl font-semibold text-gray-800 mb-6"
-                }
-                
-                Container {
-                    style: "grid grid-cols-2 md:grid-cols-3 gap-4"
-                    
-                    Container {
-                        style: "bg-blue-100 text-blue-800 px-4 py-2 rounded-lg text-center"
-                        
-                        Text {
-                            text: "JAWT"
-                            style: "font-medium"
-                        }
-                    }
-                    
-                    Container {
-                        style: "bg-green-100 text-green-800 px-4 py-2 rounded-lg text-center"
-                        
-                        Text {
-                            text: "JavaScript"
-                            style: "font-medium"
-                        }
-                    }
-                    
-                    Container {
-                        style: "bg-purple-100 text-purple-800 px-4 py-2 rounded-lg text-center"
-                        
-                        Text {
-                            text: "CSS"
-                            style: "font-medium"
-                        }
-                    }
-                    
-                    Container {
-                        style: "bg-red-100 text-red-800 px-4 py-2 rounded-lg text-center"
-                        
-                        Text {
-                            text: "HTML"
-                            style: "font-medium"
-                        }
-                    }
-                    
-                    Container {
-                        style: "bg-yellow-100 text-yellow-800 px-4 py-2 rounded-lg text-center"
-                        
-                        Text {
-                            text: "UI Design"
-                            style: "font-medium"
-                        }
-                    }
-                    
-                    Container {
-                        style: "bg-indigo-100 text-indigo-800 px-4 py-2 rounded-lg text-center"
-                        
-                        Text {
-                            text: "Tailwind"
-                            style: "font-medium"
-                        }
-                    }
-                }
-            }
         }
     }
 }
 ```
 
-## Running Your Page
+## See It in Action
 
-To see your page in action:
+To see your page, run the dev server:
 
 ```bash
-# Start the development server
+# Start the dev server
 jawt run
-
-# Your page will be available at http://localhost:6500
 ```
 
-The development server includes hot reload, so any changes you make to your JML file will automatically update in the browser.
+Your page will be running at `http://localhost:6500`. The server has hot reloading, so any changes you make to the JML file will show up in the browser instantly.
 
-## Page Properties Reference
+## Page Properties
 
-The `Page` component supports several properties for controlling the HTML document:
+The `Page` component has a few properties you can set:
 
 ```jml
 Page {
-    title: "Page Title"                    // Sets <title> tag
-    description: "Page description"         // Sets meta description
-    favicon: "/favicon.ico"                 // Sets favicon
-    name: "internal-page-name"             // Internal identifier
+    title: "Page Title"                    // The <title> tag
+    description: "Page description"         // The meta description
+    favicon: "/favicon.ico"                 // The favicon
+    name: "internal-page-name"             // An internal name for the page
     keywords: "keyword1, keyword2"         // SEO keywords
-    author: "Your Name"                    // Page author
+    author: "Your Name"                    // The author of the page
     viewport: "width=device-width, initial-scale=1.0"  // Viewport settings
     
     // Your page content
@@ -315,49 +223,29 @@ Page {
 
 ## Building for Production
 
-When you're ready to deploy your page:
+When you're ready to deploy your page, just run:
 
 ```bash
-# Build optimised version
+# Create an optimized build
 jawt build
-
-# Your HTML file will be in the dist/ directory
 ```
 
-This creates a `dist/` directory with your compiled page file, optimised and ready for deployment to any web server.
+This will create a `dist/` directory with your compiled page, ready to be uploaded to any web server.
 
 ## Key Takeaways
 
-1. **JML is Declarative**: You describe what you want, not how to build it
-2. **Single Root Component**: Pages can only have one direct child (usually a `Container` or `Main`)
-3. **Built-in Components**: `Container`, `Text`, and `Button` cover most basic needs
-4. **Tailwind Styling**: Use the `style` property with Tailwind utility classes
-5. **Hot Reload**: Changes appear instantly during development
+1.  **JML is declarative**: You describe the "what," not the "how."
+2.  **Pages have a single root component**: Usually a `Container`.
+3.  **Built-in components are your friends**: `Container`, `Text`, and `Button` are great starting points.
+4.  **Styling is done with Tailwind**: Use the `style` property.
+5.  **Hot reload is awesome**: See your changes instantly.
 
-## Next Steps
+## What's Next?
 
-Now that you've created your first JAWT page, you might want to explore:
+Now that you've built a basic page, you can explore:
 
-- Creating reusable components for more complex applications
-- Adding interactive behaviour with JML scripting
-- Building multi-page applications with routing
-- Integrating WebAssembly modules for performance-critical features
+-   Creating your own reusable components.
+-   Adding interactivity with TypeScript.
+-   Building multi-page apps with routing.
 
-## Troubleshooting
-
-**Page not loading?**
-- Check that your `_doctype page` declaration is correct
-- Ensure your JML syntax is valid (proper braces, quotes)
-- Look for error messages in the terminal running `jawt run`
-
-**Styling not appearing?**
-- Verify Tailwind class names are correct
-- Check that `style` properties are in quotes
-- Remember that Tailwind uses specific class names (e.g., `text-blue-600`, not `text-blue`)
-
-**Changes not reflecting?**
-- Save your file and wait a moment for hot reload
-- Check the browser console for any errors
-- Try stopping and restarting `jawt run`
-
-Congratulations! You've just created your first JAWT page using JML. You've learned the fundamental concepts that will serve as the foundation for building more complex web applications with JAWT.
+Congrats! You've built your first page with JAWT. You now know the fundamentals for building much more complex applications.

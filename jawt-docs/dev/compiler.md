@@ -1,20 +1,20 @@
-# Compiler (`internal/compiler`)
+# The Compiler (`internal/compiler`)
 
-The `internal/compiler` package is responsible for parsing JML (JAWT Markup Language) files and constructing their Abstract Syntax Tree (AST). It leverages ANTLR4 for grammar definition and code generation, providing the foundational parsing capabilities for the JAWT toolchain.
+The `compiler` package is where the raw JML code gets turned into something the rest of the toolchain can understand: the Abstract Syntax Tree (AST). It uses ANTLR4 to do the heavy lifting of parsing the code.
 
-## Core Concepts
+## The Core Ideas
 
-*   **JML Grammar**: Defined in `Jml.g4` (located in the top-level `grammar/` directory), this grammar specifies the syntax of the JML language.
-*   **ANTLR4**: A powerful parser generator that reads the `Jml.g4` grammar and generates Go source code for the lexer, parser, and visitor interfaces.
-*   **Lexer**: Converts the input JML file into a stream of tokens.
-*   **Parser**: Takes the token stream and builds a parse tree (concrete syntax tree) based on the grammar rules.
-*   **AST Builder (`AstBuilder`)**: A custom ANTLR visitor that traverses the parse tree and constructs the more abstract and semantically rich AST (defined in `internal/ast`).
+-   **JML Grammar**: The `Jml.g4` file (in the top-level `grammar/` directory) is the rulebook for the JML language. It defines all the valid syntax.
+-   **ANTLR4**: This is a tool that takes the `Jml.g4` grammar and generates a Go parser for it. This saves me from having to write the parser by hand, which is a huge pain.
+-   **Lexer**: This is the first stage of the parser. It scans the JML code and breaks it down into a stream of tokens (like keywords, identifiers, operators, etc.).
+-   **Parser**: This takes the stream of tokens from the lexer and builds a parse tree. A parse tree is a very detailed, concrete representation of the code.
+-   **`AstBuilder`**: This is a custom visitor that walks the parse tree and builds our own, more abstract and useful AST (the one defined in the `internal/ast` package).
 
-## Key Data Structures
+## The Key Data Structures
 
 ### `Compiler`
 
-The main struct for compiling JML files.
+The main struct for the compiler. It's pretty simple right now.
 
 ```go
 type Compiler struct {
@@ -24,7 +24,7 @@ type Compiler struct {
 
 ### `AstBuilder`
 
-A custom ANTLR visitor that transforms the ANTLR-generated parse tree into the JAWT-specific AST.
+This is where the real work happens. It's a visitor that walks the ANTLR parse tree and builds our AST.
 
 ```go
 type AstBuilder struct {
@@ -34,100 +34,29 @@ type AstBuilder struct {
 }
 ```
 
-## Functions & Methods
-
-### `NewCompiler`
-
-```go
-func NewCompiler(ctx *core.JawtContext) *Compiler
-```
-
-Creates a new `Compiler` instance.
+## The Process
 
 ### `Compile`
 
-```go
-func (c *Compiler) Compile(file string, reporter *diagnostic.Reporter) (*ast.Document, error)
-```
+This is the main entry point for the compiler. It takes a file path and does two things:
 
-Compiles a single JML file. This is the primary entry point for the compilation process. It performs the following steps:
-1.  Parses the JML file using the ANTLR-generated parser (`parseFile`).
-2.  Builds the AST from the resulting parse tree using `AstBuilder`.
-3.  Returns the root `ast.Document` node of the generated AST.
+1.  Calls `parseFile` to get the ANTLR parse tree.
+2.  Uses `AstBuilder` to walk the parse tree and build our AST.
+
+It returns the `ast.Document` node, which is the root of our AST for that file.
 
 ### `parseFile`
 
-```go
-func parseFile(file string, reporter *diagnostic.Reporter) (antlr.Tree, error)
-```
+This is an internal helper that does the actual parsing with ANTLR. It sets up the lexer and parser and attaches a custom error listener so we can report syntax errors in a nice, user-friendly way.
 
-An internal helper function that handles the low-level parsing of a JML file using ANTLR. It sets up the lexer and parser, and attaches a custom error listener (`diagnostic.AntlrErrorListener`) to report syntax errors.
+## The Parser Generation Script (`parser/generate.sh`)
 
-### `NewAstBuilder`
+This script is a lifesaver. Whenever I make a change to the `Jml.g4` grammar file, I just run this script, and it automatically regenerates the Go parser code. This makes it super easy to evolve the JML language without having to do a bunch of manual, error-prone work.
 
-```go
-func NewAstBuilder(reporter *diagnostic.Reporter, file string) *AstBuilder
-```
-
-Creates a new `AstBuilder` instance.
-
-### `Visit` (on `AstBuilder`)
-
-```go
-func (b *AstBuilder) Visit(tree antlr.Tree) interface{}
-```
-
-This is the main entry point for the `AstBuilder` to start traversing the ANTLR parse tree. It dispatches to specific `Visit` methods (e.g., `VisitDocument`) based on the type of parse tree node.
-
-### `VisitDocument` (on `AstBuilder`)
-
-```go
-func (b *AstBuilder) VisitDocument(ctx *parser.DocumentContext) interface{}
-```
-
-This method is called by ANTLR when the `document` rule is encountered in the parse tree. It contains the logic to transform the ANTLR `DocumentContext` into an `ast.Document` node.
-
-## Parser Generation (`parser/generate.sh`)
-
-The `parser/generate.sh` script is a crucial part of the compiler setup. It automates the process of generating Go source code from the `Jml.g4` ANTLR grammar file.
-
-**Purpose:**
-*   Ensures that the lexer, parser, and base visitor for the JML grammar are up-to-date.
-*   Simplifies the development workflow by automating a repetitive and error-prone task.
-
-**Usage:**
+**How to use it:**
 
 ```bash
 ./internal/compiler/parser/generate.sh
 ```
 
-This script should be run whenever the `Jml.g4` grammar file is modified. It uses the `antlr-4.13.2-complete.jar` to generate Go files in the `internal/compiler/parser/generated/` directory. These generated files are then imported and used by the `compiler.go` to perform the actual parsing.
-
-## Usage Example
-
-```go
-// Example of compiling a JML file:
-// import (
-//     "github.com/yasufadhili/jawt/internal/compiler"
-//     "github.com/yasufadhili/jawt/internal/core"
-//     "github.com/yasufadhili/jawt/internal/diagnostic"
-// )
-
-// func compileMyJMLFile(filePath string, ctx *core.JawtContext) {
-//     comp := compiler.NewCompiler(ctx)
-//     reporter := diagnostic.NewReporter()
-
-//     astDoc, err := comp.Compile(filePath, reporter)
-//     if err != nil {
-//         ctx.Logger.Error("Compilation failed", core.ErrorField(err))
-//         if reporter.HasErrors() {
-//             printer := diagnostic.NewPrinter()
-//             printer.Print(reporter)
-//         }
-//         return
-//     }
-
-//     ctx.Logger.Info("Compilation successful! AST generated.", core.StringField("document_name", astDoc.Name.Name))
-//     // Now you can work with the generated AST (astDoc)
-// }
-```
+This script uses the `antlr-4.13.2-complete.jar` to generate the Go files in the `internal/compiler/parser/generated/` directory. These generated files are then used by the `compiler.go` to do the parsing.

@@ -1,32 +1,30 @@
-# JML Overview
+# JML: The Language of JAWT
 
-**JML is the heart of JAWT development.** It's a declarative language that combines structural clarity with the programming power of TypeScript, designed specifically for building modern web applications.
+**JML is the language you'll be speaking when you build with JAWT.** I designed it to be a declarative language that gets out of your way, mixing the structural clarity of markup with the power of TypeScript.
 
-## What Makes JML Special
+## What's the Big Deal with JML?
 
-Think of JML as a blueprint language for your applications. JML lets you describe what your application should be rather than how to build it piece by piece.
+Think of JML as a way to write blueprints for your app. Instead of telling the browser *how* to draw everything step-by-step, you just describe *what* you want the final thing to look like.
 
-### The Two Pillars of JML
+### The Two Flavours of JML
 
-JML is built around two core document types, each serving a distinct purpose:
+JML has two main "document types," each with a specific job:
 
-1. **Pages** — The foundations of your application
-2. **Components** — The reusable building blocks
+1.  **Pages** — The main canvases for your application.
+2.  **Components** — The reusable Lego bricks you build with.
 
-This separation is like having specialised tools in a workshop: pages handle structure and routing, whilst components provide reusable functionality and interactivity.
+This separation keeps things clean. Pages handle the overall structure and routing, while components handle the interactive bits and pieces.
 
-## Language Philosophy
+## The Philosophy: Declarative First
 
-### Declarative by Design
-
-JML embraces a declarative approach where you describe the desired outcome rather than the steps to achieve it:
+JML is all about being declarative. You describe the end result, not the process.
 
 ```jml
 // You describe WHAT you want
 Card {
     title: "Welcome"
     style: "bg-white shadow-lg rounded-lg p-6"
-    
+
     Text {
         content: "Hello, world!"
         style: "text-gray-700"
@@ -34,21 +32,21 @@ Card {
 }
 ```
 
-Compare this to imperative approaches where you'd manually create elements, set attributes, append children, and manage the DOM step by step.
+This is a lot cleaner than manually creating DOM elements, setting attributes, and appending them to each other.
 
-### TypeScript-Inspired Syntax
+### Familiar Syntax
 
-JML borrows heavily from TypeScript's syntax, making it familiar to developers whilst maintaining its declarative nature:
+If you've used TypeScript, JML should feel pretty familiar. I borrowed a lot of its syntax for variables, functions, and types.
 
 ```jml
-// Variables and functions work like TypeScript
+// Variables and functions feel like TypeScript
 const greeting = "Hello, JAWT!"
 
 function handleClick(): void {
     console.log("Button clicked!")
 }
 
-// But UI structure is declarative
+// But the UI part is declarative
 Button {
     text: greeting
     onClick: handleClick
@@ -56,11 +54,11 @@ Button {
 }
 ```
 
-## Document Types Explained
+## The Document Types in Detail
 
-### Pages: Your Application's Entry Points
+### Pages: Your App's Entry Points
 
-Pages represent complete web pages and serve as the entry points to your application.
+A page represents a whole web page. It's where you define things like the page title and pull in the components that make up the UI.
 
 ```jml
 _doctype page home
@@ -77,16 +75,15 @@ Page {
 }
 ```
 
-**Key characteristics:**
+**Key things to remember:**
 
-- Must begin with `_doctype page`
-- Can only have one direct child component
-- Handle routing and page metadata
-- Serve as application entry points
+-   Always starts with `_doctype page`.
+-   Can only have one component directly inside the `Page` block.
+-   Handles routing and page-level metadata.
 
-### Components: Reusable Building Blocks
+### Components: Your Reusable Building Blocks
 
-Components are like Lego bricks—individual pieces that can be combined in countless ways to build complex structures. They encapsulate both appearance and behaviour.
+Components are the best part. They're like custom HTML tags you can reuse everywhere. They can have their own logic and can be composed to create really complex UIs.
 
 ```jml
 _doctype component UserCard
@@ -112,16 +109,15 @@ Card {
 }
 ```
 
-**Key characteristics:**
+**Key things to remember:**
 
-- Begin with `_doctype component`
-- Accept props for customisation
-- Can import other components and scripts
-- Encapsulate reusable functionality
+-   Starts with `_doctype component`.
+-   Uses `props` to get data from its parent.
+-   Can import other components and scripts.
 
 ## The Import System
 
-JML's import system allows you to easily combine components and integrate TypeScript functionality:
+JML lets you pull in components and TypeScript code easily.
 
 ```jml
 // Import components from the global components directory
@@ -141,7 +137,7 @@ import browser
 
 ## TypeScript Integration
 
-JML seamlessly integrates with TypeScript through the script import system. Write your dynamic functionality in TypeScript and import it directly into your JML components:
+This is where JML really shines. You can write complex logic in TypeScript and use it right inside your components.
 
 ```typescript
 // scripts/counter.ts
@@ -206,7 +202,7 @@ function handleDecrement(): void {
 
 ## Styling with Tailwind CSS
 
-JML integrates seamlessly with Tailwind CSS through the `style` property:
+JML is set up to work with Tailwind CSS out of the box. Just use the `style` property.
 
 ```jml
 Container {
@@ -225,9 +221,9 @@ Container {
 }
 ```
 
-## Interactive Behaviour
+## Making Things Interactive
 
-JML makes adding interactivity as natural as describing static content:
+Adding interactivity feels natural in JML.
 
 ```jml
 _doctype component TodoList
@@ -272,15 +268,15 @@ function deleteTodo(id: string): void {
 }
 ```
 
-## Development Experience
+## The Developer Experience
 
 ### Hot Module Replacement
 
-Changes to your JML files are reflected instantly in the browser, creating a fluid development experience where you can see your changes immediately.
+When you save a JML file, the changes show up in your browser instantly. It makes for a really smooth workflow.
 
 ### Type Safety
 
-JML leverages TypeScript's type system to catch errors early:
+JML uses TypeScript's type system, so you get type checking for free.
 
 ```jml
 // TypeScript-style type annotations
@@ -295,9 +291,9 @@ UserCard {
 }
 ```
 
-### Component Composition
+### Composition is Key
 
-JML encourages building complex UIs through composition—combining simple components into more sophisticated ones:
+JML is all about building big things from small, simple pieces.
 
 ```jml
 _doctype component BlogPost
@@ -323,9 +319,9 @@ Article {
 }
 ```
 
-## Project Organisation
+## How to Organise Your Project
 
-A typical JAWT project follows a clear structure that mirrors the language's architecture:
+A typical JAWT project has a structure that makes sense with the language's design:
 
 ```
 my-jawt-app/
@@ -347,27 +343,23 @@ my-jawt-app/
 └── jawt.config.json       # Configuration
 ```
 
-## Key Benefits
+## Why Bother?
 
-### Unified Development Experience
+### A Unified Experience
 
-Instead of juggling HTML, CSS, JavaScript, and build configurations, JML provides a single, cohesive language for describing your application structure, with TypeScript handling the dynamic functionality.
+With JML, you don't have to constantly switch between HTML, CSS, and JavaScript files and mindsets. It's one cohesive way to build your app.
 
-### Optimised Output
+### Optimised for You
 
-Each document type compiles to its optimal target:
+Jawt's compiler is smart about how it builds your code. Pages become lean HTML, components become efficient Web Components, and your TypeScript just works.
 
-- Pages become lean HTML with proper metadata
-- Components become efficient Web Components
-- TypeScript scripts provide full JavaScript functionality
+### Code That's Easy to Read
 
-### Maintainable Code
+Because it's declarative, JML code often reads like a description of the UI, which makes it easier to come back to later.
 
-The declarative nature and clear separation of concerns makes JML applications easier to understand, modify, and extend over time. Code reads like a description of what the application does rather than a complex set of instructions.
+## Getting Your Hands Dirty
 
-## Getting Started
-
-The best way to understand JML is to start with a simple page and gradually add components:
+The best way to learn is by doing. Start with a simple page and build from there.
 
 ```jml
 _doctype page welcome
@@ -397,13 +389,8 @@ Page {
 
 ## What's Next?
 
-This overview provides the foundation for understanding JML. To dive deeper into specific aspects:
+Now that you've got the basics of JML, you can dive deeper:
 
-- **[Pages](./pages.md)** — Learn about routing, metadata, and page structure
-- **[Components](./components.md)** — Master props, state, and component lifecycle
-- **[Scripts](./scripts.md)** — Explore TypeScript integration and dynamic functionality
-
----
-
-**Version**: Early Development  
-**Last Updated**: Development Roadmap Phase 1
+-   **[Pages](./pages.md)** — Learn about routing and page structure.
+-   **[Components](./components.md)** — Master props, state, and all things component.
+-   **[Scripts](./scripts.md)** — Get the full scoop on TypeScript integration.
