@@ -1,34 +1,36 @@
-# Just Another Web Tool (JAWT)
+# Welcome to JAWT
 
-**Jawt is a development toolchain that enables building web applications using a declarative approach.**
+So you're here to check out JAWT. Awesome.
 
-Write your applications using **JML**, a domain-specific language for Jawt app structure, combined with TypeScript for dynamic functionality.
+In a nutshell, **JAWT is a toolchain for building web apps in a more straightforward, declarative way.** I got tired of the endless setup and complexity that comes with modern web development, so I built JAWT around a simple idea: you should be able to describe your application's structure and logic, and the tool should handle the rest.
 
-## What is Jawt?
+You'll be writing your apps using **JML**, a language I designed specifically for this, and **TypeScript** for all the dynamic bits.
 
-Jawt provides a unified development experience through its intelligent compilation system. Instead of juggling multiple technologies and build configurations, you write everything in Jml and TypeScript, letting Jawt handle the complexity of modern web development.
+## What's Jawt All About?
 
-### Key Features
+Instead of wrestling with bundlers, transpilers, and a million config files, Jawt gives you a single, unified workflow. You write JML for structure, TypeScript for logic, and Jawt's compiler figures out how to turn it all into an optimised, fast web app.
 
-- **Unified Language Approach**: Write JML for structure and TypeScript for logic
-- **Component-Driven Architecture**: Build reusable components with clear interfaces and composition patterns
-- **Zero Configuration**: Works out of the box with sensible defaults whilst remaining customisable
-- **Hot Module Replacement**: See changes instantly during development with intelligent reloading
-- **Optimised Builds**: Automatic code splitting, tree shaking, and performance optimisation
-- **Type Safety**: Full TypeScript support for robust applications
+### Here's the Gist:
 
-## Understanding JML
+-   **One Language for Structure**: Use JML to lay out your pages and components. It's clean and easy to read.
+-   **Component-Based Everything**: Build your UI out of reusable components. It's a tried-and-true way to keep things organised.
+-   **Zero-Config, but Hackable**: It works right away with smart defaults, but you can still tweak things if you need to.
+-   **Instant Feedback**: The dev server comes with hot module replacement, so you see your changes live.
+-   **Optimised by Default**: It automatically handles things like code splitting and tree shaking to make sure your app is fast.
+-   **Full-Fat TypeScript**: No compromises. Use all the TypeScript features you know and love.
 
-JML combines the structural clarity of markup languages with component-driven development. Every JML file begins with a document type declaration that determines its purpose:
+## How JML Works
+
+JML is the core of JAWT. Every JML file has a `_doctype` that tells the compiler what it is. There are two main types:
 
 ```jml
-_doctype page home          // Defines a complete web page
-_doctype component Button   // Defines a reusable component
+_doctype page home          // This is a whole web page.
+_doctype component Button   // This is a reusable building block.
 ```
 
-### Document Types Explained
+### Pages
 
-**Pages** define complete web pages with metadata and structure. They serve as your application's entry points:
+Pages are the main entry points of your app. They define a full web page with its metadata and structure.
 
 ```jml
 _doctype page dashboard
@@ -46,7 +48,9 @@ Page {
 }
 ```
 
-**Components** encapsulate reusable UI elements with properties, state, and event handling:
+### Components
+
+Components are the reusable UI bits. You build them once and use them everywhere.
 
 ```jml
 _doctype component UserCard
@@ -67,9 +71,9 @@ Container {
 }
 ```
 
-## TypeScript Integration
+## Bringing in the Logic with TypeScript
 
-JAWT seamlessly integrates TypeScript for dynamic functionality. Write your scripts in TypeScript and import them directly into your JML components:
+Jawt wouldn't be complete without a way to handle dynamic logic. That's where TypeScript comes in. You can write your functions and classes in `.ts` files and import them right into your JML.
 
 ```typescript
 // scripts/analytics.ts
@@ -92,30 +96,30 @@ Container {
 }
 ```
 
-## Development Workflow
+## The Workflow
 
-JAWT's CLI provides everything you need to build applications efficiently:
+The `jawt` CLI is your best friend here. It's got everything you need:
 
-1. **Create** a new project: `jawt init my-app`
-2. **Develop** with hot reload: `jawt run`
-3. **Build** for production: `jawt build`
-4. **Debug** when needed: `jawt debug`
+1.  **Start a new project:** `jawt init my-app`
+2.  **Run the dev server:** `jawt run`
+3.  **Build for production:** `jawt build`
+4.  **Debug your app:** `jawt debug`
 
-The unified compiler handles all document types intelligently, resolving dependencies across your entire application and generating optimised output.
+The compiler is smart enough to understand all the different document types and how they depend on each other, spitting out a nice, optimised app at the end.
 
-## Architecture Philosophy
+## The Philosophy
 
-JAWT follows a clear separation of concerns:
+The idea behind Jawt's architecture is to keep things separate and clean:
 
-- **Pages** handle structure and routing
-- **Components** manage user interaction and state
-- **Scripts** provide dynamic functionality and business logic
+-   **Pages** for structure and routing.
+-   **Components** for UI and user interaction.
+-   **Scripts** for business logic and dynamic stuff.
 
-This architecture enables optimal loading strategies and maintainable code organisation.
+This makes your code easier to reason about and helps Jawt optimise how it loads everything.
 
 ## Quick Start Example
 
-Here's a complete JAWT application structure:
+Here's what a simple Jawt app looks like:
 
 ```
 my-app/
@@ -178,31 +182,31 @@ export function trackPageView(page: string): void {
 
 ## Browser Support
 
-JAWT generates modern web standards that work across all current browsers with automatic polyfills and optimisation.
+Jawt spits out modern, standards-compliant code that works in all the usual suspects (Chrome, Firefox, Safari, Edge). It'll even add polyfills where needed.
 
-## Next Steps
+## Where to Next?
 
-Ready to start building with JAWT? Here's where to go next:
+Ready to dive in?
 
 ### Getting Started
-- **[Installation & Setup](getting-started/installation.md)** - Install JAWT and create your first project
-- **[Tutorial](tutorial/first-page.md)** - Build a simple application step by step
-- **[Project Structure](getting-started/project-structure.md)** - Understand how JAWT projects are organised
+- **[Installation & Setup](getting-started/installation.md)** - Get Jawt installed and make your first project.
+- **[Tutorial](tutorial/first-page.md)** - Build a simple app from scratch.
+- **[Project Structure](getting-started/project-structure.md)** - Learn how to organise your Jawt projects.
 
 ### Language Reference
-- **[JML Syntax](jml/syntax.md)** - Complete JML language specification
-- **[Pages](jml/pages.md)** - Creating pages and handling routing
-- **[Components](jml/components.md)** - Building interactive components
-- **[Scripts](jml/scripts.md)** - Writing TypeScript scripts for dynamic functionality
+- **[JML Syntax](jml/syntax.md)** - The full JML language spec.
+- **[Pages](jml/pages.md)** - All about creating pages and routes.
+- **[Components](jml/components.md)** - Master building interactive components.
+- **[Scripts](jml/scripts.md)** - Using TypeScript for dynamic functionality.
 
-### Advanced Topics
-- **[Architecture](architecture/index.md)** - Understanding JAWT's compilation system
-- **[CLI Reference](references/cli.md)** - Complete command-line interface guide
-- **[Configuration](architecture/configuration.md)** - Customising your build process
-- **[Deployment](deployment/index.md)** - Publishing your applications
+### Advanced Stuff
+- **[Architecture](architecture/index.md)** - A peek under the hood.
+- **[CLI Reference](references/cli.md)** - A guide to all the CLI commands.
+- **[Configuration](architecture/configuration.md)** - How to customise your build.
+- **[Deployment](deployment/index.md)** - Getting your app out into the world.
 
 ### Resources
-- **[Examples](examples/index.md)** - Sample applications and patterns
-- **[Migration Guide](resources/migration.md)** - Moving from other tools
-- **[FAQ](resources/faq.md)** - Common questions and solutions
-- **[Contributing](contributing/index.md)** - Help improve JAWT
+- **[Examples](examples/index.md)** - Sample apps and code patterns.
+- **[Migration Guide](resources/migration.md)** - Coming from another tool?
+- **[FAQ](resources/faq.md)** - Answers to common questions.
+- **[Contributing](contributing/index.md)** - Want to help out?
