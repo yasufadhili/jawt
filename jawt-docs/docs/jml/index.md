@@ -6,6 +6,15 @@
 
 Think of JML as a way to write blueprints for your app. Instead of telling the browser *how* to draw everything step-by-step, you just describe *what* you want the final thing to look like.
 
+### JML Supports:
+
+* Declarative UI trees
+* Embedded TypeScript logic
+* Page and component document types
+* Imports for components, scripts, runtime APIs, and stores
+* For-loops and expressions
+* Type-checked props
+
 ### The Two Flavours of JML
 
 JML has two main "document types," each with a specific job:

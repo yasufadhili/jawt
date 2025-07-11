@@ -16,10 +16,17 @@ nav:
     - Pages: jml/pages.md
     - Components: jml/components.md
     - Modules: jml/modules.md
-    - Scripts: jml/scripts.md
+    - Scripting: jml/scripting.md
   - Architecture:
-    - Jawt Architecture: architecture/index.md
-    - Configuration: architecture/configuration.md
+    - Overview: architecture/index.md
+    - Workspace Layout: architecture/workspace.md
+    - Project Types: architecture/project-types.md
+  - Runtime:
+    - Overview: runtime/index.md
+  - Extensibility:
+    - Overview: extensibility/index.md
+  - Testing & Debugging:
+    - Overview: testing/index.md
   - References:
     - Pages: references/pages.md
     - Components: references/components.md
@@ -31,3 +38,5 @@ nav:
   - Resources:
     - Contributing: resources/contributing.md
     - FAQ: resources/faq.md
+  - Miscellaneous:
+    - Catch List: misc/catch-list.md

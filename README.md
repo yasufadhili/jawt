@@ -8,13 +8,17 @@ JAWT is my take on a simpler, more direct way to build things for the web. It's 
 
 ## What's the big idea?
 
-Instead of a bulleted list of "features", here's what it feels like to use JAWT:
+Jawt is built on a few core philosophies:
 
-*   **Just write what you mean:** The JML syntax is designed to be clear and expressive. You lay out your UI structure in a way that makes sense.
-*   **Build with blocks:** Create reusable components, pass them properties, and compose them together to build complex UIs from simple pieces.
-*   **See it as you build it:** The dev server has hot-reloading, so your changes pop up in the browser instantly. I know frameworks can do this :).
-*   **No heavy lifting:** It generates lightweight, optimised code without you having to configure a thing. It's zero-config out of the box.
-*   **TypeScript is a first-class citizen:** When you need to add logic, you can use TypeScript.
+*   **Developer-focused**: Designed for a single developer with strong preferences.
+*   **Declarative-first**: You write *what* you want, Jawt figures out *how* to do it.
+*   **Zero-config**: Everything just works out of the box.
+*   **Highly opinionated**: One (or two) clear ways to do things.
+*   **Self-contained**: Apps are portable with no external dependencies cluttering your project.
+
+It's a **toolchain** for building modern Single Page Applications (SPAs), a **compiler** for JML into Web Components (via Lit), a **runtime** with built-in routing and state, and a **CLI** that handles everything from scaffolding to packaging.
+
+Jawt is **not** a general-purpose build tool, nor is it a framework like React or Vue; it builds *on* Web Components. It's tailored for a specific, efficient workflow.
 
 ## Where to go from here?
 
@@ -22,7 +26,7 @@ Instead of a bulleted list of "features", here's what it feels like to use JAWT:
 
 - [Getting Started](https://yasufadhili.github.io/jawt/) — A quick tutorial to get your feet wet.
 - [Documentation](https://yasufadhili.github.io/jawt/) — The full guide to building and using Jawt apps.
-- [Architecture](https://yasufadhili.github.io/jawt/architecture/) — A look under the hood at how Jawt works.
+- [Architecture](https://yasufadhili.github.io/jawt/architecture/) — A deep dive into Jawt's design and internal workings.
 - [JML](https://yasufadhili.github.io/jawt/jml/) — Learn the language for building Jawt apps.
 - [Jawt CLI](https://yasufadhili.github.io/jawt/references/cli) — All the commands you'll need.
 - [Building from source](BUILDING.MD)

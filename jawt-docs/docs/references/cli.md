@@ -12,7 +12,7 @@ jawt init my-app
 cd my-app
 
 # Start the dev server
-jawt run
+jawt dev
 
 # Build the app for production
 jawt build
@@ -56,14 +56,14 @@ my-awesome-app/
 
 ---
 
-### `run`
+### `dev`
 
-Fires up the development server, which comes with hot reloading. It watches for changes to your JML files and automatically refreshes your browser.
+Starts the local development server with hot module replacement (HMR). It watches for changes to your JML files and automatically refreshes your browser.
 
 #### Usage
 
 ```bash
-jawt run [options]
+jawt dev [options]
 ```
 
 #### Options
@@ -81,20 +81,20 @@ jawt run [options]
 
 ```bash
 # Start the server on the default port (6500)
-jawt run
+jawt dev
 
 # Start on a different port
-jawt run -p 3000
+jawt dev -p 3000
 
 # Start with a clean cache
-jawt run -c
+jawt dev -c
 ```
 
 ---
 
 ### `build`
 
-Compiles your app into a production-ready build. It optimises everything and spits out standard HTML, CSS, and JavaScript.
+Compiles your app or library into a production-ready build. It optimises everything and spits out standard HTML, CSS, and JavaScript.
 
 #### Usage
 
@@ -107,6 +107,7 @@ jawt build [options]
 | Option | Description | Default |
 |--------|-------------|---------|
 | `-o <directory>` | Specify a custom output directory. | `dist` |
+| `--as-lib` | Compile the project as a library for reuse. | `false` |
 
 #### Examples
 
@@ -116,6 +117,9 @@ jawt build
 
 # Build to a `public` directory instead
 jawt build -o public
+
+# Build as a library
+jawt build --as-lib
 ```
 
 #### What it Generates
@@ -128,72 +132,100 @@ jawt build -o public
 
 ---
 
-### `serve`
+### `create page`
 
-Serves your production build locally. This is useful for checking how your app will behave in a production environment.
+Scaffolds a new JML page with a basic structure.
 
 #### Usage
 
 ```bash
-jawt serve
+jawt create page <name>
 ```
 
-#### Prerequisites
+#### Arguments
 
--   You need to have a production build. Run `jawt build` first.
+| Argument | Description | Required |
+|----------|-------------|----------|
+| `<name>` | The name of the new page. | Yes |
 
 #### Example
 
 ```bash
-# Build your app
-jawt build
-
-# Serve the production build
-jawt serve
+jawt create page about
 ```
-
-#### Status
-
-⚠️ **Coming soon!** This command isn't implemented yet.
 
 ---
 
-### `debug`
+### `create component`
 
-Starts the JAWT debugger, which gives you tools to inspect your app's compilation and runtime behavior.
+Scaffolds a new JML component with a basic structure.
 
 #### Usage
 
 ```bash
-jawt debug [options]
+jawt create component <name>
 ```
 
-#### Options
+#### Arguments
 
-| Option | Description | Default |
-|--------|-------------|---------|
-| `-p <port>` | Use a custom port. | 6501 |
+| Argument | Description | Required |
+|----------|-------------|----------|
+| `<name>` | The name of the new component. | Yes |
 
-#### Examples
+#### Example
 
 ```bash
-# Start the debugger on the default port (6501)
-jawt debug
-
-# Start on a different port
-jawt debug -p 9000
+jawt create component MyButton
 ```
 
-#### Features
+---
 
--   Inspect the component tree.
--   Get detailed error messages.
--   See build process insights.
--   Check performance metrics.
+### `add`
 
-#### Status
+Adds a JML component library from a local path or remote repository.
 
-⚠️ **Coming soon!** This command isn't implemented yet.
+#### Usage
+
+```bash
+jawt add <path/repo>
+```
+
+#### Arguments
+
+| Argument | Description | Required |
+|----------|-------------|----------|
+| `<path/repo>` | The path to the local library or its repository URL. | Yes |
+
+#### Example
+
+```bash
+jawt add ./my-local-lib
+jawt add https://github.com/user/some-jawt-lib
+```
+
+---
+
+### `install`
+
+Installs npm logic packages for use within Jawt projects.
+
+#### Usage
+
+```bash
+jawt install <pkg>
+```
+
+#### Arguments
+
+| Argument | Description | Required |
+|----------|-------------|----------|
+| `<pkg>` | The name of the npm package to install. | Yes |
+
+#### Example
+
+```bash
+jawt install lodash
+```
 
 ---
 
@@ -210,6 +242,6 @@ These options work with most commands.
 
 ```bash
 jawt --version
-jawt run --help
+jawt dev --help
 jawt build --help
 ```
