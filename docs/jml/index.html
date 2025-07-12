@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>Overview - Jawt</title>
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../css/brands.min.css" rel="stylesheet">
+        <link href="../css/solid.min.css" rel="stylesheet">
+        <link href="../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" disabled>
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="..">Jawt</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href=".." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Getting Started</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../getting-started/installation/" class="dropdown-item">Installation</a>
+</li>
+                                    
+<li>
+    <a href="../tutorial/first-page/" class="dropdown-item">First Page</a>
+</li>
+                                    
+<li>
+    <a href="../getting-started/project-structure/" class="dropdown-item">Project Structure</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">JML</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="./" class="dropdown-item active" aria-current="page">Overview</a>
+</li>
+                                    
+<li>
+    <a href="pages/" class="dropdown-item">Pages</a>
+</li>
+                                    
+<li>
+    <a href="components/" class="dropdown-item">Components</a>
+</li>
+                                    
+<li>
+    <a href="modules/" class="dropdown-item">Modules</a>
+</li>
+                                    
+<li>
+    <a href="scripting/" class="dropdown-item">Scripting</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Architecture</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../architecture/" class="dropdown-item">Overview</a>
+</li>
+                                    
+<li>
+    <a href="../architecture/workspace/" class="dropdown-item">Workspace Layout</a>
+</li>
+                                    
+<li>
+    <a href="../architecture/project-types/" class="dropdown-item">Project Types</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Runtime</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../runtime/" class="dropdown-item">Overview</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Extensibility</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../extensibility/" class="dropdown-item">Overview</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Testing & Debugging</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../testing/" class="dropdown-item">Overview</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">References</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../references/pages/" class="dropdown-item">Pages</a>
+</li>
+                                    
+<li>
+    <a href="../references/components/" class="dropdown-item">Components</a>
+</li>
+                                    
+<li>
+    <a href="../references/cli/" class="dropdown-item">CLI</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">API</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../api/" class="dropdown-item">Overview</a>
+</li>
+                                    
+<li>
+    <a href="../api/browser/" class="dropdown-item">Browser</a>
+</li>
+                                    
+<li>
+    <a href="../api/state/" class="dropdown-item">State</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Resources</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../resources/contributing/" class="dropdown-item">Contributing</a>
+</li>
+                                    
+<li>
+    <a href="../resources/faq/" class="dropdown-item">FAQ</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Miscellaneous</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../misc/catch-list/" class="dropdown-item">Catch List</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../getting-started/project-structure/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="pages/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown">
+                              <button id="theme-menu" aria-expanded="false" data-bs-toggle="dropdown" data-bs-display="static" aria-label="Toggle theme" class="nav-link dropdown-toggle">
+                                <i class="fa-solid fa-circle-half-stroke fa-fw"></i>
+                                <span class="d-lg-none ms-2">Toggle theme</span>
+                              </button>
+                              <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                  <button class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
+                                    <i class="fa-solid fa-sun fa-fw"></i>
+                                    <span class="ms-2">Light</span>
+                                    <i class="fa-solid fa-check ms-auto d-none"></i>
+                                  </button>
+                                </li>
+                                <li>
+                                  <button class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="false">
+                                    <i class="fa-solid fa-moon fa-fw"></i>
+                                    <span class="ms-2">Dark</span>
+                                    <i class="fa-solid fa-check ms-auto d-none"></i>
+                                  </button>
+                                </li>
+                                <li>
+                                  <button class="dropdown-item d-flex align-items-center" data-bs-theme-value="auto" aria-pressed="true">
+                                    <i class="fa-solid fa-circle-half-stroke fa-fw"></i>
+                                    <span class="ms-2">Auto</span>
+                                    <i class="fa-solid fa-check ms-auto"></i>
+                                  </button>
+                                </li>
+                              </ul>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <script src="../js/darkmode.js"></script>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#jml-the-language-of-jawt" class="nav-link">JML: The Language of JAWT</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#whats-the-big-deal-with-jml" class="nav-link">What's the Big Deal with JML?</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#the-philosophy-declarative-first" class="nav-link">The Philosophy: Declarative First</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#the-document-types-in-detail" class="nav-link">The Document Types in Detail</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#the-import-system" class="nav-link">The Import System</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#typescript-integration" class="nav-link">TypeScript Integration</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#styling-with-tailwind-css" class="nav-link">Styling with Tailwind CSS</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#making-things-interactive" class="nav-link">Making Things Interactive</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#the-developer-experience" class="nav-link">The Developer Experience</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#how-to-organise-your-project" class="nav-link">How to Organise Your Project</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#why-bother" class="nav-link">Why Bother?</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#getting-your-hands-dirty" class="nav-link">Getting Your Hands Dirty</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#whats-next" class="nav-link">What's Next?</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="jml-the-language-of-jawt">JML: The Language of JAWT</h1>
+<p><strong>JML is the language you'll be speaking when you build with JAWT.</strong> I designed it to be a declarative language that gets out of your way, mixing the structural clarity of markup with the power of TypeScript.</p>
+<h2 id="whats-the-big-deal-with-jml">What's the Big Deal with JML?</h2>
+<p>Think of JML as a way to write blueprints for your app. Instead of telling the browser <em>how</em> to draw everything step-by-step, you just describe <em>what</em> you want the final thing to look like.</p>
+<h3 id="jml-supports">JML Supports:</h3>
+<ul>
+<li>Declarative UI trees</li>
+<li>Embedded TypeScript logic</li>
+<li>Page and component document types</li>
+<li>Imports for components, scripts, runtime APIs, and stores</li>
+<li>For-loops and expressions</li>
+<li>Type-checked props</li>
+</ul>
+<h3 id="the-two-flavours-of-jml">The Two Flavours of JML</h3>
+<p>JML has two main "document types," each with a specific job:</p>
+<ol>
+<li><strong>Pages</strong> — The main canvases for your application.</li>
+<li><strong>Components</strong> — The reusable Lego bricks you build with.</li>
+</ol>
+<p>This separation keeps things clean. Pages handle the overall structure and routing, while components handle the interactive bits and pieces.</p>
+<h2 id="the-philosophy-declarative-first">The Philosophy: Declarative First</h2>
+<p>JML is all about being declarative. You describe the end result, not the process.</p>
+<pre><code class="language-jml">// You describe WHAT you want
+Card {
+    title: &quot;Welcome&quot;
+    style: &quot;bg-white shadow-lg rounded-lg p-6&quot;
+
+    Text {
+        content: &quot;Hello, world!&quot;
+        style: &quot;text-gray-700&quot;
+    }
+}
+</code></pre>
+<p>This is a lot cleaner than manually creating DOM elements, setting attributes, and appending them to each other.</p>
+<h3 id="familiar-syntax">Familiar Syntax</h3>
+<p>If you've used TypeScript, JML should feel pretty familiar. I borrowed a lot of its syntax for variables, functions, and types.</p>
+<pre><code class="language-jml">// Variables and functions feel like TypeScript
+const greeting = &quot;Hello, JAWT!&quot;
+
+function handleClick(): void {
+    console.log(&quot;Button clicked!&quot;)
+}
+
+// But the UI part is declarative
+Button {
+    text: greeting
+    onClick: handleClick
+    style: &quot;bg-blue-500 text-white px-4 py-2 rounded&quot;
+}
+</code></pre>
+<h2 id="the-document-types-in-detail">The Document Types in Detail</h2>
+<h3 id="pages-your-apps-entry-points">Pages: Your App's Entry Points</h3>
+<p>A page represents a whole web page. It's where you define things like the page title and pull in the components that make up the UI.</p>
+<pre><code class="language-jml">_doctype page home
+
+import component Layout from &quot;components/layout&quot;
+
+Page {
+    title: &quot;Welcome to My App&quot;
+    description: &quot;A minimal web application built with JAWT&quot;
+
+    Layout {
+        content: &quot;Hello, world!&quot;
+    }
+}
+</code></pre>
+<p><strong>Key things to remember:</strong></p>
+<ul>
+<li>Always starts with <code>_doctype page</code>.</li>
+<li>Can only have one component directly inside the <code>Page</code> block.</li>
+<li>Handles routing and page-level metadata.</li>
+</ul>
+<h3 id="components-your-reusable-building-blocks">Components: Your Reusable Building Blocks</h3>
+<p>Components are the best part. They're like custom HTML tags you can reuse everywhere. They can have their own logic and can be composed to create really complex UIs.</p>
+<pre><code class="language-jml">_doctype component UserCard
+
+Card {
+    style: &quot;border rounded-lg p-4 shadow&quot;
+
+    Avatar {
+        src: props.avatarUrl
+        alt: props.name
+        style: &quot;w-12 h-12 rounded-full&quot;
+    }
+
+    Text {
+        content: props.name
+        style: &quot;font-semibold text-lg&quot;
+    }
+
+    Text {
+        content: props.email
+        style: &quot;text-gray-600&quot;
+    }
+}
+</code></pre>
+<p><strong>Key things to remember:</strong></p>
+<ul>
+<li>Starts with <code>_doctype component</code>.</li>
+<li>Uses <code>props</code> to get data from its parent.</li>
+<li>Can import other components and scripts.</li>
+</ul>
+<h2 id="the-import-system">The Import System</h2>
+<p>JML lets you pull in components and TypeScript code easily.</p>
+<pre><code class="language-jml">// Import components from the global components directory
+import component Button from &quot;components/button&quot;
+import component Card from &quot;components/card&quot;
+
+// Import from the same directory (page-specific components)
+import component LocalWidget from &quot;widget&quot;
+
+// Import TypeScript scripts for dynamic functionality
+import script analytics from &quot;scripts/analytics&quot;
+import script utils from &quot;scripts/utils&quot;
+
+// Import browser APIs (components only)
+import browser
+</code></pre>
+<h2 id="typescript-integration">TypeScript Integration</h2>
+<p>This is where JML really shines. You can write complex logic in TypeScript and use it right inside your components.</p>
+<pre><code class="language-typescript">// scripts/counter.ts
+export class Counter {
+    private count: number = 0
+
+    increment(): number {
+        return ++this.count
+    }
+
+    decrement(): number {
+        return --this.count
+    }
+
+    getValue(): number {
+        return this.count
+    }
+}
+
+export function formatCount(count: number): string {
+    return `Count: ${count}`
+}
+</code></pre>
+<pre><code class="language-jml">_doctype component CounterWidget
+
+import script counter from &quot;scripts/counter&quot;
+
+Container {
+    style: &quot;flex items-center space-x-4&quot;
+
+    Button {
+        text: &quot;-&quot;
+        onClick: () =&gt; handleDecrement()
+        style: &quot;bg-red-500 text-white px-3 py-1 rounded&quot;
+    }
+
+    Text {
+        content: counter.formatCount(currentCount)
+        style: &quot;font-mono text-lg&quot;
+    }
+
+    Button {
+        text: &quot;+&quot;
+        onClick: () =&gt; handleIncrement()
+        style: &quot;bg-green-500 text-white px-3 py-1 rounded&quot;
+    }
+}
+
+const counterInstance = new counter.Counter()
+let currentCount = 0
+
+function handleIncrement(): void {
+    currentCount = counterInstance.increment()
+}
+
+function handleDecrement(): void {
+    currentCount = counterInstance.decrement()
+}
+</code></pre>
+<h2 id="styling-with-tailwind-css">Styling with Tailwind CSS</h2>
+<p>JML is set up to work with Tailwind CSS out of the box. Just use the <code>style</code> property.</p>
+<pre><code class="language-jml">Container {
+    style: &quot;max-w-4xl mx-auto px-4 py-8&quot;
+
+    Header {
+        style: &quot;text-3xl font-bold text-gray-900 mb-6&quot;
+        content: &quot;My Application&quot;
+    }
+
+    Grid {
+        style: &quot;grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6&quot;
+
+        // Grid items...
+    }
+}
+</code></pre>
+<h2 id="making-things-interactive">Making Things Interactive</h2>
+<p>Adding interactivity feels natural in JML.</p>
+<pre><code class="language-jml">_doctype component TodoList
+
+import script todoManager from &quot;scripts/todo-manager&quot;
+
+Container {
+    style: &quot;max-w-md mx-auto&quot;
+
+    Input {
+        placeholder: &quot;Add a new task...&quot;
+        onEnter: (value) =&gt; addTodo(value)
+        style: &quot;w-full p-2 border rounded mb-4&quot;
+    }
+
+    List {
+        style: &quot;space-y-2&quot;
+
+        for (todo in todos) {
+            TodoItem {
+                text: todo.text
+                completed: todo.completed
+                onToggle: () =&gt; toggleTodo(todo.id)
+                onDelete: () =&gt; deleteTodo(todo.id)
+            }
+        }
+    }
+}
+
+let todos = []
+
+function addTodo(text: string): void {
+    todos = todoManager.addTodo(todos, text)
+}
+
+function toggleTodo(id: string): void {
+    todos = todoManager.toggleTodo(todos, id)
+}
+
+function deleteTodo(id: string): void {
+    todos = todoManager.deleteTodo(todos, id)
+}
+</code></pre>
+<h2 id="the-developer-experience">The Developer Experience</h2>
+<h3 id="hot-module-replacement">Hot Module Replacement</h3>
+<p>When you save a JML file, the changes show up in your browser instantly. It makes for a really smooth workflow.</p>
+<h3 id="type-safety">Type Safety</h3>
+<p>JML uses TypeScript's type system, so you get type checking for free.</p>
+<pre><code class="language-jml">// TypeScript-style type annotations
+function processUser(user: { name: string; age: number }): string {
+    return `${user.name} is ${user.age} years old`
+}
+
+// Props are type-checked automatically
+UserCard {
+    name: &quot;John Doe&quot;        // ✅ Correct type
+    age: &quot;thirty&quot;           // ❌ Type error: expected number
+}
+</code></pre>
+<h3 id="composition-is-key">Composition is Key</h3>
+<p>JML is all about building big things from small, simple pieces.</p>
+<pre><code class="language-jml">_doctype component BlogPost
+
+Article {
+    style: &quot;max-w-2xl mx-auto&quot;
+
+    PostHeader {
+        title: props.title
+        author: props.author
+        publishDate: props.date
+    }
+
+    PostContent {
+        content: props.content
+        style: &quot;prose prose-lg&quot;
+    }
+
+    PostFooter {
+        tags: props.tags
+        shareUrl: props.url
+    }
+}
+</code></pre>
+<h2 id="how-to-organise-your-project">How to Organise Your Project</h2>
+<p>A typical JAWT project has a structure that makes sense with the language's design:</p>
+<pre><code>my-jawt-app/
+├── app/                    # Pages (routes)
+│   ├── index.jml          # Home page
+│   ├── about/
+│   │   └── index.jml      # About page
+│   └── blog/
+│       ├── index.jml      # Blog listing
+│       └── [slug].jml     # Individual blog posts
+├── components/             # Reusable components
+│   ├── layout.jml
+│   ├── button.jml
+│   └── card.jml
+├── scripts/               # TypeScript functionality
+│   ├── analytics.ts
+│   ├── utils.ts
+│   └── api.ts
+└── jawt.config.json       # Configuration
+</code></pre>
+<h2 id="why-bother">Why Bother?</h2>
+<h3 id="a-unified-experience">A Unified Experience</h3>
+<p>With JML, you don't have to constantly switch between HTML, CSS, and JavaScript files and mindsets. It's one cohesive way to build your app.</p>
+<h3 id="optimised-for-you">Optimised for You</h3>
+<p>Jawt's compiler is smart about how it builds your code. Pages become lean HTML, components become efficient Web Components, and your TypeScript just works.</p>
+<h3 id="code-thats-easy-to-read">Code That's Easy to Read</h3>
+<p>Because it's declarative, JML code often reads like a description of the UI, which makes it easier to come back to later.</p>
+<h2 id="getting-your-hands-dirty">Getting Your Hands Dirty</h2>
+<p>The best way to learn is by doing. Start with a simple page and build from there.</p>
+<pre><code class="language-jml">_doctype page welcome
+
+Page {
+    title: &quot;Welcome to JAWT&quot;
+
+    Container {
+        style: &quot;min-h-screen flex items-center justify-center bg-gray-100&quot;
+
+        Card {
+            style: &quot;bg-white p-8 rounded-lg shadow-lg text-center&quot;
+
+            Text {
+                content: &quot;Hello, JAWT!&quot;
+                style: &quot;text-2xl font-bold text-gray-900 mb-4&quot;
+            }
+
+            Text {
+                content: &quot;Your first JML application is running.&quot;
+                style: &quot;text-gray-600&quot;
+            }
+        }
+    }
+}
+</code></pre>
+<h2 id="whats-next">What's Next?</h2>
+<p>Now that you've got the basics of JML, you can dive deeper:</p>
+<ul>
+<li><strong><a href="pages/">Pages</a></strong> — Learn about routing and page structure.</li>
+<li><strong><a href="components/">Components</a></strong> — Master props, state, and all things component.</li>
+<li><strong><a href="./scripts.md">Scripts</a></strong> — Get the full scoop on TypeScript integration.</li>
+</ul></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../js/base.js"></script>
+        <script src="../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

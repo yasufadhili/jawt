@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Project Structure - Jawt</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../css/brands.min.css" rel="stylesheet">
+        <link href="../../css/solid.min.css" rel="stylesheet">
+        <link href="../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" disabled>
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">Jawt</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Getting Started</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../installation/" class="dropdown-item">Installation</a>
+</li>
+                                    
+<li>
+    <a href="../../tutorial/first-page/" class="dropdown-item">First Page</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active" aria-current="page">Project Structure</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">JML</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../jml/" class="dropdown-item">Overview</a>
+</li>
+                                    
+<li>
+    <a href="../../jml/pages/" class="dropdown-item">Pages</a>
+</li>
+                                    
+<li>
+    <a href="../../jml/components/" class="dropdown-item">Components</a>
+</li>
+                                    
+<li>
+    <a href="../../jml/modules/" class="dropdown-item">Modules</a>
+</li>
+                                    
+<li>
+    <a href="../../jml/scripting/" class="dropdown-item">Scripting</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Architecture</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../architecture/" class="dropdown-item">Overview</a>
+</li>
+                                    
+<li>
+    <a href="../../architecture/workspace/" class="dropdown-item">Workspace Layout</a>
+</li>
+                                    
+<li>
+    <a href="../../architecture/project-types/" class="dropdown-item">Project Types</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Runtime</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../runtime/" class="dropdown-item">Overview</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Extensibility</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../extensibility/" class="dropdown-item">Overview</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Testing & Debugging</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../testing/" class="dropdown-item">Overview</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">References</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../references/pages/" class="dropdown-item">Pages</a>
+</li>
+                                    
+<li>
+    <a href="../../references/components/" class="dropdown-item">Components</a>
+</li>
+                                    
+<li>
+    <a href="../../references/cli/" class="dropdown-item">CLI</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">API</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../api/" class="dropdown-item">Overview</a>
+</li>
+                                    
+<li>
+    <a href="../../api/browser/" class="dropdown-item">Browser</a>
+</li>
+                                    
+<li>
+    <a href="../../api/state/" class="dropdown-item">State</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Resources</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../resources/contributing/" class="dropdown-item">Contributing</a>
+</li>
+                                    
+<li>
+    <a href="../../resources/faq/" class="dropdown-item">FAQ</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Miscellaneous</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../misc/catch-list/" class="dropdown-item">Catch List</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../../tutorial/first-page/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../../jml/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown">
+                              <button id="theme-menu" aria-expanded="false" data-bs-toggle="dropdown" data-bs-display="static" aria-label="Toggle theme" class="nav-link dropdown-toggle">
+                                <i class="fa-solid fa-circle-half-stroke fa-fw"></i>
+                                <span class="d-lg-none ms-2">Toggle theme</span>
+                              </button>
+                              <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                  <button class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
+                                    <i class="fa-solid fa-sun fa-fw"></i>
+                                    <span class="ms-2">Light</span>
+                                    <i class="fa-solid fa-check ms-auto d-none"></i>
+                                  </button>
+                                </li>
+                                <li>
+                                  <button class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="false">
+                                    <i class="fa-solid fa-moon fa-fw"></i>
+                                    <span class="ms-2">Dark</span>
+                                    <i class="fa-solid fa-check ms-auto d-none"></i>
+                                  </button>
+                                </li>
+                                <li>
+                                  <button class="dropdown-item d-flex align-items-center" data-bs-theme-value="auto" aria-pressed="true">
+                                    <i class="fa-solid fa-circle-half-stroke fa-fw"></i>
+                                    <span class="ms-2">Auto</span>
+                                    <i class="fa-solid fa-check ms-auto"></i>
+                                  </button>
+                                </li>
+                              </ul>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <script src="../../js/darkmode.js"></script>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#how-a-jawt-project-is-laid-out" class="nav-link">How a JAWT Project is Laid Out</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#the-basic-blueprint" class="nav-link">The Basic Blueprint</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#the-app-directory-your-applications-pages" class="nav-link">The app/ Directory - Your Application's Pages</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#the-components-directory-reusable-building-blocks" class="nav-link">The components/ Directory - Reusable Building Blocks</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#the-assets-directory-static-files" class="nav-link">The assets/ Directory - Static Files</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#configuration-files" class="nav-link">Configuration Files</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#the-dist-directory-the-final-product" class="nav-link">The dist/ Directory - The Final Product</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#best-practices" class="nav-link">Best Practices</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#the-workflow" class="nav-link">The Workflow</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#common-questions" class="nav-link">Common Questions</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#whats-next" class="nav-link">What's Next?</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="how-a-jawt-project-is-laid-out">How a JAWT Project is Laid Out</h1>
+<p>Knowing your way around a JAWT project is key. I've set up a simple, conventional structure so you don't have to waste time making decisions about where to put files. Everything has a place, and once you know the layout, you can get to the fun part: building.</p>
+<h2 id="the-basic-blueprint">The Basic Blueprint</h2>
+<p>When you run <code>jawt init my-project</code>, you get this starting structure:</p>
+<pre><code>my-project/
+├── app/                    # Your pages and routes
+│   └── index.jml          # The main page (the &quot;/&quot; route)
+├── components/            # Reusable UI bits and pieces
+├── assets/                # Images, fonts, and other static stuff
+├── app.json              # Info about your project
+├── jawt.config.json      # Configuration for the build process
+└── dist/                 # Where the final, compiled app goes
+</code></pre>
+<p>Let's break down what each of these does.</p>
+<h2 id="the-app-directory-your-applications-pages">The <code>app/</code> Directory - Your Application's Pages</h2>
+<p>The <code>app/</code> directory is where the pages of your site live. The structure of this directory defines your app's routes.</p>
+<h3 id="file-based-routing">File-Based Routing</h3>
+<p>JAWT uses the file system to define routes. It's simple and intuitive:</p>
+<pre><code>app/
+├── index.jml              # → / (the root page)
+├── about/
+│   └── index.jml         # → /about
+├── blog/
+│   ├── index.jml         # → /blog
+│   └── [slug].jml        # → /blog/a-cool-post (a dynamic route)
+└── user/
+    ├── [id].jml          # → /user/123 (another dynamic route)
+    └── [id]/
+        └── settings.jml  # → /user/123/settings
+</code></pre>
+<h3 id="page-file-rules">Page File Rules</h3>
+<p>Every page file needs to:</p>
+<ol>
+<li>Be named <code>index.jml</code> for a static route, or use <code>[brackets]</code> for a dynamic one.</li>
+<li>Start with <code>_doctype page &lt;name&gt;</code>.</li>
+<li>Have a single <code>Page</code> component as its root element.</li>
+</ol>
+<h3 id="example-page">Example Page</h3>
+<pre><code class="language-jml"># app/about/index.jml
+_doctype page about
+
+import component Layout from &quot;components/layout&quot;
+
+Page {
+    title: &quot;About Us&quot;
+    description: &quot;Learn more about our company&quot;
+
+    Layout {
+        section: &quot;about&quot;
+    }
+}
+</code></pre>
+<h3 id="dynamic-routes">Dynamic Routes</h3>
+<p>Use square brackets for parts of the URL that can change.</p>
+<pre><code class="language-jml"># app/blog/[slug].jml
+_doctype page blogPost
+
+import component BlogLayout from &quot;components/blog-layout&quot;
+
+Page {
+    title: &quot;Blog Post&quot;
+    description: &quot;Read our latest blog content&quot;
+
+    BlogLayout {
+        slug: params.slug  // You can access the dynamic part like this
+    }
+}
+</code></pre>
+<h2 id="the-components-directory-reusable-building-blocks">The <code>components/</code> Directory - Reusable Building Blocks</h2>
+<p>Think of components as your own custom HTML tags. You build them once and can reuse them anywhere. The <code>components/</code> directory is where they all live.</p>
+<h3 id="organising-components">Organising Components</h3>
+<pre><code>components/
+├── layout/
+│   ├── header.jml
+│   ├── footer.jml
+│   └── main-layout.jml
+├── ui/
+│   ├── button.jml
+│   ├── card.jml
+│   └── modal.jml
+└── forms/
+    ├── contact-form.jml
+    └── login-form.jml
+</code></pre>
+<h3 id="component-file-rules">Component File Rules</h3>
+<p>Each component file must:</p>
+<ol>
+<li>Start with <code>_doctype component &lt;ComponentName&gt;</code>.</li>
+<li>Export a single component.</li>
+<li>Use <code>PascalCase</code> for the component name.</li>
+</ol>
+<pre><code class="language-jml"># components/ui/button.jml
+_doctype component Button
+
+Button {
+    text: props.text || &quot;Click me&quot;
+    style: `${props.style || &quot;&quot;} px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600`
+    onClick: props.onClick
+}
+</code></pre>
+<h3 id="importing-components">Importing Components</h3>
+<p>You can import components in a few different ways:</p>
+<pre><code class="language-jml"># Import from the global components directory
+import component Header from &quot;components/layout/header&quot;
+
+# Import from the same directory (for page-specific components)
+import component Card from &quot;card&quot;
+
+# Import with an alias
+import component MainButton from &quot;components/ui/button&quot;
+</code></pre>
+<h2 id="the-assets-directory-static-files">The <code>assets/</code> Directory - Static Files</h2>
+<p>This is where you put all your non-code files: images, fonts, CSS, etc.</p>
+<h3 id="organizing-assets">Organizing Assets</h3>
+<pre><code>assets/
+├── images/
+│   ├── logo.svg
+│   ├── hero-bg.jpg
+│   └── icons/
+│       ├── home.svg
+│       └── user.svg
+├── fonts/
+│   ├── custom-font.woff2
+│   └── icons.ttf
+├── styles/
+│   └── custom.css
+└── data/
+    ├── config.json
+    └── content.json
+</code></pre>
+<h3 id="using-assets">Using Assets</h3>
+<p>You can reference assets from anywhere in your project.</p>
+<pre><code class="language-jml"># In a page or component
+Container {
+    style: &quot;bg-cover bg-center min-h-screen&quot;
+    backgroundImage: &quot;url('/assets/images/hero-bg.jpg')&quot;
+
+    Image {
+        src: &quot;/assets/images/logo.svg&quot;
+        alt: &quot;Company Logo&quot;
+        style: &quot;w-32 h-32&quot;
+    }
+}
+</code></pre>
+<h2 id="configuration-files">Configuration Files</h2>
+<h3 id="appjson-project-info"><code>app.json</code> - Project Info</h3>
+<p>This file holds basic info about your project.</p>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;my-jawt-app&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;description&quot;: &quot;My awesome JAWT application&quot;,
+  &quot;author&quot;: &quot;Your Name&quot;
+}
+</code></pre>
+<h3 id="jawtconfigjson-build-settings"><code>jawt.config.json</code> - Build Settings</h3>
+<p>This file controls how JAWT builds and serves your project.</p>
+<pre><code class="language-json">{
+  &quot;build&quot;: {
+    &quot;outDir&quot;: &quot;dist&quot;,
+    &quot;assetsDir&quot;: &quot;assets&quot;,
+    &quot;minify&quot;: true
+  },
+  &quot;server&quot;: {
+    &quot;port&quot;: 6500,
+    &quot;host&quot;: &quot;localhost&quot;,
+    &quot;https&quot;: false,
+    &quot;open&quot;: true
+  },
+  &quot;paths&quot;: {
+    &quot;pages&quot;: &quot;app&quot;,
+    &quot;components&quot;: &quot;components&quot;,
+    &quot;assets&quot;: &quot;assets&quot;
+  }
+}
+</code></pre>
+<h2 id="the-dist-directory-the-final-product">The <code>dist/</code> Directory - The Final Product</h2>
+<p>After you run <code>jawt build</code>, this directory will contain your compiled app, ready to be deployed.</p>
+<pre><code>dist/
+├── index.html              # Compiled root page
+├── about/
+│   └── index.html         # Compiled about page
+├── assets/
+│   ├── js/
+│   │   ├── components.js  # Compiled components
+│   │   └── modules.wasm   # Compiled modules
+│   ├── css/
+│   │   └── styles.css     # Compiled styles
+│   └── images/
+│       └── ...            # Optimised images
+└── manifest.json          # A map of the build
+</code></pre>
+<h2 id="best-practices">Best Practices</h2>
+<h3 id="1-group-by-feature">1. Group by Feature</h3>
+<p>Organise your components by what they do, not what they are.</p>
+<pre><code>components/
+├── auth/           # Auth-related components
+│   ├── login-form.jml
+│   └── signup-form.jml
+├── dashboard/      # Dashboard-specific components
+│   ├── stats-card.jml
+│   └── chart.jml
+└── common/         # Shared components used everywhere
+    ├── button.jml
+    └── modal.jml
+</code></pre>
+<h3 id="2-name-things-clearly">2. Name Things Clearly</h3>
+<p>Use descriptive names for your files.</p>
+<pre><code># Good
+components/user/profile-card.jml
+components/navigation/main-menu.jml
+
+# Not so good
+components/card.jml
+components/menu.jml
+</code></pre>
+<h3 id="3-dont-go-too-deep">3. Don't Go Too Deep</h3>
+<p>Try to keep your directory structure relatively flat (3-4 levels max).</p>
+<pre><code># Good
+components/forms/contact/contact-form.jml
+
+# A bit much
+components/ui/forms/contact/complex/contact-form.jml
+</code></pre>
+<h2 id="the-workflow">The Workflow</h2>
+<h3 id="starting-out">Starting Out</h3>
+<pre><code class="language-bash"># Go to your project directory
+cd my-project
+
+# Start the dev server
+jawt run
+
+# In another terminal, you can run the debugger (optional)
+jawt debug
+</code></pre>
+<h3 id="building-for-production">Building for Production</h3>
+<pre><code class="language-bash"># Create an optimized build
+jawt build
+
+# Serve the production build locally to test it
+jawt serve
+</code></pre>
+<h2 id="common-questions">Common Questions</h2>
+<h3 id="import-not-working">Import Not Working?</h3>
+<p><strong>Problem</strong>: Component not found.</p>
+<p><strong>Solution</strong>: Double-check your import paths. Make sure they're relative to the correct directory.</p>
+<pre><code class="language-jml"># Correct
+import component Button from &quot;components/ui/button&quot;
+
+# Incorrect (usually)
+import component Button from &quot;ui/button&quot;
+</code></pre>
+<h3 id="page-not-showing-up">Page Not Showing Up?</h3>
+<p><strong>Problem</strong>: A page isn't accessible at its URL.</p>
+<p><strong>Solution</strong>: Check the file name and directory structure in <code>app/</code>.</p>
+<pre><code># For the /about route, this is correct:
+app/about/index.jml
+
+# This is wrong:
+app/about.jml
+</code></pre>
+<h2 id="whats-next">What's Next?</h2>
+<p>Now that you know how a JAWT project is structured, you can:</p>
+<ol>
+<li><strong>Organise your own projects</strong> with this structure in mind.</li>
+<li><strong>Plan out new projects</strong> before you start coding.</li>
+<li><strong>Create your own project templates</strong> for different types of apps.</li>
+</ol>
+<p>That's it! You're ready to start building well-organised, scalable apps with JAWT.</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
