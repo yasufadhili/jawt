@@ -1,6 +1,6 @@
 # JAWT Roadmap
 
-This document outlines the complete development journey for JAWT, from its foundational concepts to a robust, production-capable toolchain. This roadmap is designed for a personal project, focusing on a clear, sequential build-out of features.
+This document outlines the complete development journey for JAWT, from its foundational concepts to a robust, production-capable toolchain.
 
 ## Core Philosophy
 
