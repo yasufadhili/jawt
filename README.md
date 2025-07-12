@@ -1,30 +1,35 @@
-# JAWT—Just Another Web Tool
+# JAWT - Just Another Web Tool
 
-**JAWT is a toolchain for building web applications using a declarative approach.** 
+So, what's JAWT? Honestly, it's a personal scratch to an itch. I want to build web apps without getting bogged down in a swamp of configuration files, boilerplate, and a dozen different libraries just to get a "Hello, World" on screen.
 
-Write your application structure and behaviour using **JML**, a domain-specific language for JAWT.
+JAWT is my take on a simpler, more direct way to build things for the web. It's a toolchain built around a declarative language called **JML**. The whole idea is to let you describe *what* you want your app to look like and do, and let the tool handle the messy parts.
 
->**NOTE:** Very early development
+> **Heads up!** This is still very much a work-in-progress. Things might change, break, or not work as expected.
 
-## Features
+## What's the big idea?
 
-- **Declarative Syntax**: Express your UI structure clearly and concisely
-- **Component System**: Build reusable components with props and composition
-- **Hot Reload**: See changes instantly during development
-- **Minimal Bundle**: Generates lightweight, optimised output
-- **Zero Configuration**: Works out of the box with sensible defaults
-- **Type Safety**: Use TypeScript for scripting UI functionality
+Jawt is built on a few core philosophies:
 
-## Resources
+*   **Developer-focused**: Designed for a single developer with strong preferences.
+*   **Declarative-first**: You write *what* you want, Jawt figures out *how* to do it.
+*   **Zero-config**: Everything just works out of the box.
+*   **Highly opinionated**: One (or two) clear ways to do things.
+*   **Self-contained**: Apps are portable with no external dependencies cluttering your project.
 
-**Useful links to understand the Toolchain**
+It's a **toolchain** for building modern Single Page Applications (SPAs), a **compiler** for JML into Web Components (via Lit), a **runtime** with built-in routing and state, and a **CLI** that handles everything from scaffolding to packaging.
 
-- [Getting Started](https://yasufadhili.github.io/jawt/) — Quick tutorial on Jawt
-- [Documentation](https://yasufadhili.github.io/jawt/) — Build and use Jawt apps
-- [Architecture](https://yasufadhili.github.io/jawt/architecture/) — How Jawt handles pages, components, modules and more
-- [JML](https://yasufadhili.github.io/jawt/jml/) — Jawt's DSL for app development
-- [Jawt CLI](https://yasufadhili.github.io/jawt/references/cli) — Useful commands when working with Jawt
-- [Building](BUILDING.MD) this source code
+Jawt is **not** a general-purpose build tool, nor is it a framework like React or Vue; it builds *on* Web Components. It's tailored for a specific, efficient workflow.
+
+## Where to go from here?
+
+**Useful links to get started:**
+
+- [Getting Started](https://yasufadhili.github.io/jawt/) — A quick tutorial to get your feet wet.
+- [Documentation](https://yasufadhili.github.io/jawt/) — The full guide to building and using Jawt apps.
+- [Architecture](https://yasufadhili.github.io/jawt/architecture/) — A deep dive into Jawt's design and internal workings.
+- [JML](https://yasufadhili.github.io/jawt/jml/) — Learn the language for building Jawt apps.
+- [Jawt CLI](https://yasufadhili.github.io/jawt/references/cli) — All the commands you'll need.
+- [Building from source](BUILDING.MD)
 
 ## License
 

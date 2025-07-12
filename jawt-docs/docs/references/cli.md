@@ -1,34 +1,30 @@
-# JAWT CLI Reference
+# The JAWT CLI
 
-The JAWT CLI provides essential commands for creating, developing, and building JAWT applications.
+The `jawt` command-line interface is your main tool for creating, running, and building JAWT applications.
 
-## Installation
-
-Ensure JAWT is [installed](../getting-started/installation.md) and available in your system PATH before using these commands.
-
-## Quick Start
+## Getting Started
 
 ```bash
 # Create a new project
 jawt init my-app
 
-# Navigate to project directory
+# cd into the new directory
 cd my-app
 
-# Start development server
-jawt run
+# Start the dev server
+jawt dev
 
-# Build for production
+# Build the app for production
 jawt build
 ```
 
 ## Commands
 
-### init
+### `init`
 
-Creates a new JAWT project with the default structure and configuration files.
+Kicks off a new JAWT project with a default file structure and config files.
 
-#### Synopsis
+#### Usage
 
 ```bash
 jawt init <project-name>
@@ -38,85 +34,69 @@ jawt init <project-name>
 
 | Argument | Description | Required |
 |----------|-------------|----------|
-| `<project-name>` | Name of the new project directory | Yes |
+| `<project-name>` | The name of the new project directory. | Yes |
 
-#### Examples
+#### Example
 
 ```bash
-# Create a new project called "my-app"
-jawt init my-app
-
-# Create a project with a more descriptive name
-jawt init portfolio-website
+jawt init my-awesome-app
 ```
 
-#### Generated Structure
+#### What it Creates
 
 ```
-project-name/
+my-awesome-app/
 ├── app/
-│   └── index.jml          # Main application entry point
-├── components/            # Reusable components directory
-├── assets/               # Static assets (images, fonts, etc.)
-├── app.json             # Application configuration
-└── jawt.config.json     # JAWT toolchain configuration
+│   └── index.jml          # Your main page
+├── components/            # For reusable components
+├── assets/               # For static files
+├── app.json             # App config
+└── jawt.config.json     # JAWT config
 ```
 
 ---
 
-### run
+### `dev`
 
-Starts the development server with hot reload functionality. Monitors JML files for changes and automatically reloads the browser.
+Starts the local development server with hot module replacement (HMR). It watches for changes to your JML files and automatically refreshes your browser.
 
-#### Synopsis
+#### Usage
 
 ```bash
-jawt run [options]
+jawt dev [options]
 ```
 
 #### Options
 
 | Option | Description | Default |
 |--------|-------------|---------|
-| `-p <port>` | Specify custom port | 6500 |
-| `-c` | Run with cleared cache | - |
+| `-p <port>` | Use a custom port. | 6500 |
+| `-c` | Start with a clean cache. | - |
 
 #### Prerequisites
 
-- `app.json` must exist in the current directory
-- `jawt.config.json` must exist in the current directory
+-   You need an `app.json` and `jawt.config.json` in your project's root directory.
 
 #### Examples
 
 ```bash
-# Start on default port (6500)
-jawt run
+# Start the server on the default port (6500)
+jawt dev
 
-# Start on custom port
-jawt run -p 3000
+# Start on a different port
+jawt dev -p 3000
 
-# Start with cleared cache
-jawt run -c
-
-# Combine options
-jawt run -p 8080 -c
+# Start with a clean cache
+jawt dev -c
 ```
-
-#### Output
-
-The development server will be available at `http://localhost:<port>` with:
-
-- Hot reload enabled for JML files
-- Automatic browser refresh on changes
-- Real-time error reporting
 
 ---
 
-### build
+### `build`
 
-Compiles your JAWT application into production-ready web standard files. Generates optimised HTML, CSS, and JavaScript output.
+Compiles your app or library into a production-ready build. It optimises everything and spits out standard HTML, CSS, and JavaScript.
 
-#### Synopsis
+#### Usage
 
 ```bash
 jawt build [options]
@@ -126,264 +106,142 @@ jawt build [options]
 
 | Option | Description | Default |
 |--------|-------------|---------|
-| `-o <directory>` | Specify custom output directory | `dist` |
+| `-o <directory>` | Specify a custom output directory. | `dist` |
+| `--as-lib` | Compile the project as a library for reuse. | `false` |
 
 #### Examples
 
 ```bash
-# Build to default dist directory
+# Build to the default `dist` directory
 jawt build
 
-# Build to custom output directory
+# Build to a `public` directory instead
 jawt build -o public
 
-# Build to nested directory
-jawt build -o build/production
+# Build as a library
+jawt build --as-lib
 ```
 
-#### Output Files
+#### What it Generates
 
-The build process generates:
-- **HTML**: Compiled pages from JML definitions
-- **CSS**: Optimised stylesheets with unused styles removed
-- **JavaScript**: Minified component bundles
-- **WASM**: Compiled modules (when applicable)
-- **Assets**: Processed static files (images, fonts, etc.)
+-   **HTML**: Your compiled JML pages.
+-   **CSS**: Optimised and minified stylesheets.
+-   **JavaScript**: Minified component bundles.
+-   **WASM**: Compiled modules (if you have any).
+-   **Assets**: Your static files, processed and optimized.
 
 ---
 
-### serve
+### `create page`
 
-Serves the production build locally for previewing how your application will behave in production environment.
+Scaffolds a new JML page with a basic structure.
 
-#### Synopsis
-
-```bash
-jawt serve
-```
-
-#### Prerequisites
-
-- Must have a built application (run `jawt build` first)
-- Built files must exist in the output directory
-
-#### Example Workflow
+#### Usage
 
 ```bash
-# Build your application
-jawt build
-
-# Serve the production build
-jawt serve
+jawt create page <name>
 ```
 
-#### Status
+#### Arguments
 
-⚠️ **Currently Unavailable** - This command is planned for future releases.
+| Argument | Description | Required |
+|----------|-------------|----------|
+| `<name>` | The name of the new page. | Yes |
+
+#### Example
+
+```bash
+jawt create page about
+```
 
 ---
 
-### debug
+### `create component`
 
-Starts the JAWT debugger, providing debugging tools and insights into your application's compilation and runtime behaviour.
+Scaffolds a new JML component with a basic structure.
 
-#### Synopsis
-
-```bash
-jawt debug [options]
-```
-
-#### Options
-
-| Option | Description | Default |
-|--------|-------------|---------|
-| `-p <port>` | Specify custom port | 6501 |
-
-#### Examples
+#### Usage
 
 ```bash
-# Start debugger on default port (6501)
-jawt debug
-
-# Start debugger on custom port
-jawt debug -p 9000
+jawt create component <name>
 ```
 
-#### Features
+#### Arguments
 
-The debugger interface provides:
-- Component hierarchy inspection
-- JML syntax error highlighting
-- Build process insights
-- Performance metrics
+| Argument | Description | Required |
+|----------|-------------|----------|
+| `<name>` | The name of the new component. | Yes |
 
-#### Status
+#### Example
 
-⚠️ **Currently Unavailable** - This command is planned for future releases.
+```bash
+jawt create component MyButton
+```
+
+---
+
+### `add`
+
+Adds a JML component library from a local path or remote repository.
+
+#### Usage
+
+```bash
+jawt add <path/repo>
+```
+
+#### Arguments
+
+| Argument | Description | Required |
+|----------|-------------|----------|
+| `<path/repo>` | The path to the local library or its repository URL. | Yes |
+
+#### Example
+
+```bash
+jawt add ./my-local-lib
+jawt add https://github.com/user/some-jawt-lib
+```
+
+---
+
+### `install`
+
+Installs npm logic packages for use within Jawt projects.
+
+#### Usage
+
+```bash
+jawt install <pkg>
+```
+
+#### Arguments
+
+| Argument | Description | Required |
+|----------|-------------|----------|
+| `<pkg>` | The name of the npm package to install. | Yes |
+
+#### Example
+
+```bash
+jawt install lodash
+```
 
 ---
 
 ## Global Options
 
-These options work with most JAWT commands:
+These options work with most commands.
 
 | Option | Description |
 |--------|-------------|
-| `--help` | Display help information for the command |
-| `--version` | Display JAWT version information |
+| `--help` | Show help for a command. |
+| `--version` | Show the JAWT version. |
 
 #### Examples
 
 ```bash
 jawt --version
-jawt run --help
+jawt dev --help
 jawt build --help
 ```
-
-## Configuration Files
-
-### app.json
-
-Application-specific configuration including metadata, routing, and build settings.
-
-### jawt.config.json
-
-JAWT toolchain configuration for compilation, development server, and build optimisations.
-
-## Project Structure
-
-A typical JAWT project follows this structure:
-
-```
-my-project/
-├── app/                   # Application pages
-│   ├── index.jml         # Main entry point
-│   └── about.jml         # Additional pages
-├── components/           # Reusable components
-│   ├── Header.jml
-│   └── Footer.jml
-├── assets/              # Static assets
-│   ├── images/
-│   ├── fonts/
-│   └── styles/
-├── dist/                # Build output (generated)
-├── app.json            # App configuration
-└── jawt.config.json    # JAWT configuration
-```
-
-## Common Workflows
-
-### Starting a New Project
-
-```bash
-# Create and set up new project
-jawt init my-project
-cd my-project
-
-# Start development
-jawt run
-```
-
-### Development Workflow
-
-```bash
-# Start development server
-jawt run
-
-# In another terminal, start debugger (when available)
-jawt debug
-```
-
-### Production Deployment
-
-```bash
-# Build for production
-jawt build
-
-# Preview production build locally (when available)
-jawt serve
-
-# Deploy contents of dist/ directory to your hosting provider
-```
-
-### Working with Custom Ports
-
-```bash
-# If default ports are in use
-jawt run -p 3000
-jawt debug -p 3001
-```
-
-## Troubleshooting
-
-### Common Issues
-
-#### Command not found: jawt
-
-**Problem**: JAWT CLI is not recognised by your shell.
-
-**Solutions**:
-
-- Ensure JAWT is properly [installed](../getting-started/installation.md)
-- Verify JAWT is in your system PATH
-- Restart your terminal after installation
-
-#### Missing app.json or jawt.config.json
-
-**Problem**: Required configuration files are missing.
-
-**Solutions**:
-
-- Create a new project using `jawt init`
-- Manually create the required configuration files
-- Check that you're running commands from the correct directory
-
-#### Port already in use
-
-**Problem**: Default ports (6500, 6501) are occupied by other processes.
-
-**Solutions**:
-```bash
-# Use custom ports
-jawt run -p 8080
-jawt debug -p 8081
-
-# Find and stop processes using default ports
-lsof -ti:6500 | xargs kill -9  # macOS/Linux
-netstat -ano | findstr :6500   # Windows
-```
-
-#### Build fails
-
-**Problem**: Compilation errors during the build process.
-
-**Solutions**:
-
-- Check JML syntax for errors
-- Ensure all imported components exist
-- Verify file paths and dependencies
-- Run `jawt debug` for detailed error information (when available)
-
-#### Hot reload not working
-
-**Problem**: Changes aren't reflected in the browser automatically.
-
-**Solutions**:
-
-- Ensure you're editing files within the project directory
-- Check the browser console for connection errors
-- Try running with cleared cache: `jawt run -c`
-- Manually refresh the browser
-
-### Getting Help
-
-For additional support:
-
-- Check the [JAWT documentation](../index.md)
-- Review [JML](../jml/index.md) syntax guides
-- Report issues on the [project repository](https://github.com/yasufadhili/jawt)
-
----
-
-**Version**: Early Development  
-**Last Updated**: Development Roadmap Phase 1

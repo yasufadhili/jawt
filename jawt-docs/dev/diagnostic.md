@@ -1,20 +1,19 @@
 # Diagnostic Reporting (`internal/diagnostic`)
 
-The `internal/diagnostic` package provides a standardized way to report and manage messages related to compilation, parsing, and semantic analysis. These messages, known as diagnostics, can represent errors, warnings, or informational notes, and are crucial for providing feedback to the user during the development process.
+This package is all about handling errors and warnings in a clean, consistent way. When something goes wrong during compilation, parsing, or checking, we need to be able to report it to the user in a way that's easy to understand.
 
-## Core Concepts
+## The Core Ideas
 
-*   **Diagnostic**: A single message indicating an issue or information, including its code, message, severity, origin, and precise location in the source code.
-*   **Severity**: Defines the impact level of a diagnostic (Info, Warning, Error).
-*   **Position**: Specifies the exact location (file, line, column, byte offsets) within a source file where a diagnostic occurred.
-*   **Reporter**: A central collector for all diagnostics generated during a process (e.g., compilation).
-*   **Printer**: Responsible for formatting and outputting diagnostics to a user-friendly interface (e.g., console).
+-   **`Diagnostic`**: This is a single error or warning message. It knows what the message is, where it happened (file, line, column), how severe it is, and where it came from.
+-   **`Severity`**: This is just an enum for the level of the diagnostic: Info, Warning, or Error.
+-   **`Reporter`**: This is a central place to collect all the diagnostics that are generated during a process. For example, the compiler will have a reporter that it passes to the parser and the checker.
+-   **`Printer`**: This is what takes the diagnostics from the reporter and prints them to the console in a nice, colorful format.
 
-## Key Data Structures
+## The Key Data Structures
 
 ### `Diagnostic`
 
-Represents a single diagnostic message.
+This struct holds all the info for a single diagnostic message.
 
 ```go
 type Diagnostic struct {
@@ -26,45 +25,9 @@ type Diagnostic struct {
 }
 ```
 
-### `Position`
-
-Represents a precise location in a source file.
-
-```go
-type Position struct {
-	Line   int
-	Column int
-	Start  int // 0-based byte offset of the start of the diagnostic
-	End    int // 0-based byte offset of the end of the diagnostic
-	File   string
-}
-```
-
-### `Severity`
-
-An enumeration for the severity level of a diagnostic.
-
-```go
-type Severity int
-
-const (
-	SeverityInfo Severity = iota
-	SeverityWarning
-	SeverityError
-)
-```
-
-### `DiagnosticCode`
-
-A unique code for a diagnostic message, allowing for programmatic identification and filtering of specific issues.
-
-```go
-type DiagnosticCode string
-```
-
 ### `Reporter`
 
-Collects and manages a list of diagnostics. It provides methods to add new diagnostics and retrieve them based on their severity.
+This collects all the diagnostics.
 
 ```go
 type Reporter struct {
@@ -75,7 +38,7 @@ type Reporter struct {
 
 ### `Printer`
 
-Formats and outputs diagnostics to an `io.Writer` (e.g., `os.Stderr`). It applies color coding based on severity for better readability.
+This prints the diagnostics to the console.
 
 ```go
 type Printer struct {
@@ -85,123 +48,10 @@ type Printer struct {
 
 ### `AntlrErrorListener`
 
-A custom ANTLR error listener that integrates ANTLR parsing errors directly into the JAWT diagnostic system.
+This is a custom error listener for ANTLR. When the ANTLR parser finds a syntax error, it calls a method on this listener. I've implemented that method to create a `Diagnostic` and add it to our `Reporter`. This way, we can handle syntax errors from the parser in the same way we handle all other errors.
 
-```go
-type AntlrErrorListener struct {
-	*antlr.DefaultErrorListener
-	Reporter *Reporter
-	File     string
-}
-```
+## How It's Used
 
-## Functions & Methods
+When a process like compilation starts, it creates a new `Reporter`. This reporter is then passed down to all the different parts of the process. If any part of the process finds an error, it creates a `Diagnostic` and adds it to the reporter.
 
-### `NewDiagnostic`
-
-```go
-func NewDiagnostic(code DiagnosticCode, message string, pos Position, severity Severity, origin string) *Diagnostic
-```
-
-Creates a new `Diagnostic` instance.
-
-### `(*Diagnostic) Error()`
-
-```go
-func (d *Diagnostic) Error() string
-```
-
-Returns a formatted string representation of the diagnostic, making `Diagnostic` compatible with the `error` interface.
-
-### `NewReporter`
-
-```go
-func NewReporter() *Reporter
-```
-
-Creates a new, empty `Reporter`.
-
-### `(*Reporter) Add(d *Diagnostic)`
-
-Adds a new diagnostic to the reporter's collection.
-
-### `(*Reporter) All()`, `(*Reporter) Errors()`, `(*Reporter) Warnings()`, `(*Reporter) Infos()`
-
-Methods to retrieve diagnostics based on their severity.
-
-### `(*Reporter) HasErrors()`, `(*Reporter) HasWarnings()`
-
-Convenience methods to quickly check if any errors or warnings have been reported.
-
-### `(*Reporter) Reset()`
-
-Clears all diagnostics from the reporter.
-
-### `NewPrinter()`, `NewPrinterWithWriter(w io.Writer)`
-
-Create new `Printer` instances. `NewPrinter()` uses `os.Stderr` by default.
-
-### `(*Printer) Print(reporter *Reporter)`
-
-Prints all diagnostics collected by a `Reporter`.
-
-### `(*Printer) PrintDiagnostic(d *Diagnostic)`
-
-Prints a single `Diagnostic` message, applying color coding based on its severity.
-
-### `NewAntlrErrorListener(reporter *Reporter, file string)`
-
-Creates a new `AntlrErrorListener` that will report ANTLR syntax errors to the provided `Reporter`.
-
-### `(*AntlrErrorListener) SyntaxError(...)`
-
-This method is automatically called by ANTLR when a syntax error is encountered during parsing. It constructs a `Diagnostic` from the ANTLR error information and adds it to the `Reporter`.
-
-## Usage Example
-
-```go
-// Example of using the diagnostic package in a hypothetical parser:
-// import (
-//     "github.com/yasufadhili/jawt/internal/diagnostic"
-// )
-
-// func parseCode(code string, filename string) error {
-//     reporter := diagnostic.NewReporter()
-
-//     // Simulate a syntax error
-//     pos := diagnostic.Position{Line: 5, Column: 10, File: filename}
-//     diag := diagnostic.NewDiagnostic(
-//         "SYNTAX_001",
-//         "Unexpected token '}'",
-//         pos,
-//         diagnostic.SeverityError,
-//         "parser",
-//     )
-//     reporter.Add(diag)
-
-//     // Simulate a warning
-//     warnPos := diagnostic.Position{Line: 2, Column: 1, File: filename}
-//     warnDiag := diagnostic.NewDiagnostic(
-//         "SEMANTIC_002",
-//         "Variable 'unusedVar' declared but not used",
-//         warnPos,
-//         diagnostic.SeverityWarning,
-//         "checker",
-//     )
-//     reporter.Add(warnDiag)
-
-//     if reporter.HasErrors() {
-//         printer := diagnostic.NewPrinter()
-//         printer.Print(reporter)
-//         return fmt.Errorf("parsing failed with errors")
-//     }
-//     return nil
-// }
-
-// func main() {
-//     err := parseCode("some invalid code", "main.jml")
-//     if err != nil {
-//         fmt.Println("Process finished with errors.")
-//     }
-// }
-```
+At the end of the process, we check if the reporter has any errors. If it does, we create a `Printer` and use it to print all the diagnostics to the console. This gives the user a nice, clean list of all the issues that were found.

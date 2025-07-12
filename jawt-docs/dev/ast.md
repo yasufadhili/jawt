@@ -1,20 +1,20 @@
-# Abstract Syntax Tree (AST)
+# The Abstract Syntax Tree (AST)
 
-The `ast` package defines the core data structures representing the Abstract Syntax Tree (AST) for JML (JAWT Markup Language) files. It provides interfaces for various node types, concrete implementations of these nodes, factory methods for creating them, a visitor pattern for traversing the AST, and a printer for visualizing the tree structure.
+The `ast` package is where the magic begins. After the parser chews on a JML file, it spits out a tree-like structure that represents the code. That's the Abstract Syntax Tree, or AST. This package defines all the different types of nodes that can exist in that tree.
 
-## Core Concepts
+## The Core Idea
 
-*   **Node**: The fundamental interface for all elements in the AST. Every node has a `Position` (line, column, file) and can accept a `Visitor`.
-*   **Statement**: Represents a complete action or instruction.
-*   **Declaration**: A specific type of statement that introduces a new identifier (e.g., variable, function, component).
-*   **Expression**: Represents a piece of code that produces a value.
-*   **Visitor Pattern**: A way to traverse the AST and perform operations on each node without modifying the node structures themselves.
+-	**`Node`**: This is the granddaddy of all nodes. Everything in the AST is a `Node`. It knows its position in the source file (line, column) and can be visited by a `Visitor`.
+-	**`Statement`**: A statement is a complete instruction, like a variable declaration or an `if` block.
+-	**`Declaration`**: A special kind of statement that creates something new, like a variable, function, or component.
+-	**`Expression`**: A piece of code that results in a value, like `2 + 2` or `user.name`.
+-	**The Visitor Pattern**: This is a clean way to walk through the AST and do things with the nodes without having to change the node structures themselves. It's super useful for things like type checking and code generation.
 
-## Key Data Structures
+## The Key Data Structures
 
 ### `Position`
 
-Represents a location within a source file.
+This is just a simple struct that holds the line, column, and file of a node.
 
 ```go
 type Position struct {
@@ -24,13 +24,9 @@ type Position struct {
 }
 ```
 
-**Methods:**
-
-*   `String() string`: Returns a formatted string of the position (e.g., `file.jml:10:5`).
-
 ### `Node` Interface
 
-The base interface for all AST nodes.
+This is the base interface for everything in the AST.
 
 ```go
 type Node interface {
@@ -42,7 +38,7 @@ type Node interface {
 
 ### `Program`
 
-Represents the entire JML project, containing multiple `Document` nodes.
+This represents the entire JAWT project, which is basically a collection of `Document` nodes.
 
 ```go
 type Program struct {
@@ -53,115 +49,57 @@ type Program struct {
 
 ### `Document`
 
-Represents a single JML file (e.g., a page or a component).
+A `Document` is a single JML file, either a page or a component.
 
 ```go
 type Document struct {
 	Position
 	DocType    DocType // "page" or "component"
 	Name       *Identifier
-	Body       []Statement // Contains imports, exports, declarations, elements
+	Body       []Statement // This holds all the good stuff: imports, declarations, elements, etc.
 	SourceFile string
 }
 ```
 
-### `DocType`
-
-An enumeration for the type of JML document.
-
-```go
-type DocType string
-
-const (
-	DocTypePage      DocType = "page"
-	DocTypeComponent DocType = "component"
-)
-```
-
-### `ImportKind`
-
-An enumeration for the type of import declaration.
-
-```go
-type ImportKind string
-
-const (
-	ImportKindComponent ImportKind = "component"
-	ImportKindScript    ImportKind = "script"
-	ImportKindBrowser   ImportKind = "browser"
-	ImportKindModule    ImportKind = "module"
-)
-```
-
 ### Declarations
 
-Nodes representing various types of declarations:
+These are all the nodes that represent declarations:
 
-*   `ImportDeclaration`: `import { a } from 'b'`
-*   `ExportDeclaration`: `export const a = 1`
-*   `VariableDeclaration`: `let`, `const`, or `var` declarations.
-*   `FunctionDeclaration`: Function definitions.
-*   `ClassDeclaration`: Class definitions.
-*   `InterfaceDeclaration`: Interface definitions.
-*   `TypeAliasDeclaration`: Type aliases (e.g., `type MyType = string`).
-*   `EnumDeclaration`: Enum definitions.
-*   `PropertyDeclaration`: JML-specific component properties.
-*   `StateDeclaration`: JML-specific component state.
+-	`ImportDeclaration`: `import { a } from 'b'`
+-	`ExportDeclaration`: `export const a = 1`
+-	`VariableDeclaration`: `let`, `const`, or `var`.
+-	And so on for functions, classes, interfaces, etc.
 
 ### Statements
 
-Nodes representing various types of statements:
+These are the nodes for various statements:
 
-*   `BlockStatement`: A block of statements `{ ... }`.
-*   `ExpressionStatement`: An expression used as a statement.
-*   `IfStatement`: `if-else` statements.
-*   `ForStatement`: `for` loops.
-*   `ForInStatement`: `for-in` or `for-of` loops.
-*   `WhileStatement`: `while` loops.
-*   `ReturnStatement`: `return` statements.
-*   `BreakStatement`: `break` statements.
-*   `ContinueStatement`: `continue` statements.
-*   `ThrowStatement`: `throw` statements.
-*   `TryStatement`: `try-catch-finally` blocks.
+-	`BlockStatement`: A block of statements in curly braces `{ ... }`.
+-	`IfStatement`: An `if-else` statement.
+-	`ForStatement`: A `for` loop.
+-	And so on for `while`, `return`, `throw`, etc.
 
 ### Expressions
 
-Nodes representing various types of expressions:
+These are the nodes for expressions:
 
-*   `Identifier`: A name (e.g., variable name, function name).
-*   `Literal`: A literal value (string, number, boolean, etc.).
-*   `ArrayLiteral`: Array creation `[1, 2, 3]`.
-*   `ObjectLiteral`: Object creation `{ key: value }`.
-*   `FunctionExpression`: Anonymous function expressions.
-*   `ArrowFunctionExpression`: Arrow function expressions `() => {}`.
-*   `UnaryExpression`: Unary operations `!a`, `typeof b`.
-*   `BinaryExpression`: Binary operations `a + b`.
-*   `ConditionalExpression`: Ternary operations `a ? b : c`.
-*   `UpdateExpression`: Update operations `a++`, `--b`.
-*   `MemberExpression`: Member access `obj.prop`, `arr[index]`.
-*   `CallExpression`: Function calls `func()`.
-*   `NewExpression`: Object instantiation `new Class()`.
-*   `ThisExpression`: The `this` keyword.
-*   `SuperExpression`: The `super` keyword.
-*   `TemplateLiteral`: Template literals `` `hello ${name}` ``.
+-	`Identifier`: A name, like a variable or function name.
+-	`Literal`: A value, like a string, number, or boolean.
+-	`BinaryExpression`: An operation with two operands, like `a + b`.
+-	And so on for function calls, member access, etc.
 
-### JML Specific Nodes
+### JML-Specific Nodes
 
-*   `ComponentBodyElement`: Marker interface for nodes that can appear within a component's body.
-*   `ComponentElement`: Represents a JML component instantiation `<MyComponent>`.
-*   `ComponentProperty`: Represents a property assignment within a component body `prop: "value"`.
-*   `ForLoop`: JML-specific `for` loop for iterating over collections.
-*   `IfCondition`: JML-specific `if-else` block for conditional rendering.
+These are nodes that are unique to JML:
 
-### Type Nodes
+-	`ComponentElement`: Represents a JML component being used, like `<MyComponent>`.
+-	`ComponentProperty`: A property being assigned inside a component, like `prop: "value"`.
+-	`ForLoop`: The JML `for` loop for iterating over collections.
+-	`IfCondition`: The JML `if-else` block for conditional rendering.
 
-*   `TypeAnnotation`: Represents a type annotation `: string`.
-*   `TypeReference`: A reference to a type (e.g., `string`, `MyType`).
-*   `ObjectType`: An object type literal `{ a: string, b: number }`.
+## The Factory (`factory.go`)
 
-## Factory Methods (`factory.go`)
-
-The `factory.go` file provides convenience functions (prefixed with `New`) for creating instances of all AST node types. These methods simplify the construction of the AST programmatically.
+`factory.go` is a set of helper functions for creating new AST nodes. It just makes the code in the `AstBuilder` cleaner and easier to read.
 
 **Example:**
 
@@ -173,71 +111,35 @@ func NewIdentifier(pos Position, name string) *Identifier {
 		Name:     name,
 	}
 }
-
-// NewVariableDeclaration creates a new VariableDeclaration node.
-func NewVariableDeclaration(pos Position, kind string, declarations []*VariableDeclarator) *VariableDeclaration {
-	return &VariableDeclaration{
-		Position:     pos,
-		Kind:         kind,
-		Declarations: declarations,
-	}
-}
 ```
 
-## Visitor Pattern (`visitor.go`, `walk.go`)
+## The Visitor Pattern (`visitor.go`, `walk.go`)
 
-The `ast` package implements the visitor pattern for traversing the AST.
+This is how we traverse the AST.
 
 ### `Visitor` Interface (`visitor.go`)
 
-Defines methods for visiting each type of AST node.
+This interface defines a `Visit` method for every single type of node in the AST.
 
 ```go
 type Visitor interface {
 	VisitProgram(n *Program)
 	VisitDocument(n *Document)
-	// ... (many more Visit methods for each node type)
+	// ... and many more
 }
 ```
 
 ### `BaseVisitor` (`visitor.go`)
 
-A no-op implementation of the `Visitor` interface. This can be embedded in custom visitors to avoid implementing all methods, allowing developers to focus only on the node types they care about.
-
-```go
-type BaseVisitor struct{}
-
-// Example:
-func (v *BaseVisitor) VisitProgram(n *Program)   {}
-func (v *BaseVisitor) VisitDocument(n *Document) {}
-// ...
-```
+This is a helper that implements the `Visitor` interface with empty methods. This way, when I create a new visitor, I can just embed `BaseVisitor` and only implement the `Visit` methods for the nodes I actually care about.
 
 ### `Walk` Function (`walk.go`)
 
-The `Walk` function is responsible for traversing the AST. It takes a `Visitor` and a `Node` as input, calls the appropriate `Visit` method on the visitor for the current node, and then recursively calls `Walk` for all child nodes.
+The `Walk` function is the engine of the visitor pattern. It takes a `Visitor` and a `Node`, calls the right `Visit` method on the visitor, and then recursively calls `Walk` on all the children of that node.
 
-```go
-func Walk(v Visitor, node Node) {
-	if node == nil {
-		return
-	}
+**Example:**
 
-	node.Accept(v) // Calls the specific Visit method on the visitor
-
-	switch n := node.(type) {
-	case *Program:
-		for _, doc := range n.Documents {
-			Walk(v, doc) // Recursively walk children
-		}
-	// ... (logic for other node types)
-	}
-}
-```
-
-**Usage Example:**
-
-To create a custom visitor that counts the number of `Identifier` nodes:
+To count all the identifiers in the AST:
 
 ```go
 type IdentifierCounter struct {
@@ -249,38 +151,19 @@ func (v *IdentifierCounter) VisitIdentifier(n *ast.Identifier) {
 	v.count++
 }
 
-// In your code:
+// Later in the code:
 // counter := &IdentifierCounter{}
 // ast.Walk(counter, yourASTNode)
-// fmt.Printf("Total identifiers: %d\n", counter.count)
+// fmt.Printf("Found %d identifiers\n", counter.count)
 ```
 
-## Printer (`printer.go`)
+## The Printer (`printer.go`)
 
-The `Printer` is an implementation of the `Visitor` interface that prints a human-readable representation of the AST to an `io.Writer`. It's useful for debugging and understanding the structure of a parsed JML file.
+The `Printer` is a special visitor that prints out a human-readable representation of the AST. It's incredibly useful for debugging the parser and seeing the structure of a JML file.
 
-```go
-type Printer struct {
-	ast.BaseVisitor
-	writer io.Writer
-	indent int
-}
-
-// NewPrinter creates a new Printer.
-func NewPrinter(writer io.Writer) *Printer {
-	return &Printer{writer: writer}
-}
-
-// Print prints the given node to the writer.
-func (p *Printer) Print(node ast.Node) {
-	ast.Walk(p, node)
-}
-```
-
-**Usage Example:**
+**Example:**
 
 ```go
-// Assuming 'myAST' is an *ast.Program or *ast.Document
 // var buf bytes.Buffer
 // printer := ast.NewPrinter(&buf)
 // printer.Print(myAST)

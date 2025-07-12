@@ -1,0 +1,10 @@
+## What You Might Have Missed (Catch List)
+
+* ✅ Route metadata per page (`meta` block)
+* ✅ Layout support (wrappers via `Layout` components)
+* ✅ Page transitions (planned via built-in `<Transition>` or router hooks)
+* ✅ Form validation (planned, maybe with Zod)
+* ✅ i18n support (planned)
+* ✅ Theme toggling (via Tailwind and runtime API)
+* ✅ DevTools overlay (planned in dev server)
+* ✅ LSP/Editor integration (longer-term roadmap)

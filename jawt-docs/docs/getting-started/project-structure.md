@@ -1,63 +1,55 @@
-# JAWT Project Structure
+# How a JAWT Project is Laid Out
 
-Understanding your JAWT project structure is key to learning how to organise a well-designed project—everything has its place, and knowing where to find (and put) things makes development much more efficient. This tutorial will guide you through the anatomy of a JAWT project and explain how each directory and file contributes to your application.
+Knowing your way around a JAWT project is key. I've set up a simple, conventional structure so you don't have to waste time making decisions about where to put files. Everything has a place, and once you know the layout, you can get to the fun part: building.
 
-## Overview
+## The Basic Blueprint
 
-A JAWT project follows a convention-over-configuration approach, meaning that by organising your files in the expected structure, everything works seamlessly without additional setup. Think of it as a well-organised workshop where every tool has its designated spot.
-
-## Basic Project Structure
-
-When you run `jawt init my-project`, you get this foundation:
+When you run `jawt init my-project`, you get this starting structure:
 
 ```
 my-project/
-├── app/                    # Pages and routing
-│   └── index.jml          # Root page (/)
-├── components/            # Reusable UI components
-├── modules/               # Modules for complex computations
-├── assets/                # Static files (images, fonts, etc.)
-├── app.json              # Project metadata
-├── jawt.config.json      # Build configuration
-└── dist/                 # Build output (created after jawt build)
+├── app/                    # Your pages and routes
+│   └── index.jml          # The main page (the "/" route)
+├── components/            # Reusable UI bits and pieces
+├── assets/                # Images, fonts, and other static stuff
+├── app.json              # Info about your project
+├── jawt.config.json      # Configuration for the build process
+└── dist/                 # Where the final, compiled app goes
 ```
 
-Let's explore each part in detail.
+Let's break down what each of these does.
 
-## The `app/` Directory - Your Application Pages
+## The `app/` Directory - Your Application's Pages
 
-The `app/` directory is where your application's pages live. It defines how one navigates through your site.
+The `app/` directory is where the pages of your site live. The structure of this directory defines your app's routes.
 
-### Routing Convention
+### File-Based Routing
 
-JAWT uses file-based routing, where the directory structure directly maps to URL routes:
+JAWT uses the file system to define routes. It's simple and intuitive:
 
 ```
 app/
-├── index.jml              # → / (root page)
+├── index.jml              # → / (the root page)
 ├── about/
 │   └── index.jml         # → /about
 ├── blog/
 │   ├── index.jml         # → /blog
-│   └── [slug].jml        # → /blog/hello-world (dynamic route)
-├── contact/
-│   └── index.jml         # → /contact
+│   └── [slug].jml        # → /blog/a-cool-post (a dynamic route)
 └── user/
-    ├── index.jml         # → /user
-    ├── [id].jml          # → /user/123 (dynamic route)
+    ├── [id].jml          # → /user/123 (another dynamic route)
     └── [id]/
         └── settings.jml  # → /user/123/settings
 ```
 
-### Page File Requirements
+### Page File Rules
 
-Each page file must:
+Every page file needs to:
 
-1. Be named `index.jml` (for static routes) or use brackets for dynamic routes like `[id].jml`
-2. Start with `_doctype page <name>`
-3. Contain a single `Page` component as the root
+1.  Be named `index.jml` for a static route, or use `[brackets]` for a dynamic one.
+2.  Start with `_doctype page <name>`.
+3.  Have a single `Page` component as its root element.
 
-### Example Page Structure
+### Example Page
 
 ```jml
 # app/about/index.jml
@@ -77,7 +69,7 @@ Page {
 
 ### Dynamic Routes
 
-Dynamic routes use square brackets to indicate parameters:
+Use square brackets for parts of the URL that can change.
 
 ```jml
 # app/blog/[slug].jml
@@ -90,16 +82,16 @@ Page {
     description: "Read our latest blog content"
     
     BlogLayout {
-        slug: params.slug  # Access the dynamic parameter
+        slug: params.slug  // You can access the dynamic part like this
     }
 }
 ```
 
-## The `components/` Directory - Reusable UI Building Blocks
+## The `components/` Directory - Reusable Building Blocks
 
-Think of components as prefabricated modules in construction—they're built once and can be used throughout your project. The `components/` directory houses all your reusable UI elements.
+Think of components as your own custom HTML tags. You build them once and can reuse them anywhere. The `components/` directory is where they all live.
 
-### Component Organisation
+### Organising Components
 
 ```
 components/
@@ -111,21 +103,18 @@ components/
 │   ├── button.jml
 │   ├── card.jml
 │   └── modal.jml
-├── forms/
-│   ├── contact-form.jml
-│   └── login-form.jml
-└── navigation/
-    ├── navbar.jml
-    └── sidebar.jml
+└── forms/
+    ├── contact-form.jml
+    └── login-form.jml
 ```
 
-### Component File Structure
+### Component File Rules
 
 Each component file must:
 
-1. Start with `_doctype component <ComponentName>`
-2. Export a single component
-3. Use PascalCase for component names
+1.  Start with `_doctype component <ComponentName>`.
+2.  Export a single component.
+3.  Use `PascalCase` for the component name.
 
 ```jml
 # components/ui/button.jml
@@ -138,87 +127,26 @@ Button {
 }
 ```
 
-### Component Import Patterns
+### Importing Components
 
-Components can be imported in different ways:
+You can import components in a few different ways:
 
 ```jml
-# Import from components directory (global)
+# Import from the global components directory
 import component Header from "components/layout/header"
 
-# Import from same directory (local)
+# Import from the same directory (for page-specific components)
 import component Card from "card"
 
-# Import with alias
+# Import with an alias
 import component MainButton from "components/ui/button"
 ```
 
-## The `modules/` Directory - Performance-Critical Code
+## The `assets/` Directory - Static Files
 
-Modules handle computationally intensive tasks that need to run at near-native speed. These compile to WebAssembly (WASM).
+This is where you put all your non-code files: images, fonts, CSS, etc.
 
-### Module Organisation
-
-```
-modules/
-├── math/
-│   ├── calculations.jml
-│   └── geometry.jml
-├── image/
-│   └── processing.jml
-└── data/
-    ├── sorting.jml
-    └── filtering.jml
-```
-
-### Module File Structure
-
-```jml
-# modules/math/calculations.jml
-_doctype module calculations
-
-export function fibonacci(n: number): number {
-    if (n <= 1) return n;
-    return fibonacci(n - 1) + fibonacci(n - 2);
-}
-
-export function isPrime(n: number): boolean {
-    if (n < 2) return false;
-    for (let i = 2; i <= Math.sqrt(n); i++) {
-        if (n % i === 0) return false;
-    }
-    return true;
-}
-```
-
-### Using Modules in Components
-
-```jml
-# components/calculator.jml
-_doctype component Calculator
-
-import browser // for Alert
-
-import module math from "modules/math/calculations"
-
-Container {
-    style: "p-4"
-    
-    Button {
-        text: "Calculate Fibonacci"
-        onClick: () => {
-            const result = math.fibonacci(10);
-            browser.Alert(`Fibonacci(10) = ${result}`);
-        }
-    }
-}
-```
-
-## The `assets/` Directory - Static Resources
-
-The assets directory is like a storage room for all your non-code files—images, fonts, stylesheets, and other static resources.
-
-### Asset Organisation
+### Organizing Assets
 
 ```
 assets/
@@ -240,7 +168,7 @@ assets/
 
 ### Using Assets
 
-Assets can be referenced from anywhere in your project:
+You can reference assets from anywhere in your project.
 
 ```jml
 # In a page or component
@@ -258,9 +186,9 @@ Container {
 
 ## Configuration Files
 
-### `app.json` - Project Metadata
+### `app.json` - Project Info
 
-This file contains basic information about your project:
+This file holds basic info about your project.
 
 ```json
 {
@@ -271,16 +199,16 @@ This file contains basic information about your project:
 }
 ```
 
-### `jawt.config.json` - Build Configuration
+### `jawt.config.json` - Build Settings
 
-This file controls how your project is built and served:
+This file controls how JAWT builds and serves your project.
 
 ```json
 {
   "build": {
     "outDir": "dist",
     "assetsDir": "assets",
-    "minify": true,
+    "minify": true
   },
   "server": {
     "port": 6500,
@@ -291,15 +219,14 @@ This file controls how your project is built and served:
   "paths": {
     "pages": "app",
     "components": "components",
-    "modules": "modules",
     "assets": "assets"
   }
 }
 ```
 
-## The `dist/` Directory - Build Output
+## The `dist/` Directory - The Final Product
 
-After running `jawt build`, the `dist/` directory contains your compiled application:
+After you run `jawt build`, this directory will contain your compiled app, ready to be deployed.
 
 ```
 dist/
@@ -314,268 +241,115 @@ dist/
 │   │   └── styles.css     # Compiled styles
 │   └── images/
 │       └── ...            # Optimised images
-└── manifest.json          # Build manifest
+└── manifest.json          # A map of the build
 ```
 
-## Project Structure Best Practices
+## Best Practices
 
-### 1. Logical Grouping
+### 1. Group by Feature
 
-Organise components by functionality rather than type:
+Organise your components by what they do, not what they are.
 
 ```
 components/
-├── auth/           # Authentication-related components
+├── auth/           # Auth-related components
 │   ├── login-form.jml
 │   └── signup-form.jml
 ├── dashboard/      # Dashboard-specific components
 │   ├── stats-card.jml
 │   └── chart.jml
-└── common/         # Shared components
+└── common/         # Shared components used everywhere
     ├── button.jml
     └── modal.jml
 ```
 
-### 2. Consistent Naming
+### 2. Name Things Clearly
 
-Use clear, descriptive names:
+Use descriptive names for your files.
 
 ```
 # Good
 components/user/profile-card.jml
 components/navigation/main-menu.jml
 
-# Avoid
+# Not so good
 components/card.jml
 components/menu.jml
 ```
 
-### 3. Depth Considerations
+### 3. Don't Go Too Deep
 
-Keep directory nesting reasonable (3-4 levels maximum):
+Try to keep your directory structure relatively flat (3-4 levels max).
 
 ```
 # Good
 components/forms/contact/contact-form.jml
 
-# Too deep
+# A bit much
 components/ui/forms/contact/complex/contact-form.jml
 ```
 
-## Complete Example Project Structure
+## The Workflow
 
-Here's what a real-world JAWT project might look like:
-
-```
-my-blog/
-├── app/
-│   ├── index.jml                    # Home page
-│   ├── about/
-│   │   └── index.jml               # About page
-│   ├── blog/
-│   │   ├── index.jml               # Blog listing
-│   │   └── [slug].jml              # Individual post
-│   └── contact/
-│       └── index.jml               # Contact page
-├── components/
-│   ├── layout/
-│   │   ├── header.jml              # Site header
-│   │   ├── footer.jml              # Site footer
-│   │   └── main-layout.jml         # Main layout wrapper
-│   ├── blog/
-│   │   ├── post-card.jml           # Blog post preview
-│   │   ├── post-content.jml        # Full post display
-│   │   └── post-list.jml           # List of posts
-│   ├── ui/
-│   │   ├── button.jml              # Reusable button
-│   │   ├── card.jml                # Card component
-│   │   └── modal.jml               # Modal dialog
-│   └── forms/
-│       └── contact-form.jml        # Contact form
-├── modules/
-│   ├── content/
-│   │   └── markdown-parser.jml     # Markdown processing
-│   └── utils/
-│       └── date-formatter.jml      # Date utilities
-├── assets/
-│   ├── images/
-│   │   ├── logo.svg
-│   │   └── blog/
-│   │       ├── post1-hero.jpg
-│   │       └── post2-hero.jpg
-│   ├── fonts/
-│   │   └── custom-font.woff2
-│   └── data/
-│       └── blog-posts.json
-├── app.json
-├── jawt.config.json
-└── dist/                           # Generated after build
-```
-
-## Common Patterns and Conventions
-
-### Page-Specific Components
-
-Sometimes you need components that are only used by a single page:
-
-```
-app/
-├── dashboard/
-│   ├── index.jml                   # Dashboard page
-│   ├── stats-widget.jml            # Page-specific component
-│   └── chart-container.jml         # Page-specific component
-```
-
-Import page-specific components using relative paths:
-
-```jml
-# In app/dashboard/index.jml
-import component StatsWidget from "stats-widget"
-import component ChartContainer from "chart-container"
-```
-
-### Shared Layouts
-
-Create layout components for consistent page structure:
-
-```jml
-# components/layout/standard-layout.jml
-_doctype component StandardLayout
-
-Container {
-    style: "min-h-screen bg-gray-50"
-    
-    Header {
-        title: props.title
-    }
-    
-    Main {
-        style: "container mx-auto px-4 py-8"
-        content: props.children
-    }
-    
-    Footer {}
-}
-```
-
-### Configuration-Based Routing
-
-Use configuration files to manage complex routing:
-
-```json
-# assets/data/routes.json
-{
-  "routes": [
-    {
-      "path": "/",
-      "component": "home",
-      "title": "Home"
-    },
-    {
-      "path": "/blog/:slug",
-      "component": "blog-post",
-      "title": "Blog Post"
-    }
-  ]
-}
-```
-
-## Development Workflow
-
-### Starting Development
+### Starting Out
 
 ```bash
-# Navigate to project directory
+# Go to your project directory
 cd my-project
 
-# Start development server
+# Start the dev server
 jawt run
 
-# In another terminal, start debugger (optional)
+# In another terminal, you can run the debugger (optional)
 jawt debug
 ```
 
 ### Building for Production
 
 ```bash
-# Build optimised version
+# Create an optimized build
 jawt build
 
-# Serve production build locally for testing
+# Serve the production build locally to test it
 jawt serve
 ```
 
-### Project Maintenance
+## Common Questions
 
-```bash
-# Check project structure
-ls -la app/ components/ modules/
+### Import Not Working?
 
-# Validate configuration
-cat jawt.config.json
+**Problem**: Component not found.
 
-# Clean build artifacts
-rm -rf dist/
-```
-
-## Troubleshooting Common Issues
-
-### Import Resolution Problems
-
-**Problem**: Component not found error
-
-**Solution**: Check import paths and ensure components are in the correct directory
+**Solution**: Double-check your import paths. Make sure they're relative to the correct directory.
 
 ```jml
 # Correct
 import component Button from "components/ui/button"
 
-# Incorrect
+# Incorrect (usually)
 import component Button from "ui/button"
 ```
 
-### Routing Issues
+### Page Not Showing Up?
 
-**Problem**: Page not accessible
+**Problem**: A page isn't accessible at its URL.
 
-**Solution**: Verify file naming and directory structure
+**Solution**: Check the file name and directory structure in `app/`.
 
 ```
-# Correct for /about route
+# For the /about route, this is correct:
 app/about/index.jml
 
-# Incorrect
+# This is wrong:
 app/about.jml
 ```
 
-### Build Configuration Problems
+## What's Next?
 
-**Problem**: Assets not found after build
-**Solution**: Check `jawt.config.json` paths configuration
+Now that you know how a JAWT project is structured, you can:
 
-```json
-{
-  "paths": {
-    "assets": "assets"  // Ensure this matches your directory
-  }
-}
-```
+1.  **Organise your own projects** with this structure in mind.
+2.  **Plan out new projects** before you start coding.
+3.  **Create your own project templates** for different types of apps.
 
-## Next Steps
-
-Now that you understand JAWT project structure, you can:
-
-1. **Organise Existing Projects**: Restructure your current projects following these conventions
-2. **Plan New Projects**: Design your directory structure before you start coding
-3. **Explore Advanced Features**: Look into custom build configurations and optimisations
-4. **Create Templates**: Build project templates for common patterns you use
-
-## Key Takeaways
-
-1. **Convention Over Configuration**: Following JAWT's expected structure makes everything work seamlessly
-2. **Logical Organisation**: Group related files together for easier maintenance
-3. **Clear Separation**: Pages, components, and modules each have their designated purpose and location
-4. **Scalable Structure**: The pattern works for both small projects and large applications
-5. **Import Flexibility**: Use both absolute and relative imports as appropriate
-
-You can now create well-organised, maintainable applications that scale as your projects grow.
+That's it! You're ready to start building well-organised, scalable apps with JAWT.
