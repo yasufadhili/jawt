@@ -3,7 +3,9 @@ package build
 import (
 	"fmt"
 	"github.com/fsnotify/fsnotify"
+	"github.com/yasufadhili/jawt/internal/compiler"
 	"github.com/yasufadhili/jawt/internal/core"
+	"github.com/yasufadhili/jawt/internal/diagnostic"
 	"os"
 	"strings"
 	"sync"
@@ -46,9 +48,9 @@ type BuildSystem struct {
 	pages      map[string]*PageInfo
 	comps      map[string]*ComponentInfo
 	discoverer ProjectDiscoverer
-	// compiler *compiler.Compiler
-	watcher  FileWatcher
-	depGraph DependencyGraph
+	compiler   *compiler.Compiler
+	watcher    FileWatcher
+	depGraph   DependencyGraph
 }
 
 type FileWatcher interface {
