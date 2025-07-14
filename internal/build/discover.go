@@ -12,8 +12,8 @@ type ProjectDiscoverer struct {
 	ctx *core.JawtContext
 }
 
-func NewProjectDiscoverer(ctx *core.JawtContext) *ProjectDiscoverer {
-	return &ProjectDiscoverer{ctx: ctx}
+func NewProjectDiscoverer(ctx *core.JawtContext) ProjectDiscoverer {
+	return ProjectDiscoverer{ctx: ctx}
 }
 
 func (pd *ProjectDiscoverer) DiscoverProjectFiles() ([]string, error) {
@@ -68,7 +68,7 @@ func (pd *ProjectDiscoverer) findJMLFiles(dir string) ([]string, error) {
 	return files, err
 }
 
-func (pd *ProjectDiscoverer) createDocumentInfo(path string, projectRoot string) (*DocumentInfo, error) {
+func (pd *ProjectDiscoverer) CreateDocumentInfo(path string, projectRoot string) (*DocumentInfo, error) {
 
 	// Get file info
 	fileInfo, err := os.Stat(path)
