@@ -80,6 +80,10 @@ func (bs *BuildSystem) Initialise() error {
 		return fmt.Errorf("failed to generate workspace configs: %w", err)
 	}
 
+	if err := bs.syncWorkspaceSources(); err != nil {
+		return fmt.Errorf("failed to sync workspace sources: %w", err)
+	}
+
 	if err := bs.DiscoverProject(); err != nil {
 		return err
 	}
@@ -516,6 +520,63 @@ func (bs *BuildSystem) getDocumentTypeString(docType DocumentType) string {
 	default:
 		return "unknown"
 	}
+}
+
+// syncWorkspaceSources copies user code and extracts internal code into the .jawt/src directory
+func (bs *BuildSystem) syncWorkspaceSources() error {
+	bs.ctx.Logger.Info("Synchronizing workspace sources")
+
+	// Clean the user and internal source directories
+	if err := os.RemoveAll(bs.ctx.Paths.UserSrcDir); err != nil {
+		return fmt.Errorf("failed to clean user source directory: %w", err)
+	}
+	if err := os.RemoveAll(bs.ctx.Paths.InternalSrcDir); err != nil {
+		return fmt.Errorf("failed to clean internal source directory: %w", err)
+	}
+	if err := bs.ctx.Paths.EnsureDirectories(); err != nil {
+		return fmt.Errorf("failed to ensure workspace directories: %w", err)
+	}
+
+	// Copy user scripts
+	if err := bs.copyUserScripts(); err != nil {
+		if !os.IsNotExist(err) { // It's okay if the scripts directory doesn't exist
+			return fmt.Errorf("failed to copy user scripts: %w", err)
+		}
+	}
+
+	// TODO: Implement extracting internal Jawt components/scripts to InternalSrcDir
+
+	return nil
+}
+
+func (bs *BuildSystem) copyUserScripts() error {
+	return filepath.Walk(bs.ctx.Paths.ScriptsDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if info.IsDir() {
+			return nil
+		}
+
+		relPath, err := filepath.Rel(bs.ctx.Paths.ScriptsDir, path)
+		if err != nil {
+			return err
+		}
+
+		destPath := filepath.Join(bs.ctx.Paths.UserSrcDir, relPath)
+
+		if err := os.MkdirAll(filepath.Dir(destPath), 0755); err != nil {
+			return err
+		}
+
+		content, err := os.ReadFile(path)
+		if err != nil {
+			return err
+		}
+
+		return os.WriteFile(destPath, content, 0644)
+	})
 }
 
 // generateWorkspaceConfigs creates the necessary config files in the .jawt directory
