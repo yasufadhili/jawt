@@ -108,7 +108,7 @@ func TestProjectPathsGetTempFile(t *testing.T) {
 	filename := "test-temp-file.txt"
 	tempFile := paths.GetTempFile(filename)
 
-	expectedPath := filepath.Join(paths.ProjectRoot, ".jawt", "tmp", filename)
+	expectedPath := filepath.Join(paths.ProjectRoot, ".jawt", "temp", filename)
 	if tempFile != expectedPath {
 		t.Errorf("expected temp file path %s, got %s", expectedPath, tempFile)
 	}

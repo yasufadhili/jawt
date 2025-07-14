@@ -55,8 +55,10 @@ func NewProjectPaths(projectRoot string, projectConfig *ProjectConfig, jawtConfi
 	}
 
 	paths := &ProjectPaths{
-		ProjectRoot: absProjectRoot,
-		WorkingDir:  workingDir,
+		ProjectRoot:   absProjectRoot,
+		WorkingDir:    workingDir,
+		ProjectConfig: projectConfig,
+		JawtConfig:    jawtConfig,
 	}
 
 	// Set up input directories from project config
