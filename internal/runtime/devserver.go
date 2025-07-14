@@ -33,9 +33,10 @@ func NewDevServer(ctx context.Context, logger core.Logger) *DevServer {
 	}
 }
 
-func (s *DevServer) Start(addr string) error {
+func (s *DevServer) Start(addr string, buildDir string) error {
+	http.Handle("/", http.FileServer(http.Dir(buildDir)))
 	http.HandleFunc("/ws", s.handleWebSocket)
-	s.logger.Info("Starting dev server", core.StringField("address", addr))
+	s.logger.Info("Starting dev server", core.StringField("address", addr), core.StringField("serving_from", buildDir))
 	return http.ListenAndServe(addr, nil)
 }
 

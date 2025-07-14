@@ -79,7 +79,7 @@ func (o *Orchestrator) StartAll() error {
 
 	// Start dev server
 	go func() {
-		if err := o.devServer.Start(o.jawtContext.ProjectConfig.GetDevServerAddress()); err != nil {
+		if err := o.devServer.Start(o.jawtContext.ProjectConfig.GetDevServerAddress(), o.jawtContext.Paths.BuildDir); err != nil {
 			o.logger.Error("Failed to start dev server", core.ErrorField(err))
 		}
 	}()
