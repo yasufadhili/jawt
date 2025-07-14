@@ -6,6 +6,7 @@ import (
 	"github.com/yasufadhili/jawt/internal/compiler"
 	"github.com/yasufadhili/jawt/internal/core"
 	"github.com/yasufadhili/jawt/internal/diagnostic"
+	"github.com/yasufadhili/jawt/internal/emitter"
 	"os"
 	"path/filepath"
 	"strings"
@@ -430,10 +431,13 @@ func (bs *BuildSystem) CompileDocument(path string) error {
 		return fmt.Errorf("compilation of %s failed with errors", doc.AbsPath)
 	}
 
-	// TODO: Emit TypeScript from the AST to the .jawt/src/user directory
-	_ = ast // Placeholder to avoid unused variable error
+	// 2. Emit TypeScript from the AST to the .jawt/src/user directory
+	emitter := emitter.NewEmitter(bs.ctx)
+	if err := emitter.Emit(ast); err != nil {
+		return fmt.Errorf("failed to emit TypeScript for %s: %w", doc.AbsPath, err)
+	}
 
-	// 2. Run external compilers
+	// 3. Run external compilers
 	if err := bs.compiler.RunTSC(); err != nil {
 		return fmt.Errorf("failed to run tsc: %w", err)
 	}
