@@ -71,6 +71,23 @@ func NewBuildSystem(ctx *core.JawtContext, watcher FileWatcher) *BuildSystem {
 	}
 }
 
+// Initialise performs initial project discovery and compilation
+func (bs *BuildSystem) Initialise() error {
+	bs.ctx.Logger.Info("Initialising build system")
+
+	if err := bs.DiscoverProject(); err != nil {
+		return err
+	}
+
+	if err := bs.CompileAll(); err != nil {
+		return err
+	}
+
+	bs.SetupWatcher()
+
+	return nil
+}
+
 func (bs *BuildSystem) DiscoverProject() error {
 	bs.ctx.Logger.Info("Discovering project documents")
 
