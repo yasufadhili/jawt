@@ -27,11 +27,11 @@ func RunProject(ctx *core.JawtContext) error {
 	}
 
 	// Override defaults
-	// fileWatcher.SetWatchPatterns([]string{".jml", ".ts", ".tsx", ".js", ".jsx", ".json", ".css"})
-	// fileWatcher.SetIgnorePatterns([]string{
-	// 	".git/", "node_modules/", ".jawt/", "dist/", "build/",
-	//	".DS_Store", "*.tmp", "*.swp", "*.swo",
-	// })
+	fileWatcher.SetWatchPatterns([]string{".jml", ".ts", ".tsx", ".js", ".jsx", ".json", ".css"})
+	fileWatcher.SetIgnorePatterns([]string{
+		".git/", "node_modules/", ".jawt/", "dist/", "build/",
+		".DS_Store", "*.tmp", "*.swp", "*.swo",
+	})
 
 	c := compiler.NewCompiler(ctx)
 
