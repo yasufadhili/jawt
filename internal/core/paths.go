@@ -69,7 +69,7 @@ func NewProjectPaths(projectRoot string, projectConfig *ProjectConfig, jawtConfi
 	paths.JawtDir = filepath.Join(absProjectRoot, ".jawt") // Fixed internal directory
 	paths.BuildDir = projectConfig.GetBuildOutputDir(absProjectRoot)
 	paths.DistDir = projectConfig.GetDistDir(absProjectRoot)
-	paths.TempDir = filepath.Join(paths.JawtDir, "tmp")    // Use fixed internal tmp
+	paths.TempDir = filepath.Join(paths.JawtDir, "temp")   // Use fixed internal tmp
 	paths.CacheDir = filepath.Join(paths.JawtDir, "cache") // Use fixed internal cache
 
 	// Set up generated output directories
