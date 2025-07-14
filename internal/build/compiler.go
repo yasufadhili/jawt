@@ -17,10 +17,53 @@ func NewCompilerRunner(ctx *core.JawtContext) *CompilerRunner {
 	return &CompilerRunner{ctx: ctx}
 }
 
-func (cr *CompilerRunner) RunTSC() error {
-	cr.ctx.Logger.Info("Running TypeScript compiler")
+func (cr *CompilerRunner) RunInitialTSC() error {
+	cr.ctx.Logger.Info("Running initial TypeScript compiler check")
 
-	tscPath, err := core.ResolveExecutablePath("tsc")
+	tscPath, err := core.ResolveExecutablePath("tsc", cr.ctx)
+	if err != nil {
+		return fmt.Errorf("tsc not found: %w. Please ensure TypeScript is installed", err)
+	}
+
+	cmd := exec.Command(tscPath, "--noEmit", "--project", cr.ctx.Paths.TSConfigPath)
+	cmd.Dir = cr.ctx.Paths.JawtDir // Run from the .jawt directory
+
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		return err
+	}
+	stderr, err := cmd.StderrPipe()
+	if err != nil {
+		return err
+	}
+
+	if err := cmd.Start(); err != nil {
+		return err
+	}
+
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	go func() {
+		defer wg.Done()
+		process.ProcessLogger(stdout, cr.ctx.Logger, "tsc-initial")
+	}()
+
+	go func() {
+		defer wg.Done()
+		process.ProcessLogger(stderr, cr.ctx.Logger, "tsc-initial-err")
+	}()
+
+	wg.Wait()
+
+	return cmd.Wait()
+}
+
+// RunFullTSC runs the TypeScript compiler to emit output.
+func (cr *CompilerRunner) RunFullTSC() error {
+	cr.ctx.Logger.Info("Running full TypeScript compiler")
+
+	tscPath, err := core.ResolveExecutablePath("tsc", cr.ctx)
 	if err != nil {
 		return fmt.Errorf("tsc not found: %w. Please ensure TypeScript is installed", err)
 	}
@@ -62,7 +105,7 @@ func (cr *CompilerRunner) RunTSC() error {
 func (cr *CompilerRunner) RunTailwind() error {
 	cr.ctx.Logger.Info("Running Tailwind CSS compiler")
 
-	tailwindPath, err := core.ResolveExecutablePath("tailwindcss")
+	tailwindPath, err := core.ResolveExecutablePath("tailwindcss", cr.ctx)
 	if err != nil {
 		return fmt.Errorf("tailwindcss not found: %w. Please ensure tailwindcss is installed", err)
 	}

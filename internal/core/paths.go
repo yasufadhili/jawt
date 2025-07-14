@@ -94,7 +94,7 @@ func NewProjectPaths(projectRoot string, projectConfig *ProjectConfig, jawtConfi
 // 1. If the provided path is already an absolute executable path.
 // 2. If the command exists in the system's PATH.
 // 3. If the command exists relative to the current JAWT executable.
-func ResolveExecutablePath(cmd string) (string, error) {
+func ResolveExecutablePath(cmd string, jawtCtx *JawtContext) (string, error) {
 	// 1. Check if the provided path is already an absolute executable path
 	if filepath.IsAbs(cmd) {
 		if _, err := os.Stat(cmd); err == nil {
@@ -102,26 +102,36 @@ func ResolveExecutablePath(cmd string) (string, error) {
 		}
 	}
 
-	// 2. Check if the command exists in the system's PATH
+	// 2. Check in .jawt/tools directory
+	if jawtCtx != nil && jawtCtx.Paths != nil {
+		toolPath := filepath.Join(jawtCtx.Paths.ToolsDir, cmd)
+		if runtime.GOOS == "windows" {
+			toolPath += ".exe"
+		}
+		if _, err := os.Stat(toolPath); err == nil {
+			return toolPath, nil
+		}
+	}
+
+	// 3. Check in bundled/bin directory (for self-contained distribution)
+	jawtExec, err := os.Executable()
+	if err == nil {
+		jawtDir := filepath.Dir(jawtExec)
+		bundledPath := filepath.Join(jawtDir, "bundled", "bin", cmd)
+		if runtime.GOOS == "windows" {
+			bundledPath += ".exe"
+		}
+		if _, err := os.Stat(bundledPath); err == nil {
+			return bundledPath, nil
+		}
+	}
+
+	// 4. Check system's PATH
 	if path, err := exec.LookPath(cmd); err == nil {
 		return path, nil
 	}
 
-	// 3. Check if the command exists relative to the current JAWT executable
-	jawtExec, err := os.Executable()
-	if err != nil {
-		return "", fmt.Errorf("failed to get current executable path: %w", err)
-	}
-	jawtDir := filepath.Dir(jawtExec)
-	localPath := filepath.Join(jawtDir, cmd)
-	if runtime.GOOS == "windows" {
-		localPath += ".exe"
-	}
-	if _, err := os.Stat(localPath); err == nil {
-		return localPath, nil
-	}
-
-	return "", fmt.Errorf("executable '%s' not found in PATH or relative to JAWT executable", cmd)
+	return "", fmt.Errorf("executable '%s' not found in .jawt/tools, bundled/bin, or system PATH", cmd)
 }
 
 // EnsureDirectories creates all necessary directories

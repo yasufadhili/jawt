@@ -86,6 +86,11 @@ func (bs *BuildSystem) Initialise() error {
 		return fmt.Errorf("failed to sync workspace sources: %w", err)
 	}
 
+	// Run initial TSC check on all sources
+	if err := bs.compiler.RunInitialTSC(); err != nil {
+		return fmt.Errorf("initial TypeScript check failed: %w", err)
+	}
+
 	if err := bs.DiscoverProject(); err != nil {
 		return err
 	}
@@ -438,7 +443,7 @@ func (bs *BuildSystem) CompileDocument(path string) error {
 	}
 
 	// 3. Run external compilers
-	if err := bs.compiler.RunTSC(); err != nil {
+	if err := bs.compiler.RunFullTSC(); err != nil {
 		return fmt.Errorf("failed to run tsc: %w", err)
 	}
 
