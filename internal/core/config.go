@@ -25,6 +25,7 @@ type JawtConfig struct {
 	EnableTreeShaking  bool `json:"enable_tree_shaking"`
 }
 
+// ProjectConfig represents the new project-specific configuration structure
 type ProjectConfig struct {
 	App struct {
 		Name        string `json:"name"`
@@ -49,6 +50,7 @@ type ProjectConfig struct {
 		ShadowDOM bool   `json:"shadowDOM"`
 	} `json:"build"`
 	Dev struct {
+		Port       int      `json:"port"`
 		EnableHMR  bool     `json:"enableHMR"`
 		WatchPaths []string `json:"watchPaths"`
 	} `json:"dev"`
@@ -76,17 +78,13 @@ func NewBuildOptions() *BuildOptions {
 
 // DefaultJawtConfig returns a default jawt configuration
 func DefaultJawtConfig() *JawtConfig {
-	cwd, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
 	return &JawtConfig{
 		TypeScriptPath:     "tsc",
 		TailwindPath:       "tailwindcss",
 		NodePath:           "node",
 		DefaultPort:        6500,
-		TempDir:            filepath.Join(cwd, ".jawt", "temp"),
-		CacheDir:           filepath.Join(cwd, ".jawt", "cache"),
+		TempDir:            filepath.Join(".jawt", "temp"),
+		CacheDir:           filepath.Join(".jawt", "cache"),
 		EnableMinification: true,
 		EnableSourceMaps:   true,
 		EnableTreeShaking:  true,
@@ -137,9 +135,11 @@ func DefaultProjectConfig() *ProjectConfig {
 			ShadowDOM: false,
 		},
 		Dev: struct {
+			Port       int      `json:"port"`
 			EnableHMR  bool     `json:"enableHMR"`
 			WatchPaths []string `json:"watchPaths"`
 		}{
+			Port:       6500,
 			EnableHMR:  true,
 			WatchPaths: []string{"app", "components", "scripts", "assets"},
 		},
@@ -280,6 +280,10 @@ func (pc *ProjectConfig) Validate() error {
 		return fmt.Errorf("server host cannot be empty")
 	}
 
+	if pc.Dev.Port <= 0 || pc.Dev.Port > 65535 {
+		return fmt.Errorf("invalid dev server port: %d", pc.Dev.Port)
+	}
+
 	return nil
 }
 
@@ -319,9 +323,9 @@ func (pc *ProjectConfig) GetServerAddress() string {
 }
 
 // GetDevServerAddress returns the full dev server address
-// func (pc *ProjectConfig) GetDevServerAddress() string {
-//   return fmt.Sprintf("%s:%d", pc.Server.Host, pc.Dev.Port)
-// }
+func (pc *ProjectConfig) GetDevServerAddress() string {
+	return fmt.Sprintf("%s:%d", pc.Server.Host, pc.Dev.Port)
+}
 
 // IsMinificationEnabled returns whether minification is enabled
 func (pc *ProjectConfig) IsMinificationEnabled() bool {
@@ -333,8 +337,8 @@ func (pc *ProjectConfig) IsShadowDOMEnabled() bool {
 	return pc.Build.ShadowDOM
 }
 
-// IsHMREnabled returns whether HMR is enabled
-func (pc *ProjectConfig) IsHMREnabled() bool {
+// IsHMR enabled returns whether HMR is enabled
+func (pc *ProjectConfig) IsHMRenabled() bool {
 	return pc.Dev.EnableHMR
 }
 
@@ -376,6 +380,11 @@ func (pc *ProjectConfig) SetAuthor(author string) {
 // SetServerPort sets the server port
 func (pc *ProjectConfig) SetServerPort(port int) {
 	pc.Server.Port = port
+}
+
+// SetDevServerPort sets the dev server port
+func (pc *ProjectConfig) SetDevServerPort(port int) {
+	pc.Dev.Port = port
 }
 
 // SetMinification enables or disables minification
