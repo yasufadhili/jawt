@@ -557,7 +557,10 @@ func (bs *BuildSystem) syncWorkspaceSources() error {
 		}
 	}
 
-	// TODO: Implement extracting internal Jawt components/scripts to InternalSrcDir
+	// Extract internal Jawt components/scripts
+	if err := bs.extractInternalScripts(); err != nil {
+		return fmt.Errorf("failed to extract internal scripts: %w", err)
+	}
 
 	return nil
 }
@@ -590,6 +593,30 @@ func (bs *BuildSystem) copyUserScripts() error {
 
 		return os.WriteFile(destPath, content, 0644)
 	})
+}
+
+func (bs *BuildSystem) extractInternalScripts() error {
+	internalScripts := map[string]string{
+		"browser.ts": `// Placeholder for Jawt's internal browser API
+export function setTitle(title: string) { console.log("Setting title: " + title); }
+export function scrollToTop() { console.log('Scrolling to top'); }
+`,
+		"store.ts":   `// Placeholder for Jawt's internal store API
+export function get(key: string) { console.log("Getting key: " + key); return null; }
+export function set(key: string, value: any) { console.log("Setting key: " + key + " with value: " + value); }
+`,
+	}
+
+	for filename, content := range internalScripts {
+		destPath := filepath.Join(bs.ctx.Paths.InternalSrcDir, filename)
+		if err := os.MkdirAll(filepath.Dir(destPath), 0755); err != nil {
+			return err
+		}
+		if err := os.WriteFile(destPath, []byte(content), 0644); err != nil {
+			return fmt.Errorf("failed to write internal script %s: %w", filename, err)
+		}
+	}
+	return nil
 }
 
 // generateWorkspaceConfigs creates the necessary config files in the .jawt directory
