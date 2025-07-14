@@ -66,14 +66,6 @@ Monitors your JML files for changes and automatically reloads the browser.`,
 		}
 
 		buildOptions := core.NewBuildOptions()
-		// Check for tailwind.config.js
-		tailwindConfigPath := projectConfig.GetTailwindConfigPath(projectDir)
-		if _, err := os.Stat(tailwindConfigPath); err == nil {
-			buildOptions.UsesTailwindCSS = true
-		} else if !os.IsNotExist(err) {
-			logger.Error("Failed to check for tailwind config file", core.ErrorField(err))
-			os.Exit(1)
-		}
 
 		if port != 6500 {
 			projectConfig.SetDevServerPort(port)
@@ -86,6 +78,7 @@ Monitors your JML files for changes and automatically reloads the browser.`,
 			core.StringField("directory", projectDir),
 			core.StringField("server", projectConfig.GetDevServerAddress()))
 
+		// The orchestrator will now serve from the .jawt/build directory
 		orchestrator, err := runtime.NewOrchestrator(cmd.Context(), logger, ctx)
 		if err != nil {
 			logger.Error("Failed to create orchestrator", core.ErrorField(err))
