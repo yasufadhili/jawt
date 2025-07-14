@@ -23,8 +23,8 @@ func TestDefaultJawtConfig(t *testing.T) {
 	if config.DefaultPort != 6500 {
 		t.Errorf("expected DefaultPort to be 6500, got %d", config.DefaultPort)
 	}
-	if config.TempDir != ".jawt/temp" {
-		t.Errorf("expected TempDir to be '.jawt/temp', got %s", config.TempDir)
+	if config.TempDir != ".jawt/tmp" {
+		t.Errorf("expected TempDir to be '.jawt/tmp', got %s", config.TempDir)
 	}
 	if config.CacheDir != ".jawt/cache" {
 		t.Errorf("expected CacheDir to be '.jawt/cache', got %s", config.CacheDir)
