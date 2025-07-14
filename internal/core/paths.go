@@ -222,15 +222,7 @@ func (p *ProjectPaths) GetWatchPaths() []string {
 	return watchPaths
 }
 
-// GetTempFile returns a temporary file path
-func (p *ProjectPaths) GetTempFile(filename string) string {
-	return filepath.Join(p.TempDir, filename)
-}
 
-// GetCacheFile returns a cache file path
-func (p *ProjectPaths) GetCacheFile(filename string) string {
-	return filepath.Join(p.CacheDir, filename)
-}
 
 // findFilesWithExtension recursively finds files with the given extension
 func (p *ProjectPaths) findFilesWithExtension(dir, ext string) ([]string, error) {
