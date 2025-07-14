@@ -7,6 +7,7 @@ import (
 	"github.com/yasufadhili/jawt/internal/core"
 	"github.com/yasufadhili/jawt/internal/diagnostic"
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 	"time"
@@ -424,7 +425,7 @@ func (bs *BuildSystem) CompileDocument(path string) error {
 		return fmt.Errorf("failed to compile JML file %s: %w", doc.AbsPath, err)
 	}
 	if reporter.HasErrors() {
-		printer := diagnostic.NewPrinter(os.Stderr)
+		printer := diagnostic.NewPrinter()
 		printer.Print(reporter)
 		return fmt.Errorf("compilation of %s failed with errors", doc.AbsPath)
 	}

@@ -3,7 +3,6 @@ package build
 import (
 	"context"
 	"fmt"
-	"github.com/yasufadhili/jawt/internal/compiler"
 	"net/http"
 	"time"
 
@@ -33,9 +32,7 @@ func RunProject(ctx *core.JawtContext) error {
 		".DS_Store", "*.tmp", "*.swp", "*.swo",
 	})
 
-	c := compiler.NewCompiler(ctx)
-
-	buildSystem := NewBuildSystem(ctx, c, fileWatcher)
+	buildSystem := NewBuildSystem(ctx, fileWatcher)
 
 	// Initialise the build system (discover and compile)
 	if err := buildSystem.Initialise(); err != nil {
