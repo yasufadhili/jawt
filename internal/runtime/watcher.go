@@ -57,6 +57,7 @@ func NewFileWatcher(ctx context.Context, jawtCtx *core.JawtContext) (*FileWatche
 		debounceMap:   make(map[string]time.Time),
 		debounceDelay: 100 * time.Millisecond,
 		watchPatterns: watchPatterns,
+		logger:        jawtCtx.Logger,
 		ignorePatterns: []string{
 			".git/", "node_modules/", ".jawt/", "dist/", "build/",
 			".DS_Store", "*.tmp", "*.swp", "*.swo",
