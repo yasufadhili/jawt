@@ -18,7 +18,6 @@ type DevServer struct {
 	clients  map[*websocket.Conn]bool
 }
 
-// NewDevServer creates a new DevServer
 func NewDevServer(ctx context.Context, logger core.Logger) *DevServer {
 	serverCtx, cancel := context.WithCancel(ctx)
 	return &DevServer{
@@ -34,14 +33,12 @@ func NewDevServer(ctx context.Context, logger core.Logger) *DevServer {
 	}
 }
 
-// Start starts the dev server
 func (s *DevServer) Start(addr string) error {
 	http.HandleFunc("/ws", s.handleWebSocket)
 	s.logger.Info("Starting dev server", core.StringField("address", addr))
 	return http.ListenAndServe(addr, nil)
 }
 
-// Stop stops the dev server
 func (s *DevServer) Stop() {
 	s.cancel()
 }
