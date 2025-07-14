@@ -3,7 +3,7 @@ package build
 import (
 	"fmt"
 	"github.com/fsnotify/fsnotify"
-	"github.com/yasufadhili/jawt/internal/compiler"
+	
 	"github.com/yasufadhili/jawt/internal/core"
 	"github.com/yasufadhili/jawt/internal/diagnostic"
 	"os"
@@ -48,7 +48,7 @@ type BuildSystem struct {
 	pages      map[string]*PageInfo
 	comps      map[string]*ComponentInfo
 	discoverer ProjectDiscoverer
-	compiler   *compiler.Compiler
+	compiler   *CompilerRunner
 	watcher    FileWatcher
 	depGraph   DependencyGraph
 }
@@ -59,7 +59,7 @@ type FileWatcher interface {
 	Stop() error
 }
 
-func NewBuildSystem(ctx *core.JawtContext, compiler *compiler.Compiler, watcher FileWatcher) *BuildSystem {
+func NewBuildSystem(ctx *core.JawtContext, watcher FileWatcher) *BuildSystem {
 	return &BuildSystem{
 		ctx:        ctx,
 		docs:       make(map[string]*DocumentInfo),
@@ -67,7 +67,7 @@ func NewBuildSystem(ctx *core.JawtContext, compiler *compiler.Compiler, watcher 
 		comps:      make(map[string]*ComponentInfo),
 		discoverer: NewProjectDiscoverer(ctx),
 		watcher:    watcher,
-		compiler:   compiler,
+		compiler:   NewCompilerRunner(ctx),
 		depGraph:   NewDependencyGraph(),
 	}
 }
@@ -416,17 +416,12 @@ func (bs *BuildSystem) CompileDocument(path string) error {
 		return nil // Document doesn't exist, nothing to compile
 	}
 
-	reporter := diagnostic.NewReporter()
-	_, err := bs.compiler.Compile(doc.AbsPath, reporter)
-
-	if reporter.HasErrors() {
-		printer := diagnostic.NewPrinter()
-		printer.Print(reporter)
-		return fmt.Errorf("failed to compile %s due to errors", doc.AbsPath)
+	if err := bs.compiler.RunTSC(); err != nil {
+		return fmt.Errorf("failed to run tsc: %w", err)
 	}
 
-	if err != nil {
-		return fmt.Errorf("failed to compile %s: %w", doc.AbsPath, err)
+	if err := bs.compiler.RunTailwind(); err != nil {
+		return fmt.Errorf("failed to run tailwind: %w", err)
 	}
 
 	bs.mu.Lock()
