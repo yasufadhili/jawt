@@ -13,12 +13,10 @@ type CompilerRunner struct {
 	ctx *core.JawtContext
 }
 
-// NewCompilerRunner creates a new CompilerRunner.
 func NewCompilerRunner(ctx *core.JawtContext) *CompilerRunner {
 	return &CompilerRunner{ctx: ctx}
 }
 
-// RunTSC runs the TypeScript compiler.
 func (cr *CompilerRunner) RunTSC() error {
 	cr.ctx.Logger.Info("Running TypeScript compiler")
 
@@ -61,7 +59,6 @@ func (cr *CompilerRunner) RunTSC() error {
 	return cmd.Wait()
 }
 
-// RunTailwind runs the Tailwind CSS compiler.
 func (cr *CompilerRunner) RunTailwind() error {
 	cr.ctx.Logger.Info("Running Tailwind CSS compiler")
 

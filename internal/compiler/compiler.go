@@ -2,11 +2,10 @@ package compiler
 
 import (
 	"fmt"
-	"os"
+	parser "github.com/yasufadhili/jawt/internal/compiler/parser/generated"
 
 	"github.com/antlr4-go/antlr/v4"
 	"github.com/yasufadhili/jawt/internal/ast"
-	"github.com/yasufadhili/jawt/internal/compiler/parser"
 	"github.com/yasufadhili/jawt/internal/core"
 	"github.com/yasufadhili/jawt/internal/diagnostic"
 )
@@ -34,7 +33,7 @@ func (c *Compiler) Compile(file string, reporter *diagnostic.Reporter) (*ast.Doc
 
 	// Remove default error listeners and add our custom one
 	parser.RemoveErrorListeners()
-	parser.AddErrorListener(diagnostic.NewAntlrErrorListener(file, reporter))
+	// parser.AddErrorListener(diagnostic.NewAntlrErrorListener(file, reporter))
 
 	// Parse the input
 	tree := parser.Document()
