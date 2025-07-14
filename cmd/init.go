@@ -62,10 +62,20 @@ This includes app/, components/, assets/ directories and essential configuration
 		}
 
 		// Save project configuration
-		if err := projectConfig.Save(projectDir); err != nil {
-			logger.Error("Failed to save project configuration", core.ErrorField(err))
-			os.Exit(1)
-		}
+        if err := projectConfig.Save(projectDir); err != nil {
+            logger.Error("Failed to save project configuration", core.ErrorField(err))
+            os.Exit(1)
+        }
+
+        // Create .gitignore
+        gitignorePath := filepath.Join(projectDir, ".gitignore")
+        if _, err := os.Stat(gitignorePath); os.IsNotExist(err) {
+            gitignoreContent := []byte("# JAWT managed workspace\n.jawt/\n\n# User-specific files\n.idea/\n.vscode/\n")
+            if err := os.WriteFile(gitignorePath, gitignoreContent, 0644); err != nil {
+                logger.Error("Failed to create .gitignore file", core.ErrorField(err))
+                os.Exit(1)
+            }
+        }
 
 		logger.Info("JAWT project initialised successfully",
 			core.StringField("name", projectName),

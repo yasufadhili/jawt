@@ -76,6 +76,10 @@ func NewBuildSystem(ctx *core.JawtContext, compiler *compiler.Compiler, watcher 
 func (bs *BuildSystem) Initialise() error {
 	bs.ctx.Logger.Info("Initialising build system")
 
+	if err := bs.generateWorkspaceConfigs(); err != nil {
+		return fmt.Errorf("failed to generate workspace configs: %w", err)
+	}
+
 	if err := bs.DiscoverProject(); err != nil {
 		return err
 	}
@@ -512,4 +516,53 @@ func (bs *BuildSystem) getDocumentTypeString(docType DocumentType) string {
 	default:
 		return "unknown"
 	}
+}
+
+// generateWorkspaceConfigs creates the necessary config files in the .jawt directory
+func (bs *BuildSystem) generateWorkspaceConfigs() error {
+	bs.ctx.Logger.Info("Generating workspace configurations")
+
+	// Create tsconfig.json
+	tsconfigContent := `{
+	  "compilerOptions": {
+	    "target": "ESNext",
+	    "module": "ESNext",
+	    "moduleResolution": "node",
+	    "strict": true,
+	    "jsx": "preserve",
+	    "importHelpers": true,
+	    "experimentalDecorators": true,
+	    "esModuleInterop": true,
+	    "allowSyntheticDefaultImports": true,
+	    "sourceMap": true,
+	    "baseUrl": ".",
+	    "paths": {
+	      "@/*": ["src/user/*"],
+	      "@jawt/*": ["src/internal/*"]
+	    },
+	    "lib": ["ESNext", "DOM"],
+	    "outDir": "../build",
+	    "rootDir": "src"
+	  },
+	  "include": ["src/**/*.ts", "src/**/*.tsx"],
+	  "exclude": ["node_modules"]
+	}`
+	if err := os.WriteFile(bs.ctx.Paths.TSConfigPath, []byte(tsconfigContent), 0644); err != nil {
+		return fmt.Errorf("failed to write tsconfig.json: %w", err)
+	}
+
+	// Create tailwind.config.js
+	tailwindConfigContent := `/** @type {import('tailwindcss').Config} */
+	module.exports = {
+	  content: ["./src/user/**/*.ts", "./src/internal/**/*.ts"],
+	  theme: {
+	    extend: {},
+	  },
+	  plugins: [],
+	}`
+	if err := os.WriteFile(bs.ctx.Paths.TailwindConfigPath, []byte(tailwindConfigContent), 0644); err != nil {
+		return fmt.Errorf("failed to write tailwind.config.js: %w", err)
+	}
+
+	return nil
 }

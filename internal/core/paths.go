@@ -18,28 +18,29 @@ type ProjectPaths struct {
 	ProjectConfig *ProjectConfig
 	JawtConfig    *JawtConfig
 
-	// Input directories
+	// --- User-Facing Directories ---
 	AppDir        string
 	ComponentsDir string
 	ScriptsDir    string
 	AssetsDir     string
+	DistDir       string // Final output for the user
 
-	// Output directories
-	JawtDir  string
-	BuildDir string
-	DistDir  string
-	TempDir  string
-	CacheDir string
+	// --- Managed Workspace (.jawt) ---
+	JawtDir         string // Root .jawt directory
+	BuildDir        string // Intermediate build artifacts (.jawt/build)
+	CacheDir        string // General-purpose cache (.jawt/cache)
+	SrcDir          string // "Virtual" source root for compilers (.jawt/src)
+	UserSrcDir      string // User code copied to the workspace (.jawt/src/user)
+	InternalSrcDir  string // Jawt's internal bundled code (.jawt/src/internal)
+	NodeModulesDir  string // Managed node_modules (.jawt/node_modules)
+	ToolsDir        string // Managed tools like node/tsc (.jawt/tools)
+	GeneratedDir    string // For generated code like routes, manifests (.jawt/generated)
+	TailwindCSSPath string // Path to the output tailwind.css file
 
-	// Generated files
-	TypeScriptOutputDir string
-	TailwindOutputDir   string
-	ComponentsOutputDir string
-
-	// Config files
-	TSConfigPath       string
-	TailwindConfigPath string
+	// --- Key File Paths ---
 	ProjectConfigPath  string
+	TSConfigPath       string // Path to the generated tsconfig.json in .jawt
+	TailwindConfigPath string // Path to the generated tailwind.config.js in .jawt
 }
 
 // NewProjectPaths creates a new ProjectPaths instance
@@ -61,28 +62,29 @@ func NewProjectPaths(projectRoot string, projectConfig *ProjectConfig, jawtConfi
 		JawtConfig:    jawtConfig,
 	}
 
-	// Set up input directories from project config
+	// --- User-Facing Directories ---
 	paths.AppDir = filepath.Join(absProjectRoot, projectConfig.Paths.Pages)
 	paths.ComponentsDir = filepath.Join(absProjectRoot, projectConfig.Paths.Components)
 	paths.ScriptsDir = filepath.Join(absProjectRoot, projectConfig.Paths.Scripts)
 	paths.AssetsDir = filepath.Join(absProjectRoot, projectConfig.Paths.Assets)
-
-	// Set up output directories based on config
-	paths.JawtDir = filepath.Join(absProjectRoot, ".jawt") // Fixed internal directory
-	paths.BuildDir = projectConfig.GetBuildOutputDir(absProjectRoot)
 	paths.DistDir = projectConfig.GetDistDir(absProjectRoot)
-	paths.TempDir = filepath.Join(paths.JawtDir, "temp")   // Use fixed internal tmp
-	paths.CacheDir = filepath.Join(paths.JawtDir, "cache") // Use fixed internal cache
 
-	// Set up generated output directories
-	paths.TypeScriptOutputDir = filepath.Join(paths.BuildDir, "ts")
-	paths.TailwindOutputDir = filepath.Join(paths.BuildDir, "styles")
-	paths.ComponentsOutputDir = filepath.Join(paths.BuildDir, "components")
+	// --- Managed Workspace (.jawt) ---
+	paths.JawtDir = filepath.Join(absProjectRoot, ".jawt")
+	paths.BuildDir = filepath.Join(paths.JawtDir, "build")
+	paths.CacheDir = filepath.Join(paths.JawtDir, "cache")
+	paths.SrcDir = filepath.Join(paths.JawtDir, "src")
+	paths.UserSrcDir = filepath.Join(paths.SrcDir, "user")
+	paths.InternalSrcDir = filepath.Join(paths.SrcDir, "internal")
+	paths.NodeModulesDir = filepath.Join(paths.JawtDir, "node_modules")
+	paths.ToolsDir = filepath.Join(paths.JawtDir, "tools")
+	paths.GeneratedDir = filepath.Join(paths.JawtDir, "generated")
+	paths.TailwindCSSPath = filepath.Join(paths.BuildDir, "tailwind.css")
 
-	// Set up config file paths
-	paths.TSConfigPath = projectConfig.GetTSConfigPath(absProjectRoot)
-	paths.TailwindConfigPath = projectConfig.GetTailwindConfigPath(absProjectRoot)
+	// --- Key File Paths ---
 	paths.ProjectConfigPath = filepath.Join(absProjectRoot, "jawt.project.json")
+	paths.TSConfigPath = filepath.Join(paths.JawtDir, "jawt.tsconfig.json")
+	paths.TailwindConfigPath = filepath.Join(paths.JawtDir, "tailwind.config.js")
 
 	return paths, nil
 }
@@ -124,15 +126,19 @@ func ResolveExecutablePath(cmd string) (string, error) {
 
 // EnsureDirectories creates all necessary directories
 func (p *ProjectPaths) EnsureDirectories() error {
+	// Create all necessary directories
+	// User-facing directories are not created automatically, except for DistDir
 	dirs := []string{
+		p.DistDir,
 		p.JawtDir,
 		p.BuildDir,
-		p.DistDir,
-		p.TempDir,
 		p.CacheDir,
-		p.TypeScriptOutputDir,
-		p.TailwindOutputDir,
-		p.ComponentsOutputDir,
+		p.SrcDir,
+		p.UserSrcDir,
+		p.InternalSrcDir,
+		p.NodeModulesDir,
+		p.ToolsDir,
+		p.GeneratedDir,
 	}
 
 	for _, dir := range dirs {
