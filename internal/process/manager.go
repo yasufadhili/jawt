@@ -175,7 +175,7 @@ func (pm *Manager) GetProcessStats() map[string]Stats {
 
 // StartTypeScriptWatch starts TypeScript compiler in watch mode
 func (pm *Manager) StartTypeScriptWatch(ctx *core.JawtContext) error {
-	tsPath, err := core.ResolveExecutablePath(ctx.JawtConfig.TypeScriptPath)
+	tsPath, err := core.ResolveExecutablePath(ctx.JawtConfig.TypeScriptPath, pm.jawtContext)
 	if err != nil {
 		return fmt.Errorf("failed to resolve TypeScript executable: %w", err)
 	}
@@ -201,7 +201,7 @@ func (pm *Manager) StartTypeScriptWatch(ctx *core.JawtContext) error {
 
 // StartTailwindWatch starts Tailwind CSS compiler in watch mode
 func (pm *Manager) StartTailwindWatch(ctx *core.JawtContext) error {
-	tailwindPath, err := core.ResolveExecutablePath(ctx.JawtConfig.TailwindPath)
+	tailwindPath, err := core.ResolveExecutablePath(ctx.JawtConfig.TailwindPath, pm.jawtContext)
 	if err != nil {
 		return fmt.Errorf("failed to resolve Tailwind CSS executable: %w", err)
 	}
@@ -227,7 +227,7 @@ func (pm *Manager) StartTailwindWatch(ctx *core.JawtContext) error {
 
 // StartNodeProcess starts a Node.js process
 func (pm *Manager) StartNodeProcess(name string, args []string, workingDir string, outputHandler func(string), errorHandler func(error)) error {
-	nodePath, err := core.ResolveExecutablePath(pm.jawtContext.JawtConfig.NodePath)
+	nodePath, err := core.ResolveExecutablePath(pm.jawtContext.JawtConfig.NodePath, pm.jawtContext)
 	if err != nil {
 		return fmt.Errorf("failed to resolve Node.js executable: %w", err)
 	}
