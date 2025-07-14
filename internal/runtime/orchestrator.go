@@ -29,7 +29,7 @@ func NewOrchestrator(ctx context.Context, logger core.Logger, jawtCtx *core.Jawt
 
 	pm := process.NewProcessManager(orchCtx, logger, jawtCtx)
 
-	fw, err := NewFileWatcher(orchCtx, logger, jawtCtx)
+	fw, err := NewFileWatcher(orchCtx, jawtCtx)
 	if err != nil {
 		cancel()
 		return nil, fmt.Errorf("failed to create file watcher: %w", err)
