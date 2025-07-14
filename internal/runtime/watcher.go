@@ -35,7 +35,7 @@ type FileWatcher struct {
 }
 
 // NewFileWatcher creates a new FileWatcher instance
-func NewFileWatcher(ctx context.Context, logger core.Logger, jawtCtx *core.JawtContext) (*FileWatcher, error) {
+func NewFileWatcher(ctx context.Context, jawtCtx *core.JawtContext) (*FileWatcher, error) {
 	watcherCtx, cancel := context.WithCancel(ctx)
 
 	fsWatcher, err := fsnotify.NewWatcher()
@@ -53,7 +53,6 @@ func NewFileWatcher(ctx context.Context, logger core.Logger, jawtCtx *core.JawtC
 	return &FileWatcher{
 		ctx:           watcherCtx,
 		cancel:        cancel,
-		logger:        logger,
 		watcher:       fsWatcher,
 		debounceMap:   make(map[string]time.Time),
 		debounceDelay: 100 * time.Millisecond,

@@ -59,7 +59,7 @@ type FileWatcher interface {
 	Stop() error
 }
 
-func NewBuildSystem(ctx *core.JawtContext, watcher FileWatcher) *BuildSystem {
+func NewBuildSystem(ctx *core.JawtContext, compiler *compiler.Compiler, watcher FileWatcher) *BuildSystem {
 	return &BuildSystem{
 		ctx:        ctx,
 		docs:       make(map[string]*DocumentInfo),
@@ -67,6 +67,7 @@ func NewBuildSystem(ctx *core.JawtContext, watcher FileWatcher) *BuildSystem {
 		comps:      make(map[string]*ComponentInfo),
 		discoverer: NewProjectDiscoverer(ctx),
 		watcher:    watcher,
+		compiler:   compiler,
 		depGraph:   NewDependencyGraph(),
 	}
 }
