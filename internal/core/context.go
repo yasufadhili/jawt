@@ -14,6 +14,7 @@ type JawtContext struct {
 	JawtConfig    *JawtConfig
 	ProjectConfig *ProjectConfig
 	Paths         *ProjectPaths
+	Logger        Logger
 
 	// Build options
 	BuildOptions *BuildOptions
@@ -24,7 +25,7 @@ type JawtContext struct {
 }
 
 // NewJawtContext creates a new jawt context with the given configurations
-func NewJawtContext(jawtConfig *JawtConfig, projectConfig *ProjectConfig, paths *ProjectPaths, buildOptions *BuildOptions) *JawtContext {
+func NewJawtContext(jawtConfig *JawtConfig, projectConfig *ProjectConfig, paths *ProjectPaths, logger Logger, buildOptions *BuildOptions) *JawtContext {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	return &JawtContext{
@@ -33,6 +34,7 @@ func NewJawtContext(jawtConfig *JawtConfig, projectConfig *ProjectConfig, paths 
 		JawtConfig:    jawtConfig,
 		ProjectConfig: projectConfig,
 		Paths:         paths,
+		Logger:        logger,
 		BuildOptions:  buildOptions,
 		metadata:      make(map[string]interface{}),
 	}
@@ -61,4 +63,19 @@ func (tc *JawtContext) GetMetadata(key string) (interface{}, bool) {
 	defer tc.mu.RUnlock()
 	value, exists := tc.metadata[key]
 	return value, exists
+}
+
+// Logger interface for structured logging
+type Logger interface {
+	Debug(msg string, fields ...Field)
+	Info(msg string, fields ...Field)
+	Warn(msg string, fields ...Field)
+	Error(msg string, fields ...Field)
+	Fatal(msg string, fields ...Field)
+}
+
+// Field represents a key-value pair for structured logging
+type Field struct {
+	Key   string
+	Value interface{}
 }
