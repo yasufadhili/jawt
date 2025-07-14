@@ -3,7 +3,7 @@ package build
 import (
 	"fmt"
 	"github.com/fsnotify/fsnotify"
-	
+	"github.com/yasufadhili/jawt/internal/compiler"
 	"github.com/yasufadhili/jawt/internal/core"
 	"github.com/yasufadhili/jawt/internal/diagnostic"
 	"os"
@@ -416,6 +416,23 @@ func (bs *BuildSystem) CompileDocument(path string) error {
 		return nil // Document doesn't exist, nothing to compile
 	}
 
+	// 1. Compile JML to TypeScript
+	reporter := diagnostic.NewReporter()
+	jmlCompiler := compiler.NewCompiler(bs.ctx)
+	ast, err := jmlCompiler.Compile(doc.AbsPath, reporter)
+	if err != nil {
+		return fmt.Errorf("failed to compile JML file %s: %w", doc.AbsPath, err)
+	}
+	if reporter.HasErrors() {
+		printer := diagnostic.NewPrinter(os.Stderr)
+		printer.Print(reporter)
+		return fmt.Errorf("compilation of %s failed with errors", doc.AbsPath)
+	}
+
+	// TODO: Emit TypeScript from the AST to the .jawt/src/user directory
+	_ = ast // Placeholder to avoid unused variable error
+
+	// 2. Run external compilers
 	if err := bs.compiler.RunTSC(); err != nil {
 		return fmt.Errorf("failed to run tsc: %w", err)
 	}
